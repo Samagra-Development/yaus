@@ -27,6 +27,8 @@ const { InMemoryCache } = apolloInMemoryCache;
 const hashids = new Hashids();
 dotenv.config();
 
+const BASE_URL = "http://localhost:8888"
+
 const client = new ApolloClient({
   link: new HttpLink({
     uri: `${process.env.HASURA_URL}`,
@@ -69,28 +71,23 @@ const startApp = function () {
     server.log.info(`server listening on ${address}`);
   });
 
+  // Home page
   server.route({
     method: "GET",
     url: "/",
     handler: function (request, reply) {
-      reply.redirect("https://x.samgragovernance.in");
+      reply.send("HOME PAGE for YAUS");
     },
   });
 
-  server.route({
-    method: "POST",
-    handler: function (request, reply) {
-      url: "/transformer/pass", console.log(request.body);
-      reply.send({ data: request.body.data });
-    },
-  });
-
+  
+  // Redirect to Long URL BASE_URL/abc123 => https://www.google.com
   server.route({
     method: "GET",
     url: "/sr/:code",
     handler: async function (request, reply) {
       if (!request.params.code) {
-        return reply.redirect("https://x.samgragovernance.in");
+        return reply.redirect(BASE_URL);
       }
       const hashid = hashids.decode(request.params.code)[0];
       const redirectURL = await getLinkFromHashID(client, { hashid });
@@ -106,6 +103,7 @@ const startApp = function () {
     },
   });
 
+  // Get URL for a HashID
   server.route({
     method: "GET",
     url: "/sr/getURL/:hashId",
@@ -127,96 +125,6 @@ const startApp = function () {
           .code(404)
           .header("Content-Type", "application/json; charset=utf-8")
           .send({ error: "Could not find URL with hashID" });
-      }
-    },
-  });
-
-  server.route({
-    method: "POST",
-    url: "/sr/addByUser",
-    handler: async function (request, reply) {
-      if (!request.body.userID && !request.body.phone) {
-        return reply
-          .code(404)
-          .header("Content-Type", "application/json; charset=utf-8")
-          .send({ error: "Not a valid user" });
-      } else {
-        let userID = request.body.userID;
-        const groupID = request.body.group;
-        const templateID = request.body.template;
-        const phoneNo = request.body.phone;
-        const project = request.body.project;
-        const applicationID = request.body.applicationID;
-        const authServer = request.body.authServer;
-
-        const faClient = new FusionAuthClient(
-          config.authServer[authServer].key,
-          config.authServer[authServer].service
-        );
-
-        console.log(config.authServer[authServer]);
-        if (userID) {
-          faClient
-            .retrieveUserByVerificationId(userID)
-            .then((res) => {
-              console.log(res);
-            })
-            .then((s) => {
-              reply
-                .code(404)
-                .header("Content-Type", "application/json; charset=utf-8")
-                .send({ error: null });
-            });
-        } else {
-          const { user, error } = {
-            ...(await getUserByPhoneNo(
-              faClient,
-              phoneNo,
-              groupID,
-              applicationID
-            )),
-          };
-          const template = (await getTemplateFromID(client, { templateID }))
-            .data.template[0].text;
-          try {
-            const url = interpolate(
-              template.substring(1, template.length - 1),
-              { user }
-            );
-            insertLink(client, {
-              url,
-              userID: user.id,
-              project,
-            })
-              .then((res) => {
-                console.log(res);
-                return reply
-                  .code(200)
-                  .header("Content-Type", "application/json; charset=utf-8")
-                  .send({ error: null, res });
-              })
-              .catch((e) => {
-                console.log(e);
-                return reply
-                  .code(404)
-                  .header("Content-Type", "application/json; charset=utf-8")
-                  .send({ error: e.message, res: null });
-              });
-          } catch (e) {
-            console.log(e);
-            if (e instanceof TypeError) {
-              return reply
-                .code(404)
-                .header("Content-Type", "application/json; charset=utf-8")
-                .send({ error: "Not a valid user" });
-            } else {
-              return reply
-                .code(404)
-                .header("Content-Type", "application/json; charset=utf-8")
-                .send({ error: "Not a valid template" });
-            }
-          }
-        }
       }
     },
   });
