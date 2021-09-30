@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+  short-nr:
+    build: ./src
+    image: short-nr
+    container_name: short-nr
+    restart: unless-stopped
+    env_file:
+      - src/.env
+    ports:
+      - 8888:8888
+  
+  shortdb:
+    container_name: shortdb
+    image: postgres:12
+    env_file:
+      - src/.env
+    ports:
+      - "5432"
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+
+  gql:
+    image: hasura/graphql-engine:v2.0.0-alpha.1
+    env_file:
+      - src/.env
+    ports:
+      - "15003:8080"
+    depends_on:
+      - shortdb
+    restart: always

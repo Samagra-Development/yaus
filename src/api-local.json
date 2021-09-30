@@ -1,0 +1,27 @@
+[
+  {
+    "name": "saksham-emp",
+    "script": "index.js",
+    "exec_mode": "fork",
+    "instances": 1,
+    "watch": true,
+    "merge_logs": true,
+    "autorestart": true,
+    "exec_interpreter": "node",
+    "ignore_watch": [
+      "node_modules",
+      "assets",
+      "public",
+      "esamwaduser.json",
+      "ams-users.json",
+      ".idea",
+      ".git",
+      "html-app",
+      "background-processes"
+    ],
+    "post_update": ["npm install"],
+    "env": {
+      "NODE_ENV": "default"
+    }
+  }
+]
