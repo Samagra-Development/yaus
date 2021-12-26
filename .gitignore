@@ -2,4 +2,7 @@
 node_modules/
 config/default.json
 pgdata
-*.env
+.env
+yarn-error.log
+redis-data
+redis.conf
