@@ -6,6 +6,10 @@
 2. API to Generate URLs in bulk or templates.
 3. Tracking clicks.
 
+## API Docs
+
+[Postman Collection](https://www.getpostman.com/collections/5f24dd9ac134e00eeb4d)
+
 ## Benchmarks
 
 Can be reproduced by - `k6 run --duration 30s --vus 400 scripts.js`
