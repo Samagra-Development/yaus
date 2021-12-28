@@ -89,7 +89,7 @@ const startApp = function () {
           console.log.error("ENV must include SERVER_BASE_URL");
         }
         const server = fastify({
-          logger: false,
+          logger: true,
         });
 
         server.register(corsPlugin, {
@@ -127,7 +127,11 @@ const startApp = function () {
             if (!request.params.code) {
               return reply.redirect(BASE_URL);
             }
-            let hashid = hashids.decode(request.params.code)[0];
+            try {
+              let hashid = hashids.decode(request.params.code)[0];
+            } catch (e) {
+              hashid = -1;
+            }
             if (!hashid) hashid = -1;
             let redirectURL = await getLink(client, {
               hashid,
