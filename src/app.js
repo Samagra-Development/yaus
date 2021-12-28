@@ -73,9 +73,6 @@ const startApp = function () {
     sub.connect("click-counter-update", function () {
       sub.on("data", async function (note) {
         await cacheClient.incr(JSON.parse(note).id);
-        // await updateCustomHashClicks(client, {
-        //   id: JSON.parse(note).id,
-        // });
       });
 
       pub.connect("click-counter-update", function () {
@@ -235,7 +232,6 @@ const startApp = function () {
             const hashid = parseInt(request.params.hashId);
             const customhash = request.body.customhash;
             const DBres = await updateCustomId(client, { hashid, customhash });
-            request.log.info("DBres:", DBres.length);
 
             if (DBres.length !== 0) {
               request.log.info("Entered ");

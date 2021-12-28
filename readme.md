@@ -1,5 +1,7 @@
 # Yet Another URL Shortner
 
+Design Guideline - Speed over simplicity.
+
 ## Features
 
 1. GraphQL based (Powered by [Hasura](https://github.com/hasura))

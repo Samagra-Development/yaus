@@ -2,8 +2,7 @@ version: '3'
 
 services:
   short-nr:
-    build: ./src
-    image: short-nr
+    image: sha256:554d34a52e665a71ebecb255061d0df15c0332132b7fc5183992dc0116f94b0e
     container_name: short-nr
     restart: unless-stopped
     ports:
