@@ -18,7 +18,7 @@ const fastify = require("fastify");
 const fetch = require("node-fetch");
 const uuidv4 = require("uuid").v4;
 const pino = require("pino");
-const redisClient = require("redis");
+const Redis = require("ioredis");
 const logger = pino({
   // transport: {
   //   target: "pino-pretty",
@@ -61,12 +61,7 @@ const client = new ApolloClient({
 
 const startApp = function () {
   context.on("ready", async function () {
-    const cacheClient = redisClient.createClient({
-      url: "redis://localhost:6381",
-    });
-
-    cacheClient.on("error", (err) => console.log("Redis Client Error", err));
-
+    const redis = new Redis("redis://localhost:6381");
     let pub = context.socket("PUBLISH");
     let sub = context.socket("SUBSCRIBE");
     sub.setEncoding("utf8");
@@ -141,8 +136,7 @@ const startApp = function () {
                 .header("Content-Type", "application/json; charset=utf-8")
                 .send({ error: "Could not find URL with hashID" });
             } else {
-              await client.connect();
-              await cacheClient.incr(redirectURL.link[0].id);
+              await redis.incr(redirectURL.link[0].id);
               return reply.redirect(redirectURL.link[0].url);
             }
           },
