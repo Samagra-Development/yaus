@@ -124,8 +124,9 @@ const startApp = function () {
             if (!request.params.code) {
               return reply.redirect(BASE_URL);
             }
+            let hashid = -1;
             try {
-              let hashid = hashids.decode(request.params.code)[0];
+              hashid = hashids.decode(request.params.code)[0];
             } catch (e) {
               hashid = -1;
             }
@@ -140,6 +141,7 @@ const startApp = function () {
                 .header("Content-Type", "application/json; charset=utf-8")
                 .send({ error: "Could not find URL with hashID" });
             } else {
+              await client.connect();
               await cacheClient.incr(redirectURL.link[0].id);
               return reply.redirect(redirectURL.link[0].url);
             }
