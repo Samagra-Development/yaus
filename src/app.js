@@ -81,7 +81,7 @@ const startApp = function () {
           console.log.error("ENV must include SERVER_BASE_URL");
         }
         const server = fastify({
-          logger: true,
+          logger: false,
         });
 
         server.register(corsPlugin, {
@@ -107,7 +107,7 @@ const startApp = function () {
           method: "GET",
           url: "/",
           handler: function (request, reply) {
-            reply.send("HOME PAGE for YAUS");
+            reply.send({ response: "HOME PAGE for YAUS" });
           },
         });
 
