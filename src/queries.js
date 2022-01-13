@@ -114,7 +114,7 @@ const insertLink = (client, variables) =>
   client.mutate({
     mutation: gql`
     mutation addNewLink($url: String, $userID: uuid, $project: uuid, $customHashId: String) {
-      insert_link(objects: {url: $url, user: $userID, project: $project, customHashId: $customHashId}, on_conflict: {constraint: link_user_project_url_key, update_columns: user}) {
+      insert_link(objects: {url: $url, user: $userID, project: $project, customHashId: $customHashId}, on_conflict: {constraint: link_user_project_url_customHashId_key, update_columns: user}) {
         returning {
           clicks
           hashid

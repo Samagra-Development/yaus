@@ -26,6 +26,7 @@
     "graphql": "^15.5.0",
     "graphql-tag": "^2.11.0",
     "hashids": "^2.2.8",
+    "ioredis": "^4.28.2",
     "knex": "^0.21.17",
     "lodash": "^4.17.15",
     "node-fetch": "^2.6.1",

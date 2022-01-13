@@ -114,7 +114,7 @@ const startApp = function () {
         // Redirect to Long URL BASE_URL/abc123 => https://www.google.com
         server.route({
           method: "GET",
-          url: "/sr/:code",
+          url: "/:code",
           handler: async function (request, reply) {
             if (!request.params.code) {
               return reply.redirect(BASE_URL);
@@ -153,9 +153,9 @@ const startApp = function () {
             if (returnings.link.length !== 0) {
               let url = "";
               if (returnings.link[0].customHashId !== null) {
-                url = `${serverBaseUrl}/sr/${returnings.link[0].customHashId}`;
+                url = `${serverBaseUrl}/${returnings.link[0].customHashId}`;
               } else {
-                url = `${serverBaseUrl}/sr/${hashids.encode(
+                url = `${serverBaseUrl}/${hashids.encode(
                   returnings.link[0].hashid
                 )}`;
               }
@@ -189,9 +189,9 @@ const startApp = function () {
                 if (returnings) {
                   let url = "";
                   if (returnings[0].customHashId !== null) {
-                    url = `${serverBaseUrl}/sr/${returnings[0].customHashId}`;
+                    url = `${serverBaseUrl}/${returnings[0].customHashId}`;
                   } else {
-                    url = `${serverBaseUrl}/sr/${hashids.encode(
+                    url = `${serverBaseUrl}/${hashids.encode(
                       returnings[0].hashid
                     )}`;
                   }
