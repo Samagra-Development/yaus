@@ -19,13 +19,14 @@ mkdir -p broker
 sudo chown -R 1001:1001 broker
 docker-compose up -d shortdb gql yaus-broker shortnr-cache shortnr-redis-commander
 
-echo "the script will sleep for 2 mins to let the services start"
-sleep 2m
+echo "the script will sleep for 30s to let the services start"
+sleep 30s
 
-# Starting Server
+# Starting Server - https://8888-
 cd src
-serverBaseURl="SERVER_BASE_URL=${GITPOD_WORKSPACE_URL:-default_value}"
-sed "13s|^.*$|$serverBaseURl|" .env > .env.tmp
+serverBaseURL="SERVER_BASE_URL=${GITPOD_WORKSPACE_URL:-default_value}"
+serverBaseURL="https://8888-${serverBaseURL:8}"
+sed "13s|^.*$|$serverBaseURL|" .env > .env.tmp
 mv .env.tmp .env
 yarn install
 yarn start
