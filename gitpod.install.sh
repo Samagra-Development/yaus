@@ -9,6 +9,9 @@ export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || pr
 nvm install 16
 nvm use 16
 
+sudo apt-get install unzip
+unzip pgdata.zip
+
 # Start DB and services 
 cp src/sample.env .env
 cp .env src/.env
