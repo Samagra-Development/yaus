@@ -24,8 +24,8 @@ sleep 30s
 
 # Starting Server - https://8888-
 cd src
-serverBaseURL="SERVER_BASE_URL=${GITPOD_WORKSPACE_URL:-default_value}"
-serverBaseURL="https://8888-${serverBaseURL:8}"
+serverBaseURL=${GITPOD_WORKSPACE_URL:-default_value}
+serverBaseURL="SERVER_BASE_URL=https://8888-${serverBaseURL:8}"
 sed "13s|^.*$|$serverBaseURL|" .env > .env.tmp
 mv .env.tmp .env
 yarn install
