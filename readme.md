@@ -12,7 +12,7 @@ Design Guideline - Speed over simplicity.
 
 If you are just here to try the setup please click on the button below.
 
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/Samagra-Development/yaus/tree/gitpod)
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/Samagra-Development/yaus)
 
 ## API Docs
 
