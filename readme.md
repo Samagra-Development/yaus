@@ -8,6 +8,12 @@ Design Guideline - Speed over simplicity.
 2. API to Generate URLs in bulk or templates.
 3. Tracking clicks.
 
+## Installation
+
+If you are just here to try the setup please click on the button below.
+
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/Samagra-Development/yaus/tree/gitpod)
+
 ## API Docs
 
 [Postman Collection](https://www.getpostman.com/collections/5f24dd9ac134e00eeb4d)
