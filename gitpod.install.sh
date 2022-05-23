@@ -11,6 +11,7 @@ nvm use 16
 
 # Start DB and services 
 cp src/sample.env .env
+mkdir broker
 sudo chown -R 1001:1001 broker # Bitnami RabbitMQ issues
 docker-compose up -d shortdb gql yaus-broker shortnr-cache shortnr-redis-commander
 
