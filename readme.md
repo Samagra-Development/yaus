@@ -19,7 +19,7 @@ If you are just here to try the setup please click on the button below.
 
 We have provided `Makefile` for easier setup.
 
-**Install make and setup make on your system**
+**Install and setup Make, docker, docker-compose on your local system before hand**
 
 For Debian based system
 `sudo apt-get install build-essential`
