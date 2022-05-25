@@ -14,6 +14,35 @@ If you are just here to try the setup please click on the button below.
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/Samagra-Development/yaus)
 
+
+### Local Setup
+
+We have provided `Makefile` for easier setup.
+
+**Install and setup Make, docker, docker-compose on your local system before hand**
+
+For Debian based system
+`sudo apt-get install build-essential`
+
+Following commands could be used:
+
+`make` or `make start`: Setups the project locally and starts the server
+
+`make setup_nvm_pgdata`: Setups nvm and pgdata for postgres
+
+`make setup_env`: Setups the `.env` files needed from the `src/sample.env`
+
+`make up`: Starts the various docker container and services
+
+`make start_server`: Installs dependencies and starts the server
+
+`make stop`: Stops the docker containers
+
+`make down`: Stops and removes all the docker containers
+
+`make reset`: Restart the project setup from start
+
+
 ## API Docs
 
 [Postman Collection](https://www.getpostman.com/collections/5f24dd9ac134e00eeb4d)
