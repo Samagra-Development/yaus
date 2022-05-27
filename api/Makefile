@@ -9,7 +9,6 @@ up:
 	echo "The docker containers are up"
 
 setup_nvm_pgdata:
-	touch somefile
 	# Install NVM
 	curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
 
