@@ -1,14 +1,14 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import styles from './app.module.css';
-import NxWelcome from './nx-welcome';
+import * as React from "react";
+import { Admin, Resource } from "react-admin";
+import jsonServerProvider from "ra-data-json-server";
+import { PostList } from "./posts";
 
-export function App() {
-  return (
-    <>
-      <NxWelcome title="admin" />
-      <div />
-    </>
-  );
-}
+const App = () => (
+  <Admin
+    dataProvider={jsonServerProvider("https://jsonplaceholder.typicode.com")}
+  >
+    <Resource name="posts" list={PostList} options={{}} />
+  </Admin>
+);
 
 export default App;
