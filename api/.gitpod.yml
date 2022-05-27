@@ -1,0 +1,3 @@
+tasks:
+  - name: Install yaus
+    init: bash ./gitpod.install.sh

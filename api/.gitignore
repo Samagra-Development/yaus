@@ -1,0 +1,10 @@
+./idea
+node_modules/
+config/default.json
+pgdata
+.env
+yarn-error.log
+redis-data
+redis.conf
+broker
+.vscode

@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "ioredis": "^4.28.2",
+    "yarn": "^1.22.17"
+  }
+}
