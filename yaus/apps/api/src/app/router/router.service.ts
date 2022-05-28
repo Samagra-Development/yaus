@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+const Hashids = require("hashids");
 
 import {
   ApolloClient,
@@ -9,12 +10,13 @@ import {
   gql,
   ApolloQueryResult,
 } from '@apollo/client';
-import { getLinkFromHashID } from './queries';
+import { getLink, getLinkFromHashID } from './queries';
 import { fetch } from 'isomorphic-fetch';
 
 @Injectable()
 export class RouterService {
   dbClient: ApolloClient<any>;
+  hashids;
 
   constructor(private readonly configService: ConfigService) {
     this.dbClient = this.getClient(
@@ -26,6 +28,8 @@ export class RouterService {
         'content-type': 'application/json',
       }
     );
+
+    this.hashids = new Hashids();
   }
 
   getClient = (
@@ -47,5 +51,20 @@ export class RouterService {
       hashid: parseInt(hashid),
     });
     return response.link[0].url || '';
+  }
+
+  async decodeAndRedirect(code: string): Promise<{url: string, hashid: number}> {
+    let hashid = -1;
+    try {
+      hashid = this.hashids.decode(code)[0];
+    } catch (e) {
+      hashid = -1;
+    }
+    if (!hashid) hashid = -1;
+    const redirectURL = await getLink(this.dbClient, {
+      hashid,
+      customHashId: code,
+    });
+    return {url:redirectURL.link[0].url || '', hashid: hashid};
   }
 }

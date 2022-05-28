@@ -5,6 +5,7 @@ import { AppService } from './app.service';
 import { RedisModule } from 'nestjs-redis';
 import { RouterService } from './router/router.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { TelemetryService } from './telemetry/telemetry.service';
 
 @Module({
   imports: [
@@ -36,6 +37,6 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
     ]),
   ],
   controllers: [AppController],
-  providers: [AppService, ConfigService, RouterService],
+  providers: [AppService, ConfigService, RouterService, TelemetryService],
 })
 export class AppModule {}

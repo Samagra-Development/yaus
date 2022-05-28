@@ -14,10 +14,11 @@ npx nx server admin
 ```
 
 ### TODO
-1. Migrate to Fastify
-2. Add all the routes that are not yet implemented
-3. Prisma Schema Setup
-4. Posthog integration
-5. Health Check APIs (https://docs.nestjs.com/recipes/terminus)
-6. Admin APIs
-7. Integrate Swagger
+- [x] Migrate to Fastify
+- [x] Add all the routes that are not yet implemented
+- [x] Prisma Schema Setup
+- [x] Posthog integration -- (Discuss and add events)
+- [x] Health Check APIs (https://docs.nestjs.com/recipes/terminus) -- (Add for Db, Hasura, Redis, RabbitMq)
+- [] Admin APIs
+- [x] Integrate Swagger --- (Pending: Add detailed descriptions for APIs)
+- [x] Added interceptor for API execution time tracking
