@@ -6,6 +6,9 @@ import { RedisModule } from 'nestjs-redis';
 import { RouterService } from './router/router.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { TelemetryService } from './telemetry/telemetry.service';
+import { PrismaService } from './prisma.service';
+import { TerminusModule } from '@nestjs/terminus';
+import { PosthogModule } from 'nestjs-posthog';
 
 @Module({
   imports: [
@@ -22,21 +25,40 @@ import { TelemetryService } from './telemetry/telemetry.service';
       },
       inject: [ConfigService],
     }),
-    ClientsModule.register([
+    ClientsModule.registerAsync([
       {
         name: 'CLICK_SERVICE',
-        transport: Transport.RMQ,
-        options: {
-          urls: ['amqp://username:password@localhost:5672'],
-          queue: 'clicks',
-          queueOptions: {
-            durable: false,
-          },
-        },
+        imports: [ConfigModule],
+        useFactory: async (config: ConfigService) => ({
+            transport: Transport.RMQ,
+            options: {
+              urls: [config.get<string>('RMQ_URL')],
+              queue: config.get<string>('RMQ_QUEUE'),
+              queueOptions: {
+                durable: config.get<boolean>('RMQ_QUEUE_DURABLE'),
+              },
+            },
+        }),
+        inject: [ConfigService],
       },
     ]),
+    PosthogModule.forRootAsync({
+      useFactory: (config: ConfigService) => {
+        return {
+          apiKey: config.get<string>('POSTHOG_API_KEY'),
+          options: {
+            host: config.get<string>('POSTHOG_API_HOST'),
+            flushAt: config.get<number>('POSTHOG_BATCH_SIZE'),
+            flushInterval: config.get<number>('POSTHOG_FLUSH_INTERVAL'),
+          },
+          mock: false,
+        };
+      },
+      inject: [ConfigService],
+    }),
+    TerminusModule,
   ],
   controllers: [AppController],
-  providers: [AppService, ConfigService, RouterService, TelemetryService],
+  providers: [AppService, ConfigService, RouterService, PrismaService, TelemetryService],
 })
 export class AppModule {}

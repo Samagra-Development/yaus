@@ -1,21 +1,39 @@
-import { Test } from '@nestjs/testing';
+import { Test, TestingModule } from '@nestjs/testing';
+import { RedisService } from 'nestjs-redis';
 
 import { AppService } from './app.service';
+import { PrismaService } from './prisma.service';
 
 describe('AppService', () => {
   let service: AppService;
+  let mockRedisSet;
 
-  beforeAll(async () => {
-    const app = await Test.createTestingModule({
-      providers: [AppService],
-    }).compile();
+  const mockRedis = {
+    set: mockRedisSet,
+  };
 
-    service = app.get<AppService>(AppService);
+  const mockRedisService = {
+    getClient: jest.fn(() => mockRedis),
+  };
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        AppService,
+        { provide: RedisService, useValue: mockRedisService },
+        PrismaService
+      ],
+    })
+    .overrideProvider(RedisService)
+    .useValue(mockRedisService)
+    .compile();
+
+    service = module.get<AppService>(AppService);
   });
 
-  describe('getData', () => {
-    it('should return "Welcome to api!"', () => {
-      expect(service.getData()).toEqual({ message: 'Welcome to api!' });
-    });
+  it('should be defined', () => {
+    expect(service).toBeDefined();
   });
+
+
 });

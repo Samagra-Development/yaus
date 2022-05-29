@@ -40,7 +40,7 @@ export class AppController {
 
   @Get('/health')
     @HealthCheck()
-    checkHealth() {
+    async checkHealth() {
         return this.healthCheckService.check([]);
     }
   
