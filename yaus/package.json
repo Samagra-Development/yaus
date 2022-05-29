@@ -28,6 +28,7 @@
     "fastify-swagger": "^5.2.0",
     "graphql": "^16.5.0",
     "hashids": "^2.2.10",
+    "husky": "^8.0.1",
     "isomorphic-fetch": "^3.0.0",
     "nestjs-posthog": "^1.1.2",
     "nestjs-redis": "git+https://github.com/GyanendroKh/nestjs-redis.git#nest8-fix",
