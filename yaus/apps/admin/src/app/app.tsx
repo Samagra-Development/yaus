@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react';
 import Dashboard from './components/Dashboard';
 
 import { createBrowserHistory as createHistory } from 'history';
+import Links from './components/Dashboard/Links';
 const history = createHistory();
 
 const createApolloClient = async () => {
@@ -41,7 +42,7 @@ const App = () => {
           dashboard={Dashboard}
           history={history}
       >
-      <Resource name="link" list={ListGuesser} />
+      <Resource name="link" list={Links} />
       </Admin>
   )
 };
