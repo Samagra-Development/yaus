@@ -22,16 +22,16 @@ async function bootstrap() {
   );
 
   // // MS for managing side-effects
-  app.connectMicroservice<MicroserviceOptions>({
-    transport: Transport.RMQ,
-    options: {
-      urls: ['amqp://username:password@localhost:5672'],
-      queue: 'clicks',
-      queueOptions: {
-        durable: false,
-      },
-    },
-  });
+  // app.connectMicroservice<MicroserviceOptions>({
+  //   transport: Transport.RMQ,
+  //   options: {
+  //     urls: ['amqp://username:password@localhost:5672'],
+  //     queue: 'clicks',
+  //     queueOptions: {
+  //       durable: false,
+  //     },
+  //   },
+  // });
 
   const globalPrefix = 'api';
   app.setGlobalPrefix(globalPrefix);

@@ -5,6 +5,7 @@ import {
     NestInterceptor,
   } from '@nestjs/common';
   import { map, Observable } from 'rxjs';
+import { TelemetryService } from '../telemetry/telemetry.service';
   
   // Nestjs Lifecyle - https://i.stack.imgur.com/2lFhd.jpg
   
@@ -20,17 +21,19 @@ import {
   export class AddROToResponseInterceptor<T>
     implements NestInterceptor<T, Response<T>>
   {
+    constructor(private readonly telemetryService: TelemetryService){}
     intercept(
       context: ExecutionContext,
       next: CallHandler,
     ): Observable<Response<T>> {
-      const req = context.switchToHttp().getRequest();
-      const rspObj = req.body.respObj;
+      const now = Date.now();
+      const req = context.switchToHttp().getRequest();;
       return next.handle().pipe(
         map((data) => {
-          rspObj.result = data;
-          rspObj.endTime = new Date();
-          return rspObj;
+          let name: string;
+          console.log(`Execution Time: ${Date.now() - now}ms`)
+          this.telemetryService.sendEvent(process.env.POSTHOG_DISTINCT_KEY, `${req.raw.url} Execution Time`, {routeName:name, executionTime: `${Date.now() - now}ms`})
+          return data;
         }),
       );
     }

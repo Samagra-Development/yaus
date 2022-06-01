@@ -12,5 +12,8 @@ export default {
     '^.+\\.[tj]s$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
+  transformIgnorePatterns: [
+    '[/\\\\]node_modules(?![\\/\\\\](monaco-editor|weak-lru-cache|ordered-binary))[/\\\\].+\\.js$',
+  ],
   coverageDirectory: '../../coverage/apps/api',
 };
