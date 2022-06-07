@@ -1,7 +1,7 @@
 ### Setting Up Backend
 
 ```shell
-cd api
+cd apps/api
 unzip pgdata.zip
 docker-compose up -d shortdb gql yaus-broker shortnr-cache
 npx nx serve api
@@ -12,6 +12,9 @@ npx nx serve api
 ```shell
 npx nx server admin
 ```
+
+### Try It
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/Samagra-Development/yaus)
 
 ### TODO
 - [x] Migrate to Fastify

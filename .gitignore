@@ -1,3 +1,4 @@
 redis-data
 redis.conf
 .DS_Store
+node_modules/
