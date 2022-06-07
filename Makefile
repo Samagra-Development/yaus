@@ -3,6 +3,7 @@ SHELL := /bin/bash
 start: setup_env setup_nvm_pgdata up start_server
 
 up:
+	cd apps/api
 	docker-compose up -d shortdb gql yaus-broker shortnr-cache shortnr-redis-commander
 	echo "the script will sleep for 60s to let the services start"
 	sleep 60s
@@ -27,21 +28,19 @@ setup_nvm_pgdata:
 
 
 setup_env: 
-	sudo cp src/sample.env .env
-	sudo cp .env src/.env
-	mkdir -p broker
-	sudo chown -R 1001:1001 broker
+	sudo cp sample.env .env
 
 start_server: 
 	echo "Starting the YAUS server"
-	cd src && yarn install
-	cd src && yarn start
+	yarn install
+	npx nx serve api
 
 stop:
+	cd apps/api
 	docker-compose stop
 
 down:
+	cd apps/api
 	docker-compose down
 
 reset: down start
-	

@@ -1,10 +1,5 @@
-./idea
-node_modules/
-config/default.json
-pgdata
-.env
-yarn-error.log
 redis-data
 redis.conf
-broker
-.vscode
+.DS_Store
+node_modules/
+.env
