@@ -63,7 +63,7 @@ export class RouterService {
     if (!hashid) hashid = -1;
     const redirectURL = await getLink(this.dbClient, {
       hashid,
-      customHashId: code,
+      customHashId: hashid > -1 ? "" : code,
     });
     return {url:redirectURL.link[0].url || '', hashid: hashid};
   }
