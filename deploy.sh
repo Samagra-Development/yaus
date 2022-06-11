@@ -19,13 +19,14 @@ mkdir -p broker
 sudo chown -R 1001:1001 broker
 chown -R 1001:1001 redisinsight
 
-docker-compose -f docker-compose.gitpod.yml up -d shortdb gql yaus-broker shortnr-cache
+docker-compose -f docker-compose.gitpod.yml up -d
 
 yarn install
 npx prisma generate --schema=/workspace/yaus/apps/api/src/app/prisma/schema.prisma
 
 # sleep for 15 seconds
-sleep 15
+sleep 30
+curl http://localhost:8088/add/?name=shortnr&host=shortnr-cache&port=6379
 
 # start api server
 npx nx serve api
