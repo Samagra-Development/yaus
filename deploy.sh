@@ -16,6 +16,7 @@ rm -rf __MACOSX
 
 # Resolving permission errors
 mkdir -p broker
+mkdir -p redisinsight
 sudo chown -R 1001:1001 broker
 chown -R 1001:1001 redisinsight
 
