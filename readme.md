@@ -14,7 +14,7 @@ npx nx server admin
 ```
 
 ### Try It
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/Samagra-Development/yaus/tree/monorepo)
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/Samagra-Development/yaus/tree/gitpod)
 
 ### TODO
 - [x] Migrate to Fastify
