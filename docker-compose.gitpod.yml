@@ -12,15 +12,26 @@ services:
   shortdb:
     container_name: shortdb
     image: postgres:12
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
     ports:
       - 5432:5432
     volumes:
       - ./pgdata:/var/lib/postgresql/data
 
   gql:
-    image: hasura/graphql-engine:v2.0.0-alpha.1
+    image: hasura/graphql-engine:v2.7.0
     ports:
       - 15003:8080
+    environment:
+      HASURA_GRAPHQL_METADATA_DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@shortdb:5432/${POSTGRES_DB}
+      PG_DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@shortdb:5432/${POSTGRES_DB}
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "true" # set to "false" to disable console
+      HASURA_GRAPHQL_DEV_MODE: "true"
+      HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
+      HASURA_GRAPHQL_ADMIN_SECRET: ${HASURA_ADMIN_SECRET}
     depends_on:
       - shortdb
     restart: always
