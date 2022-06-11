@@ -59,10 +59,9 @@ services:
 
   redis-ui:
     container_name: redis-ui
-    hostname: redis-commander
     image: redislabs/redisinsight:latest
     restart: always
-    environment:
-      - REDIS_HOSTS=local:shortnr-cache:6379
+    volumes:
+      - ./redisinsight:/db 
     ports:
-      - 8088:8081
+      - 8088:8001
