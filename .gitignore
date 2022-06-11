@@ -2,4 +2,7 @@ redis-data
 redis.conf
 .DS_Store
 node_modules/
+pgdata
+redisinsight
+broker
 .env
