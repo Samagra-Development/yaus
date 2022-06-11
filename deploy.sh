@@ -14,8 +14,10 @@ unzip pgdata.zip
 rm -rf pgdata.zip
 rm -rf __MACOSX
 
+# Resolving permission errors
 mkdir -p broker
 sudo chown -R 1001:1001 broker
+chown -R 1001:1001 redisinsight
 
 docker-compose -f docker-compose.gitpod.yml up -d shortdb gql yaus-broker shortnr-cache
 
