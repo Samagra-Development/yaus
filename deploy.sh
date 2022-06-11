@@ -8,7 +8,6 @@ export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || pr
 nvm install 16
 nvm use 16
 
-
 cp sample.env .env
 sudo apt-get install unzip
 unzip pgdata.zip
@@ -22,4 +21,9 @@ docker-compose -f docker-compose.gitpod.yml up -d shortdb gql yaus-broker shortn
 
 yarn install
 npx prisma generate --schema=/workspace/yaus/apps/api/src/app/prisma/schema.prisma
+
+# sleep for 15 seconds
+sleep 15
+
+# start api server
 npx nx serve api

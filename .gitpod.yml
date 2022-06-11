@@ -2,7 +2,7 @@ tasks:
   - name: YAUS Server
     init: bash ./deploy.sh
     env:
-      DATABASE_URL: "postgresql://postgresql:yoursupersecret@localhost:49153/shortdb?schema=public"
+      DATABASE_URL: "postgresql://postgresql:yoursupersecret@localhost:5432/shortdb?schema=public"
 
 ports:
   - port: 5432
