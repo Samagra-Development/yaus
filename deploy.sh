@@ -27,7 +27,7 @@ npx prisma generate --schema=/workspace/yaus/apps/api/src/app/prisma/schema.pris
 
 # sleep for 15 seconds
 sleep 30
-curl http://localhost:8088/add/?name=shortnr&host=shortnr-cache&port=6379
+curl 'http://localhost:8088/add/?name=shortnr&host=shortnr-cache&port=6379'
 
 # start api server
 npx nx serve api
