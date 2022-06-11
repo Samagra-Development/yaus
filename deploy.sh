@@ -18,7 +18,7 @@ rm -rf __MACOSX
 mkdir -p broker
 mkdir -p redisinsight
 sudo chown -R 1001:1001 broker
-chown -R 1001:1001 redisinsight
+sudo chown -R 1001:1001 redisinsight
 
 docker-compose -f docker-compose.gitpod.yml up -d
 
@@ -27,7 +27,11 @@ npx prisma generate --schema=/workspace/yaus/apps/api/src/app/prisma/schema.pris
 
 # sleep for 15 seconds
 sleep 30
-curl 'http://localhost:8088/add/?name=shortnr&host=shortnr-cache&port=6379'
+
+# Starting Server - https://8888-
+serverBaseURL=${GITPOD_WORKSPACE_URL:-default_value}
+serverBaseURL="https://8088-${serverBaseURL:8}/add/?name=shortnr&host=shortnr-cache&port=6379"
+echo "Open this URL in a the browser to add redis to redisInsight ${serverBaseURL}"
 
 # start api server
 npx nx serve api
