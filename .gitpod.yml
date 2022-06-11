@@ -23,3 +23,6 @@ ports:
   - port: 15672
     onOpen: ignore
     visibility: public
+  - port: 8088
+    onOpen: ignore
+    visibility: public
