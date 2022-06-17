@@ -2,9 +2,12 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { RedisModule } from 'nestjs-redis';
+import { RedisModule } from '@liaoliaots/nestjs-redis';
+import { RedisHealthModule } from '@liaoliaots/nestjs-redis/health';
+import { PrismaHealthIndicator } from './prisma/prisma.health';
 import { RouterService } from './router/router.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { HttpModule } from '@nestjs/axios';
 import { TelemetryService } from './telemetry/telemetry.service';
 import { PrismaService } from './prisma.service';
 import { TerminusModule } from '@nestjs/terminus';
@@ -16,14 +19,13 @@ import { PosthogModule } from 'nestjs-posthog';
       isGlobal: true,
       envFilePath: ['.env.local', '.env'],
     }),
-    RedisModule.forRootAsync({
-      useFactory: (config: ConfigService) => {
-        return {
-          name: 'db',
-          url: config.get('REDIS_URI'),
-        };
-      },
-      inject: [ConfigService],
+    RedisModule.forRoot({
+      readyLog: true,
+      config: {
+          host: 'localhost',
+          port: 6381,
+          password: 'redismain'
+      }
     }),
     ClientsModule.registerAsync([
       {
@@ -57,8 +59,10 @@ import { PosthogModule } from 'nestjs-posthog';
       inject: [ConfigService],
     }),
     TerminusModule,
+    HttpModule,
+    RedisHealthModule,
   ],
   controllers: [AppController],
-  providers: [AppService, ConfigService, RouterService, PrismaService, TelemetryService],
+  providers: [AppService, ConfigService, RouterService, PrismaService, TelemetryService, PrismaHealthIndicator],
 })
 export class AppModule {}
