@@ -19,13 +19,17 @@ import { PosthogModule } from 'nestjs-posthog';
       isGlobal: true,
       envFilePath: ['.env.local', '.env'],
     }),
-    RedisModule.forRoot({
-      readyLog: true,
-      config: {
-          host: 'localhost',
-          port: 6381,
-          password: 'redismain'
-      }
+    RedisModule.forRootAsync({
+      useFactory: (config: ConfigService) => {
+        return {
+          readyLog: true,
+          config: {
+            name: 'db',
+            url: config.get('REDIS_URI'),
+          }
+        };
+      },
+      inject: [ConfigService],
     }),
     ClientsModule.registerAsync([
       {
