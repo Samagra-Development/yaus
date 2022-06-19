@@ -9,10 +9,11 @@ services:
     environment:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
     ports:
       - 5432:5432
     volumes:
-      - ./pgdata:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql/data
 
   gql:
     image: hasura/graphql-engine:v2.7.0
@@ -21,8 +22,8 @@ services:
     env_file:
       - .env
     environment:
-      HASURA_GRAPHQL_METADATA_DATABASE_URL: postgres://postgresql:${POSTGRES_PASSWORD}@shortdb:5432/${POSTGRES_DB}
-      PG_DATABASE_URL: postgres://postgresql:${POSTGRES_PASSWORD}@shortdb:5432/${POSTGRES_DB}
+      HASURA_GRAPHQL_METADATA_DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@shortdb:5432/${POSTGRES_DB}
+      HASURA_GRAPHQL_DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@shortdb:5432/${POSTGRES_DB}
       HASURA_GRAPHQL_ENABLE_CONSOLE: "true" # set to "false" to disable console
       HASURA_GRAPHQL_DEV_MODE: "true"
       HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
@@ -43,7 +44,7 @@ services:
       - 25672:25672
       - 15672:15672
     volumes:
-      - ./broker:/bitnami
+      - broker:/bitnami
   
   shortnr-cache:
     container_name: shortnr-cache
@@ -62,6 +63,12 @@ services:
     image: redislabs/redisinsight:latest
     restart: always
     volumes:
-      - ./redisinsight:/db 
+      - redisinsight:/db 
     ports:
       - 8088:8001
+
+volumes:
+  pgdata:
+  broker:
+  redisinsight:
+    driver: local     

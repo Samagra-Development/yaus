@@ -10,7 +10,7 @@ import {
   gql,
   ApolloQueryResult,
 } from '@apollo/client';
-import { getLink, getLinkFromHashID } from './queries';
+import { getLink, getLinkFromHashID, getLinkFromHashIdOrCustomHashId } from './queries';
 import { fetch } from 'isomorphic-fetch';
 
 @Injectable()
@@ -47,8 +47,9 @@ export class RouterService {
   };
 
   async redirect(hashid: string): Promise<string> {
-    const response = await getLinkFromHashID(this.dbClient, {
+    const response = await getLinkFromHashIdOrCustomHashId(this.dbClient, {
       hashid: parseInt(hashid),
+      customHashId: hashid,
     });
     return response.link[0].url || '';
   }

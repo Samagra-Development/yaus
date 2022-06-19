@@ -30,22 +30,23 @@ let AppController = class AppController {
             return this.healthCheckService.check([]);
         });
     }
-    handler(code, res) {
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            const resp = yield this.routerService.decodeAndRedirect(code);
-            this.clickServiceClient
-                .send('onClick', {
-                hashid: resp.hashid,
-            })
-                .subscribe();
-            if (resp.url !== '') {
-                return res.redirect(resp.url);
-            }
-            else {
-                throw new common_1.NotFoundException();
-            }
-        });
-    }
+    /*
+    @Deprecated
+    */
+    // @Get('/sr/:code')
+    // async handler(@Param('code') code: string, @Res() res) {
+    //   const resp = await this.routerService.decodeAndRedirect(code)
+    //   this.clickServiceClient
+    //     .send('onClick', {
+    //       hashid: resp.hashid,
+    //     })
+    //     .subscribe();
+    //   if (resp.url !== '') {
+    //     return res.redirect(resp.url);
+    //   } else {
+    //     throw new NotFoundException();
+    //   }
+    // }
     //http://localhost:3333/api/redirect/208
     redirect(hashid, res) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
@@ -101,14 +102,6 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:paramtypes", []),
     tslib_1.__metadata("design:returntype", Promise)
 ], AppController.prototype, "checkHealth", null);
-tslib_1.__decorate([
-    (0, common_1.Get)('/sr/:code'),
-    tslib_1.__param(0, (0, common_1.Param)('code')),
-    tslib_1.__param(1, (0, common_1.Res)()),
-    tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [String, Object]),
-    tslib_1.__metadata("design:returntype", Promise)
-], AppController.prototype, "handler", null);
 tslib_1.__decorate([
     (0, common_1.Get)('/:hashid'),
     tslib_1.__param(0, (0, common_1.Param)('hashid')),
@@ -178,6 +171,8 @@ const telemetry_service_1 = __webpack_require__("./apps/api/src/app/telemetry/te
 const prisma_service_1 = __webpack_require__("./apps/api/src/app/prisma.service.ts");
 const terminus_1 = __webpack_require__("@nestjs/terminus");
 const nestjs_posthog_1 = __webpack_require__("nestjs-posthog");
+const nestjs_simple_redis_lock_1 = __webpack_require__("@huangang/nestjs-simple-redis-lock");
+const nestjs_redis_2 = __webpack_require__("nestjs-redis");
 let AppModule = class AppModule {
 };
 AppModule = tslib_1.__decorate([
@@ -190,11 +185,17 @@ AppModule = tslib_1.__decorate([
             nestjs_redis_1.RedisModule.forRootAsync({
                 useFactory: (config) => {
                     return {
-                        name: 'db',
+                        name: config.get('REDIS_NAME'),
                         url: config.get('REDIS_URI'),
                     };
                 },
                 inject: [config_1.ConfigService],
+            }),
+            nestjs_simple_redis_lock_1.RedisLockModule.registerAsync({
+                useFactory: (redisManager) => tslib_1.__awaiter(void 0, void 0, void 0, function* () {
+                    return { prefix: ':lock:', client: redisManager.getClient() };
+                }),
+                inject: [nestjs_redis_2.RedisService]
             }),
             microservices_1.ClientsModule.registerAsync([
                 {
@@ -258,8 +259,40 @@ let AppService = class AppService {
     }
     updateClicks(urlId) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            const client = yield this.redisService.getClient('db');
+            const client = yield this.redisService.getClient(process.env.REDIS_NAME);
             client.incr(urlId);
+        });
+    }
+    fetchAllKeys() {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const client = yield this.redisService.getClient(process.env.REDIS_NAME);
+            const keys = yield client.keys('*');
+            return keys;
+        });
+    }
+    updateClicksInDb() {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const client = yield this.redisService.getClient(process.env.REDIS_NAME);
+            const keys = yield this.fetchAllKeys();
+            for (var key of keys) {
+                client.get(key).then((value) => {
+                    const updateClick = this.prisma.link.updateMany({
+                        where: {
+                            OR: [
+                                {
+                                    hashid: parseInt(key),
+                                },
+                                {
+                                    customHashId: key
+                                }
+                            ],
+                        },
+                        data: {
+                            clicks: parseInt(value),
+                        },
+                    });
+                });
+            }
         });
     }
     link(linkWhereUniqueInput) {
@@ -390,7 +423,7 @@ exports.PrismaService = PrismaService;
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.updateCustomId = exports.updateCustomHashClicks = exports.updateClicks = exports.getUniqueLinkID = exports.insertLink = exports.getLinkFromCustomHash = exports.getLink = exports.getLinkFromHashID = exports.getLinkFromHash = exports.getTemplateFromID = exports.getLastLink = void 0;
+exports.updateCustomId = exports.updateCustomHashClicks = exports.incrementClicks = exports.updateClicks = exports.getUniqueLinkID = exports.insertLink = exports.getLinkFromCustomHash = exports.getLink = exports.getLinkFromHashIdOrCustomHashId = exports.getLinkFromHashID = exports.getLinkFromHash = exports.getTemplateFromID = exports.getLastLink = void 0;
 const tslib_1 = __webpack_require__("tslib");
 const graphql_tag_1 = __webpack_require__("graphql-tag");
 const getLastLink = (client, variables) => client.query({
@@ -452,6 +485,27 @@ const getLinkFromHashID = (client, variables) => tslib_1.__awaiter(void 0, void 
     });
 });
 exports.getLinkFromHashID = getLinkFromHashID;
+const getLinkFromHashIdOrCustomHashId = (client, variables) => tslib_1.__awaiter(void 0, void 0, void 0, function* () {
+    return client
+        .query({
+        query: (0, graphql_tag_1.default) `
+        query getLinkFromHashIdOrCustomHashId($hashid: Int, $customHashId: String) {
+          link(where: { hashid: { _eq: $hashid }, _or: {customHashId: { _eq: $customHashId }}}) {
+            url
+            hashid
+            customHashId
+          }
+        }
+      `,
+        variables,
+    })
+        .then((response) => response.data)
+        .catch((e) => {
+        console.log(e);
+        return null;
+    });
+});
+exports.getLinkFromHashIdOrCustomHashId = getLinkFromHashIdOrCustomHashId;
 const getLink = (client, variables) => tslib_1.__awaiter(void 0, void 0, void 0, function* () {
     return client
         .query({
@@ -564,6 +618,31 @@ const updateClicks = (client, variables) => {
     client
         .mutate({
         mutation: (0, graphql_tag_1.default) `
+            mutation udpateClicks($hashid: Int, $customHashId: String) {
+              update_link(
+                where: { hashid: { _eq: $hashid }, _or: { customHashId: { _eq: $customHashId } } }
+                _set: { clicks: $clicks }
+              ) {
+                returning {
+                  clicks
+                }
+              }
+            }
+          `,
+        variables,
+    })
+        .then((res) => {
+        console.log(res);
+    })
+        .catch((e) => {
+        console.log(e);
+    });
+};
+exports.updateClicks = updateClicks;
+const incrementClicks = (client, variables) => {
+    client
+        .mutate({
+        mutation: (0, graphql_tag_1.default) `
         mutation udpateClicks($hashid: Int) {
           update_link(
             where: { hashid: { _eq: $hashid } }
@@ -584,7 +663,7 @@ const updateClicks = (client, variables) => {
         console.log(e);
     });
 };
-exports.updateClicks = updateClicks;
+exports.incrementClicks = incrementClicks;
 const updateCustomHashClicks = (client, variables) => {
     client
         .mutate({
@@ -671,8 +750,9 @@ let RouterService = class RouterService {
     }
     redirect(hashid) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            const response = yield (0, queries_1.getLinkFromHashID)(this.dbClient, {
+            const response = yield (0, queries_1.getLinkFromHashIdOrCustomHashId)(this.dbClient, {
                 hashid: parseInt(hashid),
+                customHashId: hashid,
             });
             return response.link[0].url || '';
         });
@@ -748,6 +828,13 @@ exports.TelemetryService = TelemetryService;
 /***/ ((module) => {
 
 module.exports = require("@apollo/client");
+
+/***/ }),
+
+/***/ "@huangang/nestjs-simple-redis-lock":
+/***/ ((module) => {
+
+module.exports = require("@huangang/nestjs-simple-redis-lock");
 
 /***/ }),
 

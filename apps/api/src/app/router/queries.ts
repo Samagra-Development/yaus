@@ -62,6 +62,27 @@ export const getLinkFromHashID = async (client, variables) => {
     });
 };
 
+export const getLinkFromHashIdOrCustomHashId = async (client, variables) => {
+  return client
+    .query({
+      query: gql`
+        query getLinkFromHashIdOrCustomHashId($hashid: Int, $customHashId: String) {
+          link(where: { hashid: { _eq: $hashid }, _or: {customHashId: { _eq: $customHashId }}}) {
+            url
+            hashid
+            customHashId
+          }
+        }
+      `,
+      variables,
+    })
+    .then((response) => response.data)
+    .catch((e) => {
+      console.log(e);
+      return null;
+    });
+};
+
 export const getLink = async (client, variables) => {
   return client
     .query({
@@ -172,7 +193,32 @@ export const getUniqueLinkID = (client, variables) =>
       return res.data.link[0].hashid;
     });
 
-export const updateClicks = (client, variables) => {
+    export const updateClicks = (client, variables) => {
+      client
+        .mutate({
+          mutation: gql`
+            mutation udpateClicks($hashid: Int, $customHashId: String) {
+              update_link(
+                where: { hashid: { _eq: $hashid }, _or: { customHashId: { _eq: $customHashId } } }
+                _set: { clicks: $clicks }
+              ) {
+                returning {
+                  clicks
+                }
+              }
+            }
+          `,
+          variables,
+        })
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    };
+
+export const incrementClicks = (client, variables) => {
   client
     .mutate({
       mutation: gql`
@@ -196,6 +242,7 @@ export const updateClicks = (client, variables) => {
       console.log(e);
     });
 };
+
 export const updateCustomHashClicks = (client, variables) => {
   client
     .mutate({

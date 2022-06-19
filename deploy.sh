@@ -9,10 +9,10 @@ nvm install 16
 nvm use 16
 
 cp sample.env .env
-sudo apt-get install unzip
-unzip pgdata.zip
-rm -rf pgdata.zip
-rm -rf __MACOSX
+# sudo apt-get install unzip
+# unzip pgdata.zip
+# rm -rf pgdata.zip
+# rm -rf __MACOSX
 
 # Resolving permission errors
 mkdir -p broker
@@ -24,6 +24,8 @@ docker-compose -f docker-compose.gitpod.yml up -d
 
 yarn install
 npx prisma generate --schema=/workspace/yaus/apps/api/src/app/prisma/schema.prisma
+npx prisma migrate dev --schema=/workspace/yaus/apps/api/src/app/prisma/schema.prisma
+npx prisma db seed
 
 # sleep for 15 seconds
 sleep 30

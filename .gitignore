@@ -6,3 +6,4 @@ pgdata
 redisinsight
 broker
 .env
+migrations/

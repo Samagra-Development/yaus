@@ -44,21 +44,23 @@ export class AppController {
         return this.healthCheckService.check([]);
     }
   
-
-  @Get('/sr/:code')
-  async handler(@Param('code') code: string, @Res() res) {
-    const resp = await this.routerService.decodeAndRedirect(code)
-    this.clickServiceClient
-      .send('onClick', {
-        hashid: resp.hashid,
-      })
-      .subscribe();
-    if (resp.url !== '') {
-      return res.redirect(resp.url);
-    } else {
-      throw new NotFoundException();
-    }
-  }
+/*
+@Deprecated
+*/
+// @Get('/sr/:code')
+  // async handler(@Param('code') code: string, @Res() res) {
+  //   const resp = await this.routerService.decodeAndRedirect(code)
+  //   this.clickServiceClient
+  //     .send('onClick', {
+  //       hashid: resp.hashid,
+  //     })
+  //     .subscribe();
+  //   if (resp.url !== '') {
+  //     return res.redirect(resp.url);
+  //   } else {
+  //     throw new NotFoundException();
+  //   }
+  // }
 
   //http://localhost:3333/api/redirect/208
   @Get('/:hashid')

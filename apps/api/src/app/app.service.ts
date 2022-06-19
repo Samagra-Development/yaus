@@ -12,8 +12,38 @@ export class AppService {
     ) {}
 
   async updateClicks(urlId: string): Promise<void> {
-    const client = await this.redisService.getClient('db');
+    const client = await this.redisService.getClient(process.env.REDIS_NAME);
     client.incr(urlId);
+  }
+
+  async fetchAllKeys(): Promise<string[]> {
+    const client = await this.redisService.getClient(process.env.REDIS_NAME);
+    const keys: string[] = await client.keys('*');
+    return keys
+  }
+
+  async updateClicksInDb(): Promise<void> {
+    const client = await this.redisService.getClient(process.env.REDIS_NAME);
+    const keys: string[] = await this.fetchAllKeys()
+    for(var key of keys) {
+      client.get(key).then((value: string) => {
+        const updateClick =  this.prisma.link.updateMany({
+          where: {
+          OR: [
+            {
+              hashid: parseInt(key),
+            },
+            {
+              customHashId: key
+            }
+          ],
+         },
+          data: {
+            clicks: parseInt(value),
+          },
+        })
+      })
+    }
   }
 
   async link(linkWhereUniqueInput: Prisma.linkWhereUniqueInput,
