@@ -18,7 +18,12 @@ import {
   Payload,
   RmqContext,
 } from '@nestjs/microservices';
+
 import { HealthCheckService, HttpHealthIndicator, HealthCheck } from '@nestjs/terminus';
+import { PrismaHealthIndicator } from './prisma/prisma.health';
+import { InjectRedis } from '@liaoliaots/nestjs-redis';
+import { RedisHealthIndicator } from '@liaoliaots/nestjs-redis/health';
+import Redis from 'ioredis';
 import { Link } from './app.interface';
 
 import { AppService } from './app.service';
@@ -32,17 +37,25 @@ export class AppController {
   constructor(
     private readonly appService: AppService,
     private readonly routerService: RouterService,
-    private http: HttpHealthIndicator,
     private healthCheckService: HealthCheckService,
+    private http: HttpHealthIndicator,
+    private redisIndicator: RedisHealthIndicator,
+    private prismaIndicator: PrismaHealthIndicator,
+    @InjectRedis() private readonly redis: Redis,
     @Inject('CLICK_SERVICE') private clickServiceClient: ClientProxy
   ) {}
 
 
   @Get('/health')
-    @HealthCheck()
-    async checkHealth() {
-        return this.healthCheckService.check([]);
-    }
+  @HealthCheck()
+  async checkHealth() {
+    return this.healthCheckService.check([
+      async () => this.http.pingCheck('RabbitMQ', 'http://localhost:15672/'),
+      async () => this.http.pingCheck('Basic Check', 'http://localhost:3333/api'),
+      async () => this.redisIndicator.checkHealth('Redis', { type: 'redis', client: this.redis, timeout: 500 }),
+      async () => this.prismaIndicator.isHealthy('Db'),
+    ])
+  }
   
 /*
 @Deprecated

@@ -2,9 +2,12 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { RedisModule } from 'nestjs-redis';
+import { RedisModule } from '@liaoliaots/nestjs-redis';
+import { RedisHealthModule } from '@liaoliaots/nestjs-redis/health';
+import { PrismaHealthIndicator } from './prisma/prisma.health';
 import { RouterService } from './router/router.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { HttpModule } from '@nestjs/axios';
 import { TelemetryService } from './telemetry/telemetry.service';
 import { PrismaService } from './prisma.service';
 import { TerminusModule } from '@nestjs/terminus';
@@ -21,8 +24,11 @@ import { RedisService } from 'nestjs-redis';
     RedisModule.forRootAsync({
       useFactory: (config: ConfigService) => {
         return {
-          name: config.get('REDIS_NAME'),
-          url: config.get('REDIS_URI'),
+          readyLog: true,
+          config: {
+            name: 'db',
+            url: config.get('REDIS_URI'),
+          }
         };
       },
       inject: [ConfigService],
@@ -65,8 +71,10 @@ import { RedisService } from 'nestjs-redis';
       inject: [ConfigService],
     }),
     TerminusModule,
+    HttpModule,
+    RedisHealthModule,
   ],
   controllers: [AppController],
-  providers: [AppService, ConfigService, RouterService, PrismaService, TelemetryService],
+  providers: [AppService, ConfigService, RouterService, PrismaService, TelemetryService, PrismaHealthIndicator],
 })
 export class AppModule {}
