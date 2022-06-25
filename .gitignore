@@ -7,3 +7,4 @@ redisinsight
 broker
 .env
 migrations/
+dist/

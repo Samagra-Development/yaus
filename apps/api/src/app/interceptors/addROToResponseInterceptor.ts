@@ -4,6 +4,7 @@ import {
     Injectable,
     NestInterceptor,
   } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
   import { map, Observable } from 'rxjs';
 import { TelemetryService } from '../telemetry/telemetry.service';
   
@@ -21,7 +22,9 @@ import { TelemetryService } from '../telemetry/telemetry.service';
   export class AddROToResponseInterceptor<T>
     implements NestInterceptor<T, Response<T>>
   {
-    constructor(private readonly telemetryService: TelemetryService){}
+    constructor(
+      private readonly telemetryService: TelemetryService,
+      private configService: ConfigService){}
     intercept(
       context: ExecutionContext,
       next: CallHandler,
@@ -32,7 +35,7 @@ import { TelemetryService } from '../telemetry/telemetry.service';
         map((data) => {
           let name: string;
           console.log(`Execution Time: ${Date.now() - now}ms`)
-          this.telemetryService.sendEvent(process.env.POSTHOG_DISTINCT_KEY, `${req.raw.url} Execution Time`, {routeName:name, executionTime: `${Date.now() - now}ms`})
+          this.telemetryService.sendEvent(this.configService.get<string>('POSTHOG_DISTINCT_KEY'), `${req.raw.url} Execution Time`, {routeName:name, executionTime: `${Date.now() - now}ms`})
           return data;
         }),
       );

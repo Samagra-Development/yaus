@@ -5,6 +5,8 @@ import { RedisModule, RedisService } from 'nestjs-redis';
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { AppService } from "../app.service";
 import { PrismaService } from "../prisma.service";
+import { TelemetryService } from "../telemetry/telemetry.service";
+import { PosthogModule } from "nestjs-posthog";
 
 describe("SchedulerService", () => {
   let service: SchedulerService;
@@ -34,13 +36,27 @@ describe("SchedulerService", () => {
           },
           inject: [ConfigService],
         }),
+        PosthogModule.forRootAsync({
+          useFactory: (config: ConfigService) => {
+            return {
+              apiKey: config.get<string>('POSTHOG_API_KEY'),
+              options: {
+                host: config.get<string>('POSTHOG_API_HOST'),
+                flushAt: config.get<number>('POSTHOG_BATCH_SIZE'),
+                flushInterval: config.get<number>('POSTHOG_FLUSH_INTERVAL'),
+              },
+              mock: false,
+            };
+          },
+          inject: [ConfigService],
+        }),
         RedisLockModule.registerAsync({
         useFactory: async (redisManager: RedisService) => {
           return { prefix: ':lock:', client: redisManager.getClient() }
         },
         inject: [RedisService]
       }),],
-      providers: [SchedulerService, { provide: RedisService, useValue: mockRedisService }, AppService, PrismaService],
+      providers: [SchedulerService, { provide: RedisService, useValue: mockRedisService }, AppService, PrismaService, TelemetryService, ],
     })
     .overrideProvider(RedisService)
     .useValue(mockRedisService)

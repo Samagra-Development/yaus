@@ -10,15 +10,19 @@ import {
   gql,
   ApolloQueryResult,
 } from '@apollo/client';
-import { getLink, getLinkFromHashID, getLinkFromHashIdOrCustomHashId } from './queries';
+import { getLink, getLinkFromHashIdOrCustomHashId } from './queries';
 import { fetch } from 'isomorphic-fetch';
+import { TelemetryService } from '../telemetry/telemetry.service';
 
 @Injectable()
 export class RouterService {
   dbClient: ApolloClient<any>;
   hashids;
 
-  constructor(private readonly configService: ConfigService) {
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly telemetryService: TelemetryService,
+    ) {
     this.dbClient = this.getClient(
       this.configService.get<string>('GRAPHQL_URI'),
       {
@@ -47,11 +51,17 @@ export class RouterService {
   };
 
   async redirect(hashid: string): Promise<string> {
-    const response = await getLinkFromHashIdOrCustomHashId(this.dbClient, {
-      hashid: parseInt(hashid),
-      customHashId: hashid,
-    });
-    return response.link[0].url || '';
+    try {
+      const response = await getLinkFromHashIdOrCustomHashId(this.dbClient, {
+        hashid: parseInt(hashid),
+        customHashId: hashid,
+      });
+      return response.link[0].url || '';
+    }
+    catch (err) {
+      this.telemetryService.sendEvent(this.configService.get<string>('POSTHOG_DISTINCT_KEY'), "Exception in getLinkFromHashIdOrCustomHashId query", {error: err})
+      return '';
+    }
   }
 
   async decodeAndRedirect(code: string): Promise<{url: string, hashid: number}> {
@@ -62,10 +72,17 @@ export class RouterService {
       hashid = -1;
     }
     if (!hashid) hashid = -1;
-    const redirectURL = await getLink(this.dbClient, {
-      hashid,
-      customHashId: code,
-    });
-    return {url:redirectURL.link[0].url || '', hashid: hashid};
+    try {
+      const redirectURL = await getLink(this.dbClient, {
+        hashid,
+        customHashId: code,
+      });
+      return {url:redirectURL.link[0].url || '', hashid: hashid};
+    }
+    catch (err) {
+      this.telemetryService.sendEvent(this.configService.get<string>('POSTHOG_DISTINCT_KEY'), "Exception in getLink query", {error: err})
+      return {url: '', hashid: hashid};
+    }
+    
   }
 }

@@ -56,10 +56,6 @@ export const getLinkFromHashID = async (client, variables) => {
       variables,
     })
     .then((response) => response.data)
-    .catch((e) => {
-      console.log(e);
-      return null;
-    });
 };
 
 export const getLinkFromHashIdOrCustomHashId = async (client, variables) => {
@@ -77,10 +73,6 @@ export const getLinkFromHashIdOrCustomHashId = async (client, variables) => {
       variables,
     })
     .then((response) => response.data)
-    .catch((e) => {
-      console.log(e);
-      return null;
-    });
 };
 
 export const getLink = async (client, variables) => {
@@ -108,10 +100,6 @@ export const getLink = async (client, variables) => {
     .then((response) => {
       return response.data;
     })
-    .catch((e) => {
-      console.log(e);
-      return null;
-    });
 };
 
 export const getLinkFromCustomHash = async (client, variables) => {
@@ -129,7 +117,6 @@ export const getLinkFromCustomHash = async (client, variables) => {
       variables,
     })
     .then((response) => response.data)
-    .catch((e) => null);
 };
 
 export const insertLink = (client, variables) =>
@@ -213,9 +200,6 @@ export const getUniqueLinkID = (client, variables) =>
         .then((res) => {
           console.log(res);
         })
-        .catch((e) => {
-          console.log(e);
-        });
     };
 
 export const incrementClicks = (client, variables) => {
@@ -238,9 +222,6 @@ export const incrementClicks = (client, variables) => {
     .then((res) => {
       console.log(res);
     })
-    .catch((e) => {
-      console.log(e);
-    });
 };
 
 export const updateCustomHashClicks = (client, variables) => {
@@ -258,9 +239,6 @@ export const updateCustomHashClicks = (client, variables) => {
       variables,
     })
     .then((res) => {})
-    .catch((e) => {
-      console.log(e);
-    });
 };
 
 export const updateCustomId = async (client, variables) => {
@@ -284,8 +262,4 @@ export const updateCustomId = async (client, variables) => {
       console.log('REs', typeof JSON.stringify(res.data.update_link.returning));
       return res.data.update_link.returning;
     })
-    .catch((e) => {
-      console.log(e);
-      return e;
-    });
 };

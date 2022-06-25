@@ -2,28 +2,30 @@ import { Injectable } from '@nestjs/common';
 import { RedisService } from 'nestjs-redis';
 import { PrismaService } from './prisma.service';
 import { link, Prisma } from '@prisma/client';
-import { Link } from './app.interface';
+import { Link } from './app.interface'; 
+import { ConfigService } from '@nestjs/config'
 
 @Injectable()
 export class AppService {
   constructor(
+    private configService: ConfigService,
     private readonly redisService: RedisService,
     private prisma: PrismaService,
     ) {}
 
   async updateClicks(urlId: string): Promise<void> {
-    const client = await this.redisService.getClient(process.env.REDIS_NAME);
+    const client = await this.redisService.getClient(this.configService.get<string>('REDIS_NAME'));
     client.incr(urlId);
   }
 
   async fetchAllKeys(): Promise<string[]> {
-    const client = await this.redisService.getClient(process.env.REDIS_NAME);
+    const client = await this.redisService.getClient(this.configService.get<string>('REDIS_NAME'));
     const keys: string[] = await client.keys('*');
     return keys
   }
 
   async updateClicksInDb(): Promise<void> {
-    const client = await this.redisService.getClient(process.env.REDIS_NAME);
+    const client = await this.redisService.getClient(this.configService.get<string>('REDIS_NAME'));
     const keys: string[] = await this.fetchAllKeys()
     for(var key of keys) {
       client.get(key).then((value: string) => {
