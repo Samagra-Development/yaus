@@ -3,14 +3,17 @@ import { createMock } from '@golevelup/ts-jest';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { RedisService } from 'nestjs-redis';
+import { RedisHealthModule } from '@liaoliaots/nestjs-redis/health';
+import { RedisService } from '@liaoliaots/nestjs-redis';
 import { PrismaService } from './prisma.service';
+import { PrismaHealthIndicator } from './prisma/prisma.health';
 import { RouterService } from './router/router.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TerminusModule } from '@nestjs/terminus';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { TelemetryService } from './telemetry/telemetry.service';
 import { PosthogModule } from 'nestjs-posthog';
+import { RedisModule } from '@liaoliaots/nestjs-redis';
 
 describe('AppController', () => {
   let controller: AppController;
@@ -33,6 +36,18 @@ describe('AppController', () => {
           isGlobal: true,
           envFilePath: ['.env.local', '.env'],
         }),
+        RedisModule.forRootAsync({
+          useFactory: (config: ConfigService) => {
+            return {
+              readyLog: true,
+              config: {
+                name: 'db',
+                url: config.get('REDIS_URI'),
+              }
+            };
+          },
+          inject: [ConfigService],
+        }),   
         ClientsModule.registerAsync([
           {
             name: 'CLICK_SERVICE',
@@ -64,6 +79,7 @@ describe('AppController', () => {
           },
           inject: [ConfigService],
         }),
+        RedisHealthModule,
       ],
       controllers: [AppController],
       providers: [
@@ -71,6 +87,7 @@ describe('AppController', () => {
         ConfigService,
         { provide: RedisService, useValue: mockRedisService }, 
         PrismaService,
+        PrismaHealthIndicator,
         RouterService,
         TelemetryService
     ],
