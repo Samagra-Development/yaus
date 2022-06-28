@@ -12,8 +12,6 @@ import { TelemetryService } from './telemetry/telemetry.service';
 import { PrismaService } from './prisma.service';
 import { TerminusModule } from '@nestjs/terminus';
 import { PosthogModule } from 'nestjs-posthog';
-import { RedisLockModule } from '@huangang/nestjs-simple-redis-lock';
-import { RedisService } from 'nestjs-redis';
 
 @Module({
   imports: [
@@ -32,12 +30,6 @@ import { RedisService } from 'nestjs-redis';
         };
       },
       inject: [ConfigService],
-    }),
-    RedisLockModule.registerAsync({
-      useFactory: async (redisManager: RedisService) => {
-        return { prefix: ':lock:', client: redisManager.getClient() }
-      },
-      inject: [RedisService]
     }),
     ClientsModule.registerAsync([
       {

@@ -15,7 +15,6 @@
   "dependencies": {
     "@apollo/client": "^3.6.5",
     "@golevelup/ts-jest": "^0.3.3",
-    "@huangang/nestjs-simple-redis-lock": "^0.6.0",
     "@liaoliaots/nestjs-redis": "^8.2.1",
     "@nestjs/axios": "^0.0.8",
     "@nestjs/common": "^8.0.0",

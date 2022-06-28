@@ -11,6 +11,10 @@ import { TerminusModule } from '@nestjs/terminus';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { TelemetryService } from './telemetry/telemetry.service';
 import { PosthogModule } from 'nestjs-posthog';
+import { RedisModule } from '@liaoliaots/nestjs-redis';
+import { HttpModule } from '@nestjs/axios';
+import { RedisHealthModule } from '@liaoliaots/nestjs-redis/health';
+import { PrismaHealthIndicator } from './prisma/prisma.health';
 
 describe('AppController', () => {
   let controller: AppController;
@@ -32,6 +36,18 @@ describe('AppController', () => {
         ConfigModule.forRoot({
           isGlobal: true,
           envFilePath: ['.env.local', '.env'],
+        }),
+        RedisModule.forRootAsync({
+          useFactory: (config: ConfigService) => {
+            return {
+              readyLog: true,
+              config: {
+                name: 'db',
+                url: config.get('REDIS_URI'),
+              }
+            };
+          },
+          inject: [ConfigService],
         }),
         ClientsModule.registerAsync([
           {
@@ -64,6 +80,8 @@ describe('AppController', () => {
           },
           inject: [ConfigService],
         }),
+        HttpModule,
+        RedisHealthModule,
       ],
       controllers: [AppController],
       providers: [
@@ -72,7 +90,8 @@ describe('AppController', () => {
         { provide: RedisService, useValue: mockRedisService }, 
         PrismaService,
         RouterService,
-        TelemetryService
+        TelemetryService,
+        PrismaHealthIndicator
     ],
     })
     .overrideProvider(RedisService)

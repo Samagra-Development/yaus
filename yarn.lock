@@ -1263,18 +1263,6 @@
   resolved "https://registry.yarnpkg.com/@graphql-typed-document-node/core/-/core-3.1.1.tgz#076d78ce99822258cf813ecc1e7fa460fa74d052"
   integrity sha512-NQ17ii0rK1b34VZonlmT2QMJFI70m0TRwbknO/ihlbatXyaktDhN/98vBiUU6kNBPljqGqyIrl2T4nY2RpFANg==
 
-"@huangang/nestjs-simple-redis-lock@^0.6.0":
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/@huangang/nestjs-simple-redis-lock/-/nestjs-simple-redis-lock-0.6.0.tgz#087779be0d5d6ab4c50884fcbda6bce1aff5ad34"
-  integrity sha512-8dZkjsQDWy0t2UC/V+rrw5FkOoJN1YYlzdWB8QU7ZCaxQ02iP6iMnDU+ujqgdEQsh+mShn4AWtunFDLEUbNhmA==
-  dependencies:
-    "@nestjs/common" "^8.4.3"
-    "@nestjs/core" "^8.4.3"
-    "@nestjs/terminus" "^8.0.6"
-    debug "^4.3.4"
-    ioredis "^5.0.1"
-    rxjs "^7.5.5"
-
 "@humanwhocodes/config-array@^0.9.2":
   version "0.9.5"
   resolved "https://registry.yarnpkg.com/@humanwhocodes/config-array/-/config-array-0.9.5.tgz#2cbaf9a89460da24b5ca6531b8bbfc23e1df50c7"
@@ -1524,6 +1512,13 @@
   resolved "https://registry.yarnpkg.com/@leichtgewicht/ip-codec/-/ip-codec-2.0.4.tgz#b2ac626d6cb9c8718ab459166d4bb405b8ffa78b"
   integrity sha512-Hcv+nVC0kZnQ3tD9GVu5xSMR4VVYOteQIr/hwFPVEvPdlXqgGEuRjiheChHgdM+JyqdgNcmzZOX/tnl0JOiI7A==
 
+"@liaoliaots/nestjs-redis@^8.2.1":
+  version "8.2.2"
+  resolved "https://registry.yarnpkg.com/@liaoliaots/nestjs-redis/-/nestjs-redis-8.2.2.tgz#127669b5d404ee0f16c41a94e17b234bc30472ea"
+  integrity sha512-/xBQto0ZAVjDQ7WiLuQLCy01xEtF7fiHMbffRo0dTwpC9GJ2gU1bm1VL9CbocFfAxiLDjcfIyRZuaaj3ZU6igg==
+  dependencies:
+    tslib "2.4.0"
+
 "@mui/base@5.0.0-alpha.82":
   version "5.0.0-alpha.82"
   resolved "https://registry.yarnpkg.com/@mui/base/-/base-5.0.0-alpha.82.tgz#19645af6790a79587517a5782ee32bf9ab7f7ac8"
@@ -1638,16 +1633,6 @@
     tslib "2.4.0"
     uuid "8.3.2"
 
-"@nestjs/common@^8.4.3":
-  version "8.4.7"
-  resolved "https://registry.yarnpkg.com/@nestjs/common/-/common-8.4.7.tgz#fc4a575b797e230bb5a0bcab6da8b796aa88d605"
-  integrity sha512-m/YsbcBal+gA5CFrDpqXqsSfylo+DIQrkFY3qhVIltsYRfu8ct8J9pqsTO6OPf3mvqdOpFGrV5sBjoyAzOBvsw==
-  dependencies:
-    axios "0.27.2"
-    iterare "1.2.1"
-    tslib "2.4.0"
-    uuid "8.3.2"
-
 "@nestjs/config@^2.0.1":
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/@nestjs/config/-/config-2.0.1.tgz#1b977bb8c1a97637cfc916ab0c0910db047d372e"
@@ -1675,19 +1660,6 @@
   version "8.4.5"
   resolved "https://registry.yarnpkg.com/@nestjs/core/-/core-8.4.5.tgz#a419259f074a9a1b889540ce2ab46a87b85e9fbf"
   integrity sha512-mT4MV2pEILu+Xy/deIvhb4JkIWaUU+yxssQqMScj8pWvAQ4+6sN52Sxl5NwLb6FTyZ8t5m8Qgr4yZPTmS+Y1Ig==
-  dependencies:
-    "@nuxtjs/opencollective" "0.3.2"
-    fast-safe-stringify "2.1.1"
-    iterare "1.2.1"
-    object-hash "3.0.0"
-    path-to-regexp "3.2.0"
-    tslib "2.4.0"
-    uuid "8.3.2"
-
-"@nestjs/core@^8.4.3":
-  version "8.4.7"
-  resolved "https://registry.yarnpkg.com/@nestjs/core/-/core-8.4.7.tgz#fbec7fa744ac8749a4b966f759a6656c1cf43883"
-  integrity sha512-XB9uexHqzr2xkPo6QSiQWJJttyYYLmvQ5My64cFvWFi7Wk2NIus0/xUNInwX3kmFWB6pF1ab5Y2ZBvWdPwGBhw==
   dependencies:
     "@nuxtjs/opencollective" "0.3.2"
     fast-safe-stringify "2.1.1"
@@ -6503,10 +6475,10 @@ ioredis@^4:
     redis-parser "^3.0.0"
     standard-as-callback "^2.1.0"
 
-ioredis@^5.0.1:
-  version "5.0.6"
-  resolved "https://registry.yarnpkg.com/ioredis/-/ioredis-5.0.6.tgz#e50b8cc945f1f3ac932b0b8aab4bd8073d1402a9"
-  integrity sha512-KUm7wPzIet9QrFMoMm09/4bkfVKBUD9KXwBitP3hrNkZ+A6NBndweXGwYIB/7szHcTZgfo7Kvx88SxljJV4D9A==
+ioredis@^5.0.6:
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/ioredis/-/ioredis-5.1.0.tgz#17bc0bc40f164ef26910ca6e56981c2a9bfdf57e"
+  integrity sha512-HYHnvwxFwefeUBj0hZFejLvd8Q/YNAfnZlZG/hSRxkRhXMs1H8soMEVccHd1WlLrKkynorXBsAtqDGskOdAfVQ==
   dependencies:
     "@ioredis/commands" "^1.1.1"
     cluster-key-slot "^1.1.0"
@@ -9587,7 +9559,7 @@ rxjs@6.6.7, rxjs@^6, rxjs@^6.5.4:
   dependencies:
     tslib "^1.9.0"
 
-rxjs@^7.0.0, rxjs@^7.5.1, rxjs@^7.5.5:
+rxjs@^7.0.0, rxjs@^7.5.1:
   version "7.5.5"
   resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-7.5.5.tgz#2ebad89af0f560f460ad5cc4213219e1f7dd4e9f"
   integrity sha512-sy+H0pQofO95VDmFLzyaw9xNJU4KTRSwQIGM6+iG3SypAtCiLDzpeG8sJrNCWn2Up9km+KhkvTdbkrdy+yzZdw==

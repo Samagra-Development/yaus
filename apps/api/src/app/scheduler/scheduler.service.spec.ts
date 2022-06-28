@@ -1,4 +1,3 @@
-import { RedisLockModule } from "@huangang/nestjs-simple-redis-lock";
 import { Test, TestingModule } from "@nestjs/testing";
 import { SchedulerService } from "./scheduler.service";
 import { RedisModule, RedisService } from 'nestjs-redis';
@@ -49,14 +48,8 @@ describe("SchedulerService", () => {
             };
           },
           inject: [ConfigService],
-        }),
-        RedisLockModule.registerAsync({
-        useFactory: async (redisManager: RedisService) => {
-          return { prefix: ':lock:', client: redisManager.getClient() }
-        },
-        inject: [RedisService]
-      }),],
-      providers: [SchedulerService, { provide: RedisService, useValue: mockRedisService }, AppService, PrismaService, TelemetryService, ],
+        }),],
+      providers: [SchedulerService, AppService, PrismaService, TelemetryService, ],
     })
     .overrideProvider(RedisService)
     .useValue(mockRedisService)
