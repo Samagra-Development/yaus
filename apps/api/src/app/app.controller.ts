@@ -57,8 +57,10 @@ export class AppController {
     ])
   }
   
-
-  @Get('/sr/:code')
+/*
+@Deprecated
+*/
+@Get('/sr/:code')
   async handler(@Param('code') code: string, @Res() res) {
     const resp = await this.routerService.decodeAndRedirect(code)
     this.clickServiceClient
