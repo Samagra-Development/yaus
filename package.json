@@ -46,6 +46,7 @@
     "reflect-metadata": "^0.1.13",
     "regenerator-runtime": "0.13.7",
     "rxjs": "^7.0.0",
+    "supertest": "^6.2.3",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
