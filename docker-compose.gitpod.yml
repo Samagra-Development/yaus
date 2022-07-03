@@ -3,7 +3,7 @@ version: '3'
 services:
   shortdb:
     container_name: shortdb
-    image: fintrace/postgres-uuid
+    image: postgres:12
     env_file:
       - .env
     environment:
@@ -13,6 +13,7 @@ services:
     ports:
       - 5432:5432
     volumes:
+      - ./scripts/1-init.sql:/docker-entrypoint-initdb.d/1-init.sql
       - pgdata:/var/lib/postgresql/data
 
   gql:
