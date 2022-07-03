@@ -85,14 +85,15 @@ export class AppController {
   @ApiOperation({ summary: 'Redirect Links' })
   @ApiResponse({ status: 301, description: 'will be redirected to the specified link'})
   async redirect(@Param('hashid') hashid: string, @Res() res) {
-    const reRouteURL: string = await this.routerService.redirect(hashid);
+    const reRouteURL: string = await this.appService.redirect(hashid);
     this.clickServiceClient
       .send('onClick', {
-        hashid: parseInt(hashid),
+        hashid: hashid,
       })
       .subscribe();
     if (reRouteURL !== '') {
-      return res.redirect(reRouteURL);
+      console.log({reRouteURL}); 
+      return res.redirect(302, reRouteURL);
     } else {
       throw new NotFoundException();
     }
@@ -101,8 +102,8 @@ export class AppController {
 
   @Post('/register')
   @ApiOperation({ summary: 'Create New Links' })
-  @ApiBody({ type: [Link] })
-  @ApiResponse({ type: [Link], status: 200})
+  @ApiBody({ type: Link })
+  @ApiResponse({ type: Link, status: 200})
   async register(@Body() link: Link): Promise<LinkModel> {
     return this.appService.createLink(link);
   }
@@ -110,8 +111,8 @@ export class AppController {
   
   @Patch('update/:id')
   @ApiOperation({ summary: 'Update Existing Links' })
-  @ApiBody({ type: [Link] })
-  @ApiResponse({ type: [Link], status: 200})
+  @ApiBody({ type: Link })
+  @ApiResponse({ type: Link, status: 200})
   async update(@Param('id') id: string, @Body() link: Link ): Promise<LinkModel> {
     return this.appService.updateLink({
       where: { customHashId: id },
