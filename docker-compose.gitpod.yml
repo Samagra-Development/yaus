@@ -11,7 +11,7 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
     ports:
-      - 5432:5432
+      - 15432:5432
     volumes:
       - ./scripts/1-init.sql:/docker-entrypoint-initdb.d/1-init.sql
       - pgdata:/var/lib/postgresql/data
