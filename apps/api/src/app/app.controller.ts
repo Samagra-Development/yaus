@@ -30,6 +30,7 @@ import { AppService } from './app.service';
 import { RouterService } from './router/router.service';
 import { link as LinkModel } from '@prisma/client';
 import { AddROToResponseInterceptor } from './interceptors/addROToResponseInterceptor';
+import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
 @Controller()
 @UseInterceptors(AddROToResponseInterceptor)
@@ -48,6 +49,8 @@ export class AppController {
 
   @Get('/health')
   @HealthCheck()
+  @ApiOperation({ summary: 'Get Health Check Status' })
+  @ApiResponse({ status: 200, description: 'Result Report for All the Health Check Services' })
   async checkHealth() {
     return this.healthCheckService.check([
       async () => this.http.pingCheck('RabbitMQ', 'http://localhost:15672/'),
@@ -61,6 +64,8 @@ export class AppController {
 @Deprecated
 */
 @Get('/sr/:code')
+@ApiOperation({ summary: 'Redirect with encoded parameters' })
+@ApiResponse({ status: 301, description: 'will be redirected to the specified encoded link'})
   async handler(@Param('code') code: string, @Res() res) {
     const resp = await this.routerService.decodeAndRedirect(code)
     this.clickServiceClient
@@ -77,6 +82,8 @@ export class AppController {
 
   //http://localhost:3333/api/redirect/208
   @Get('/:hashid')
+  @ApiOperation({ summary: 'Redirect Links' })
+  @ApiResponse({ status: 301, description: 'will be redirected to the specified link'})
   async redirect(@Param('hashid') hashid: string, @Res() res) {
     const reRouteURL: string = await this.routerService.redirect(hashid);
     this.clickServiceClient
@@ -93,12 +100,18 @@ export class AppController {
 
 
   @Post('/register')
+  @ApiOperation({ summary: 'Create New Links' })
+  @ApiBody({ type: [Link] })
+  @ApiResponse({ type: [Link], status: 200})
   async register(@Body() link: Link): Promise<LinkModel> {
     return this.appService.createLink(link);
   }
 
   
   @Patch('update/:id')
+  @ApiOperation({ summary: 'Update Existing Links' })
+  @ApiBody({ type: [Link] })
+  @ApiResponse({ type: [Link], status: 200})
   async update(@Param('id') id: string, @Body() link: Link ): Promise<LinkModel> {
     return this.appService.updateLink({
       where: { customHashId: id },
