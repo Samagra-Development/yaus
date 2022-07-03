@@ -26,3 +26,6 @@ ports:
   - port: 8088
     onOpen: ignore
     visibility: public
+  - port: 3333
+    onOpen: ignore
+    visibility: public  

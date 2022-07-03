@@ -3,6 +3,7 @@ import { RedisService } from '@liaoliaots/nestjs-redis';
 import { PrismaService } from './prisma.service';
 import { link, Prisma } from '@prisma/client';
 import { ConfigService } from '@nestjs/config'
+import { TelemetryService } from './telemetry/telemetry.service';
 
 @Injectable()
 export class AppService {
@@ -10,6 +11,7 @@ export class AppService {
     private configService: ConfigService,
     private readonly redisService: RedisService,
     private prisma: PrismaService,
+    private telemetryService: TelemetryService,
     ) {}
 
   async updateClicks(urlId: string): Promise<void> {
@@ -94,4 +96,25 @@ export class AppService {
       });
     }
 
+    async redirect(hashid: string): Promise<string> {
+        return this.prisma.link.findMany({
+          where: {
+            OR: [
+              {
+                hashid: Number.isNaN(Number(hashid))? -1:parseInt(hashid),
+              },
+              { customHashId: hashid },
+            ],
+          },
+          select: {
+            url: true,
+          },
+          take: 1
+        })
+        .then(response => {return response[0].url || ''})
+        .catch(err => {
+          this.telemetryService.sendEvent(this.configService.get<string>('POSTHOG_DISTINCT_KEY'), "Exception in getLinkFromHashIdOrCustomHashId query", {error: err})
+          return '';
+        });
+      }
 }
