@@ -1,11 +1,16 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { SchedulerService } from "./scheduler.service";
-import { RedisModule, RedisService } from 'nestjs-redis';
+import { RedisService } from 'nestjs-redis';
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { AppService } from "../app.service";
 import { PrismaService } from "../prisma.service";
 import { TelemetryService } from "../telemetry/telemetry.service";
 import { PosthogModule } from "nestjs-posthog";
+import { TerminusModule } from "@nestjs/terminus";
+import { HttpModule } from "@nestjs/axios";
+import { RedisHealthModule } from "@liaoliaots/nestjs-redis/health";
+import { ClientsModule, Transport } from "@nestjs/microservices";
+import { RedisModule } from "@liaoliaots/nestjs-redis";
 
 describe("SchedulerService", () => {
   let service: SchedulerService;
@@ -29,12 +34,32 @@ describe("SchedulerService", () => {
         RedisModule.forRootAsync({
           useFactory: (config: ConfigService) => {
             return {
-              name: config.get('REDIS_NAME'),
-              url: config.get('REDIS_URI'),
+              readyLog: true,
+              config: {
+                name: 'db',
+                url: config.get('REDIS_URI'),
+              }
             };
           },
           inject: [ConfigService],
         }),
+        ClientsModule.registerAsync([
+          {
+            name: 'CLICK_SERVICE',
+            imports: [ConfigModule],
+            useFactory: async (config: ConfigService) => ({
+                transport: Transport.RMQ,
+                options: {
+                  urls: [config.get<string>('RMQ_URL')],
+                  queue: config.get<string>('RMQ_QUEUE'),
+                  queueOptions: {
+                    durable: config.get<boolean>('RMQ_QUEUE_DURABLE'),
+                  },
+                },
+            }),
+            inject: [ConfigService],
+          },
+        ]),
         PosthogModule.forRootAsync({
           useFactory: (config: ConfigService) => {
             return {
@@ -48,7 +73,11 @@ describe("SchedulerService", () => {
             };
           },
           inject: [ConfigService],
-        }),],
+        }),
+        TerminusModule,
+        HttpModule,
+        RedisHealthModule,
+      ],
       providers: [SchedulerService, AppService, PrismaService, TelemetryService, ],
     })
     .overrideProvider(RedisService)

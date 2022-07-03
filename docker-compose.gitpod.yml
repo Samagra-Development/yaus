@@ -3,7 +3,7 @@ version: '3'
 services:
   shortdb:
     container_name: shortdb
-    image: postgres:12
+    image: fintrace/postgres-uuid
     env_file:
       - .env
     environment:
