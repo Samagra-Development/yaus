@@ -20,6 +20,7 @@ async function bootstrap() {
     AppModule,
     new FastifyAdapter()
   );
+  app.enableCors()
 
   // // MS for managing side-effects
   // app.connectMicroservice<MicroserviceOptions>({
