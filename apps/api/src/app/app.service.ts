@@ -116,13 +116,17 @@ export class AppService {
           const url = response[0].url
           const params = response[0].params
           const ret = [];
-          Object.keys(params).forEach(function(d) {
-            ret.push(encodeURIComponent(d) + '=' + encodeURIComponent(params[d]));
-          })
-          return `${url}?${ret.join('&')}` || '';
+          if(params != null){
+            return url;
+          }else {
+            Object.keys(params).forEach(function(d) {
+              ret.push(encodeURIComponent(d) + '=' + encodeURIComponent(params[d]));
+            })
+            return `${url}?${ret.join('&')}` || '';
+          }
         })
         .catch(err => {
-          this.telemetryService.sendEvent(this.configService.get<string>('POSTHOG_DISTINCT_KEY'), "Exception in getLinkFromHashIdOrCustomHashId query", {error: err})
+          this.telemetryService.sendEvent(this.configService.get<string>('POSTHOG_DISTINCT_KEY'), "Exception in getLinkFromHashIdOrCustomHashId query", {error: err.message})
           return '';
         });
       }

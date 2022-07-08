@@ -59,7 +59,7 @@ export class RouterService {
       return response.link[0].url || '';
     }
     catch (err) {
-      this.telemetryService.sendEvent(this.configService.get<string>('POSTHOG_DISTINCT_KEY'), "Exception in getLinkFromHashIdOrCustomHashId query", {error: err})
+      this.telemetryService.sendEvent(this.configService.get<string>('POSTHOG_DISTINCT_KEY'), "Exception in getLinkFromHashIdOrCustomHashId query", {error: err.message})
       return '';
     }
   }
@@ -80,7 +80,7 @@ export class RouterService {
       return {url:redirectURL.link[0].url || '', hashid: hashid};
     }
     catch (err) {
-      this.telemetryService.sendEvent(this.configService.get<string>('POSTHOG_DISTINCT_KEY'), "Exception in getLink query", {error: err})
+      this.telemetryService.sendEvent(this.configService.get<string>('POSTHOG_DISTINCT_KEY'), "Exception in getLink query", {error: err.message})
       return {url: '', hashid: hashid};
     }
     

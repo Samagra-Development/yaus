@@ -21,7 +21,7 @@ export class SchedulerService {
             this.appService.updateClicksInDb();
         }
         catch (err) {
-            this.telemetryService.sendEvent(this.configService.get<string>('POSTHOG_DISTINCT_KEY'), "Exception in updateClicksInDb cron", {error: err})
+            this.telemetryService.sendEvent(this.configService.get<string>('POSTHOG_DISTINCT_KEY'), "Exception in updateClicksInDb cron", {error: err.message})
             return '';
         }
         finally {
