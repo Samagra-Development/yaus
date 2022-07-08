@@ -108,10 +108,19 @@ export class AppService {
           },
           select: {
             url: true,
+            params: true,
           },
           take: 1
         })
-        .then(response => {return response[0].url || ''})
+        .then(response => {
+          const url = response[0].url
+          const params = response[0].params
+          const ret = [];
+          Object.keys(params).forEach(function(d) {
+            ret.push(encodeURIComponent(d) + '=' + encodeURIComponent(params[d]));
+          })
+          return `${url}?${ret.join('&')}` || '';
+        })
         .catch(err => {
           this.telemetryService.sendEvent(this.configService.get<string>('POSTHOG_DISTINCT_KEY'), "Exception in getLinkFromHashIdOrCustomHashId query", {error: err})
           return '';
