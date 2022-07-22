@@ -117,7 +117,7 @@ export class AppController {
     return this.appService.updateLink({
       where: { customHashId: id },
       data: { 
-        user: link.user || null,
+        userID: link.user || null,
         tags: link.tags || null,
         clicks: link.clicks || null,
         url: link.url || null,

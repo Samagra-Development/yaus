@@ -9,7 +9,7 @@ datasource db {
 
 model link {
   id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  user         String?  @db.Uuid
+  userID       String?  @db.Uuid
   tags         String[]
   clicks       Int      @default(0)
   url          String?
@@ -18,7 +18,7 @@ model link {
   customHashId String?  @unique
   params       Json?
 
-  @@unique([user, project, url, customHashId])
+  @@unique([userID, project, url, customHashId])
 }
 
 model template {
