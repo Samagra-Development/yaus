@@ -1,0 +1,28 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model link {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userID       String?  @db.Uuid
+  tags         String[]
+  clicks       Int      @default(0)
+  url          String?
+  hashid       Int      @default(autoincrement())
+  project      String?  @db.Uuid
+  customHashId String?  @unique
+  params       Json?
+
+  @@unique([userID, project, url, customHashId])
+}
+
+model template {
+  id   String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  text String?
+  name Unsupported("name")
+}
