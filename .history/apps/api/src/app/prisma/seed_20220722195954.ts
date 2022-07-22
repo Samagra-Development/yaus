@@ -6,7 +6,7 @@ async function main() {
     where: { customHashId: 'google' },
     update: {},
     create: {
-      userID: '1cd2bd98-7eba-4a4a-8cec-32eeb3648cf4',
+      user: '1cd2bd98-7eba-4a4a-8cec-32eeb3648cf4',
       tags: ['dummy'],
       clicks: 0,
       url: 'https://google.com',
