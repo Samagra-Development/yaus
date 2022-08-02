@@ -116,7 +116,7 @@ export class AppService {
           const url = response[0].url
           const params = response[0].params
           const ret = [];
-          if(params != null){
+          if(params == null){
             return url;
           }else {
             Object.keys(params).forEach(function(d) {
