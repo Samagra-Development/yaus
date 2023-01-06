@@ -15,9 +15,9 @@ COPY yarn.lock ./
 # Install app dependencies
 RUN yarn install
 
-COPY . .
-
 RUN npx prisma generate --schema=./apps/api/src/app/prisma/schema.prisma
+
+COPY . .
 
 # Generate build
 RUN yarn run build
