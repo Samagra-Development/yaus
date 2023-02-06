@@ -11,9 +11,11 @@ import { RedisService } from 'nestjs-redis';
 import { AppService } from './app.service';
 import { PrismaService } from './prisma.service';
 import { TelemetryService } from './telemetry/telemetry.service';
+import { Link } from './app.interface';
 
 describe('AppService', () => {
   let service: AppService;
+  let prisma: PrismaService;
   let mockRedisSet;
 
   const mockRedis = {
@@ -90,11 +92,36 @@ describe('AppService', () => {
     .compile();
 
     service = module.get<AppService>(AppService);
+    prisma = module.get<PrismaService>(PrismaService);
   });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
 
+  it("should return url with query params appended to it", async () => {
+    const url = "https://google.com";
+    const hashId = "1";
+    const queryParams = {
+      hello: "1234",
+      world: "5678",
+    };
 
+    const link: Link = {
+      id: "1",
+      user: null,
+      tags: [],
+      clicks: 0,
+      url: url,
+      hashid: +hashId,
+      project: null,
+      customHashId: null,
+    };
+
+    prisma.link.findMany = jest.fn().mockResolvedValueOnce([link]);
+
+    expect(await service.redirect(hashId, queryParams)).toBe(
+      `${url}?hello=1234&world=5678`
+    );
+  });
 });
