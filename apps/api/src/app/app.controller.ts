@@ -21,7 +21,7 @@ import {
 
 import { HealthCheckService, HttpHealthIndicator, HealthCheck } from '@nestjs/terminus';
 import { PrismaHealthIndicator } from './prisma/prisma.health';
-import { InjectRedis } from '@liaoliaots/nestjs-redis';
+import { RedisService } from '@liaoliaots/nestjs-redis';
 import { RedisHealthIndicator } from '@liaoliaots/nestjs-redis/health';
 import Redis from 'ioredis';
 import { Link } from './app.interface';
@@ -31,10 +31,13 @@ import { RouterService } from './router/router.service';
 import { link as LinkModel } from '@prisma/client';
 import { AddROToResponseInterceptor } from './interceptors/addROToResponseInterceptor';
 import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ConfigService } from '@nestjs/config';
 
 @Controller()
 @UseInterceptors(AddROToResponseInterceptor)
 export class AppController {
+  private readonly redis: Redis
+
   constructor(
     private readonly appService: AppService,
     private readonly routerService: RouterService,
@@ -42,9 +45,12 @@ export class AppController {
     private http: HttpHealthIndicator,
     private redisIndicator: RedisHealthIndicator,
     private prismaIndicator: PrismaHealthIndicator,
-    @InjectRedis() private readonly redis: Redis,
+    private readonly configService: ConfigService,
+    private readonly redisService: RedisService,
     @Inject('CLICK_SERVICE') private clickServiceClient: ClientProxy
-  ) {}
+  ) {
+      this.redis = redisService.getClient(configService.get('REDIS_NAME'));
+  }
 
 
   @Get('/health')

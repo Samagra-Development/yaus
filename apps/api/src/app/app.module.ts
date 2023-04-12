@@ -12,6 +12,8 @@ import { TelemetryService } from './telemetry/telemetry.service';
 import { PrismaService } from './prisma.service';
 import { TerminusModule } from '@nestjs/terminus';
 import { PosthogModule } from 'nestjs-posthog';
+import { ScheduleModule } from '@nestjs/schedule';
+import { SchedulerService } from './scheduler/scheduler.service';
 
 @Module({
   imports: [
@@ -24,7 +26,7 @@ import { PosthogModule } from 'nestjs-posthog';
         return {
           readyLog: true,
           config: {
-            name: 'db',
+            namespace: config.get('REDIS_NAME'),
             url: config.get('REDIS_URI'),
           }
         };
@@ -65,8 +67,9 @@ import { PosthogModule } from 'nestjs-posthog';
     TerminusModule,
     HttpModule,
     RedisHealthModule,
+    ScheduleModule.forRoot()
   ],
   controllers: [AppController],
-  providers: [AppService, ConfigService, RouterService, PrismaService, TelemetryService, PrismaHealthIndicator],
+  providers: [AppService, ConfigService, RouterService, PrismaService, TelemetryService, PrismaHealthIndicator, SchedulerService],
 })
 export class AppModule {}
