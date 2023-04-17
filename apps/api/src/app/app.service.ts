@@ -14,6 +14,11 @@ export class AppService {
     private telemetryService: TelemetryService,
     ) {}
 
+  async setKey(hashid: string): Promise<void> {
+    const client = await this.redisService.getClient(this.configService.get<string>('REDIS_NAME'));
+    client.set(hashid, 0);
+  }
+  
   async updateClicks(urlId: string): Promise<void> {
     const client = await this.redisService.getClient(this.configService.get<string>('REDIS_NAME'));
     client.incr(urlId);
@@ -28,9 +33,9 @@ export class AppService {
   async updateClicksInDb(): Promise<void> {
     const client = await this.redisService.getClient(this.configService.get<string>('REDIS_NAME'));
     const keys: string[] = await this.fetchAllKeys()
-    for(var key of keys) {
-      client.get(key).then((value: string) => {
-        const updateClick =  this.prisma.link.updateMany({
+    for(const key of keys) {
+      client.get(key).then(async (value: string) => {
+        const updateClick = await this.prisma.link.updateMany({
           where: {
           OR: [
             {
@@ -74,9 +79,12 @@ export class AppService {
     }
   
     async createLink(data: Prisma.linkCreateInput): Promise<link> {
-      return this.prisma.link.create({
+      const link = await this.prisma.link.create({
         data,
       });
+
+      this.setKey(link.hashid.toString());
+      return link;
     }
 
     async updateLink(params: {
@@ -116,6 +124,9 @@ export class AppService {
           const url = response[0].url
           const params = response[0].params
           const ret = [];
+          
+          this.updateClicks(hashid);
+
           if(params == null){
             return url;
           }else {

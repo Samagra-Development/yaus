@@ -42,7 +42,7 @@ describe('AppController', () => {
             return {
               readyLog: true,
               config: {
-                name: 'db',
+                namespace: config.get('REDIS_NAME'),
                 url: config.get('REDIS_URI'),
               }
             };
