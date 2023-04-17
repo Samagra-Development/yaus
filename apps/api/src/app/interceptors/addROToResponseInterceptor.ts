@@ -7,6 +7,7 @@ import {
 import { ConfigService } from '@nestjs/config';
   import { map, Observable } from 'rxjs';
 import { TelemetryService } from '../telemetry/telemetry.service';
+import { URLSearchParams } from 'url';
   
   // Nestjs Lifecyle - https://i.stack.imgur.com/2lFhd.jpg
   
@@ -35,7 +36,21 @@ import { TelemetryService } from '../telemetry/telemetry.service';
         map((data) => {
           let name: string;
           console.log(`Execution Time: ${Date.now() - now}ms`)
-          this.telemetryService.sendEvent(this.configService.get<string>('POSTHOG_DISTINCT_KEY'), `${req.raw.url} Execution Time`, {routeName:name, executionTime: `${Date.now() - now}ms`})
+
+          const rawUrl = decodeURIComponent(req.raw.url);
+          const url = rawUrl.split("?")?.[0];
+          const urlSearchParams = new URLSearchParams(rawUrl.split("?")?.[1]);
+
+          this.telemetryService.sendEvent(
+            this.configService.get<string>("POSTHOG_DISTINCT_KEY"),
+            `${url} Execution Time`,
+            {
+              routeName: name,
+              executionTime: `${Date.now() - now}ms`,
+              url: req.url,
+              queryParams: Object.fromEntries(urlSearchParams.entries()),
+            }
+          );
           return data;
         }),
       );
