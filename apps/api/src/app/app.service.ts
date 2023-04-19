@@ -37,20 +37,20 @@ export class AppService {
       client.get(key).then(async (value: string) => {
         const updateClick = await this.prisma.link.updateMany({
           where: {
-          OR: [
-            {
-              hashid: parseInt(key),
-            },
-            {
-              customHashId: key
-            }
-          ],
-         },
+            OR: [
+              {
+                hashid: Number.isNaN(Number(key)) ? -1 : parseInt(key),
+              },
+              {
+                customHashId: key,
+              },
+            ],
+          },
           data: {
             clicks: parseInt(value),
           },
-        })
-      })
+        });
+      });
     }
   }
 
@@ -117,6 +117,7 @@ export class AppService {
           select: {
             url: true,
             params: true,
+            hashid: true,
           },
           take: 1
         })
@@ -125,7 +126,7 @@ export class AppService {
           const params = response[0].params
           const ret = [];
           
-          this.updateClicks(hashid);
+          this.updateClicks(response[0].hashid.toString());
 
           if(params == null){
             return url;
