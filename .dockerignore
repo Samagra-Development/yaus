@@ -1,0 +1,6 @@
+/node_modules
+/broker
+/dist
+/redis-data
+/redis.conf
+/redisinsight

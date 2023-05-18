@@ -7937,9 +7937,10 @@ nestjs-posthog@^1.1.2:
   dependencies:
     posthog-node "^1.3.0"
 
-"nestjs-redis@git+https://github.com/GyanendroKh/nestjs-redis.git#nest8-fix":
+nestjs-redis@^1.3.3:
   version "1.3.3"
-  resolved "git+https://github.com/GyanendroKh/nestjs-redis.git#0b1f99ac8ec0c7f2ae64f8cd30b32b7ad324cfaf"
+  resolved "https://registry.yarnpkg.com/nestjs-redis/-/nestjs-redis-1.3.3.tgz#9b285653bbe3af92cf7ecd1e2225b8bf2df32ad2"
+  integrity sha512-YLvWtVKP38Uica7pL8T955jPi0MFmJ4+Wj3R/IHbLpsdCJkdA9wtfO9NoUpiZpM1aO1dEGcOBoStvgb0Uy7MGA==
   dependencies:
     "@nestjs/common" "^7.4.4"
     "@nestjs/core" "^7.4.4"
