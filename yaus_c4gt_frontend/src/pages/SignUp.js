@@ -1,4 +1,4 @@
-import React, { Component,useEffect,useState } from "react";
+import React, { Component, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 
 import {
@@ -29,8 +29,6 @@ const template = [
     viewBox="0 0 20 20"
     fill="black"
     xmlns="http://www.w3.org/2000/svg"
-    
-    
   >
     <path
       data-v-4ebdc598=""
@@ -96,7 +94,7 @@ const signin = [
     width="14"
     height="14"
     viewBox="0 0 14 14"
-  > 
+  >
     <path
       className="fill-muted"
       d="M12.25,14H1.75A1.752,1.752,0,0,1,0,12.25V3.5A1.752,1.752,0,0,1,1.75,1.75h.876V.875a.875.875,0,0,1,1.75,0V1.75h5.25V.875a.875.875,0,0,1,1.75,0V1.75h.875A1.752,1.752,0,0,1,14,3.5v8.75A1.752,1.752,0,0,1,12.25,14ZM3.5,4.375a.875.875,0,0,0,0,1.75h7a.875.875,0,0,0,0-1.75Z"
@@ -104,213 +102,217 @@ const signin = [
   </svg>,
 ];
 function SignUp() {
-
-  useEffect(()=>{
-
-    if(localStorage.getItem("user-info")){
-      history.push("/dashboard")
+  useEffect(() => {
+    if (localStorage.getItem("user-info")) {
+      history.push("/dashboard");
     }
-  },[])
+  }, []);
 
-  const[name,setName]=useState("")
-  const[email,setEmail]=useState("")
-  const[password,setPassword]=useState("")
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const history=useHistory();
+  const history = useHistory();
 
+  async function action() {
+    let item = {
+      registration: {
+        applicationId: "650c50b5-eae9-442e-88de-fc36be10a21b",
+      },
+      user: {
+        name: name,
+        email: email,
+        password: password,
+      },
+    };
 
-
-  async function action(){
-    let item={
-      "registration": {
-          "applicationId": "650c50b5-eae9-442e-88de-fc36be10a21b"
-          },
-      "user": {
-          "name": name,
-          "email": email,
-          "password": password,
-          
-      }
-  }
-    
-    let result = await fetch("https://fa.chakshu-rd.samagra.io/api/user/registration",{
-      method:'POST',
-      credentials: 'omit',
-      headers:{
-        'Authorization':'_Qd8pWtFySgctTxzuNs6seq5WxIdaQhpiOm-MR2y6G5bLqNBl7Bpb-sk',
-        'Content-Type':'application/json'
-        
+    let result = await fetch(
+      "https://fa.chakshu-rd.samagra.io/api/user/registration",
+      {
+        method: "POST",
+        credentials: "omit",
+        headers: {
+          Authorization: `${process.env.REACT_APP_AUTH_TOKEN}`,
+          "Content-Type": "application/json",
         },
 
-      body:JSON.stringify(item)
-    })
-    result=await result.json();
+        body: JSON.stringify(item),
+      }
+    );
+    result = await result.json();
     // console.warn("Result", result)
     localStorage.setItem("user-info", JSON.stringify(result));
-    history.push('/dashboard')
-
-
+    history.push("/dashboard");
   }
 
+  const onFinish = (values) => {
+    console.log("Success:", values);
+  };
 
-    const onFinish = (values) => {
-      console.log("Success:", values);
-    };
-
-    const onFinishFailed = (errorInfo) => {
-      console.log("Failed:", errorInfo);
-    };
-    return (
-      <>
-        <div className="layout-default ant-layout layout-sign-up">
-          <Header>
-            {/* <div className="header-col header-brand">
+  const onFinishFailed = (errorInfo) => {
+    console.log("Failed:", errorInfo);
+  };
+  return (
+    <>
+      <div className="layout-default ant-layout layout-sign-up">
+        <Header>
+          {/* <div className="header-col header-brand">
               <h5>Muse Dashboard</h5>
-            </div> */}  
-            <div className="header-col header-nav">
-              <Menu mode="horizontal" defaultSelectedKeys={["1"]}>
-                <Menu.Item key="1">
-                  <Link to="/dashboard">
-                    {template}
-                    <span> Dashboard</span>
-                  </Link>
-                </Menu.Item>
-                <Menu.Item key="2">
-                  <Link to="/profile">
-                    {profile}
-                    <span>Profile</span>
-                  </Link>
-                </Menu.Item>
-                <Menu.Item key="3">
-                  <Link to="/sign-up">
-                    {signup}
-                    <span> Sign Up</span>
-                  </Link>
-                </Menu.Item>
-                <Menu.Item key="4">
-                  <Link to="/sign-in">
-                    {signin}
-                    <span> Sign In</span>
-                  </Link>
-                </Menu.Item>
-              </Menu>
-            </div>
-            {/* <div className="header-col header-btn">
+            </div> */}
+          <div className="header-col header-nav">
+            <Menu mode="horizontal" defaultSelectedKeys={["1"]}>
+              <Menu.Item key="1">
+                <Link to="/dashboard">
+                  {template}
+                  <span> Dashboard</span>
+                </Link>
+              </Menu.Item>
+              <Menu.Item key="2">
+                <Link to="/profile">
+                  {profile}
+                  <span>Profile</span>
+                </Link>
+              </Menu.Item>
+              <Menu.Item key="3">
+                <Link to="/sign-up">
+                  {signup}
+                  <span> Sign Up</span>
+                </Link>
+              </Menu.Item>
+              <Menu.Item key="4">
+                <Link to="/sign-in">
+                  {signin}
+                  <span> Sign In</span>
+                </Link>
+              </Menu.Item>
+            </Menu>
+          </div>
+          {/* <div className="header-col header-btn">
               <Button type="false">FREE DOWNLOAD</Button>
             </div> */}
-          </Header>
+        </Header>
 
-          <Content className="p-0">
-            <div className="sign-up-header">
-              <div className="content">
-                <Title>Sign Up</Title>
-                {/* <p className="text-lg">
+        <Content className="p-0">
+          <div className="sign-up-header">
+            <div className="content">
+              <Title>Sign Up</Title>
+              {/* <p className="text-lg">
                   Use these awesome forms to login or create new account in your
                   project for free.
                 </p> */}
-              </div>
             </div>
+          </div>
 
-            <Card
-              className="card-signup header-solid h-full ant-card pt-0"
-              // title={<h5>Create Your Account With</h5>}
-              bordered="false"
-            >
-              <div className="sign-up-gateways">
-                {/* <Button type="false">
+          <Card
+            className="card-signup header-solid h-full ant-card pt-0"
+            // title={<h5>Create Your Account With</h5>}
+            bordered="false"
+          >
+            <div className="sign-up-gateways">
+              {/* <Button type="false">
                   <img src={logo1} alt="logo 1" />
                 </Button> */}
-                {/* <Button type="false">
+              {/* <Button type="false">
                   <img src={logo2} alt="logo 2" />
                 </Button> */}
-                {/* <Button type="false">
+              {/* <Button type="false">
                   <img src={logo3} alt="logo 3" />
                 </Button> */}
-              </div>
-              <p className="text-center my-25 font-semibold text-muted"></p>
-              <Form
-                name="basic"
-                initialValues={{ remember: true }}
-                onFinish={onFinish}
-                onFinishFailed={onFinishFailed}
-                className="row-col"
+            </div>
+            <p className="text-center my-25 font-semibold text-muted"></p>
+            <Form
+              name="basic"
+              initialValues={{ remember: true }}
+              onFinish={onFinish}
+              onFinishFailed={onFinishFailed}
+              className="row-col"
+            >
+              <Form.Item
+                name="Name"
+                rules={[
+                  { required: true, message: "Please input your username!" },
+                ]}
               >
-                <Form.Item
-                  name="Name"
-                  rules={[
-                    { required: true, message: "Please input your username!" },
-                  ]}
-                >
-                  <Input  value={name} onChange={(e)=>setName(e.target.value)} placeholder="Username" />
-                </Form.Item>
-                <Form.Item
-                  name="email"
-                  rules={[
-                    { required: true, message: "Please input your email!" },
-                  ]}
-                >
-                  <Input value={email} onChange={(e)=>setEmail(e.target.value)} placeholder="Email" />
-                </Form.Item>
-                <Form.Item
-                  name="password"
-                  rules={[
-                    { required: true, message: "Please input your password!" },
-                  ]}
-                >
-                  <Input type="password" value={password} onChange={(e)=>setPassword(e.target.value)} placeholder="Password" />
-                </Form.Item>
+                <Input
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Username"
+                />
+              </Form.Item>
+              <Form.Item
+                name="email"
+                rules={[
+                  { required: true, message: "Please input your email!" },
+                ]}
+              >
+                <Input
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Email"
+                />
+              </Form.Item>
+              <Form.Item
+                name="password"
+                rules={[
+                  { required: true, message: "Please input your password!" },
+                ]}
+              >
+                <Input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Password"
+                />
+              </Form.Item>
 
-                <Form.Item name="remember" valuePropName="checked">
-                  <Checkbox>
-                    I agree the{" "}
-                    <a href="#pablo" className="font-bold text-dark">
-                      Terms and Conditions
-                    </a>
-                  </Checkbox>
-                </Form.Item>
+              <Form.Item name="remember" valuePropName="checked">
+                <Checkbox>
+                  I agree the{" "}
+                  <a href="#pablo" className="font-bold text-dark">
+                    Terms and Conditions
+                  </a>
+                </Checkbox>
+              </Form.Item>
 
-                <Form.Item>
-                
+              <Form.Item>
                 <Button
-                    style={{ width: "100%" }}
-                    type="primary"
-                    htmlType="submit"
-                    onClick={action}
-                  >
-                    SIGN UP
-                  </Button>
-                  
-                  
-                </Form.Item>
-              </Form>
-              <p className="font-semibold text-muted text-center">
-                Already have an account?{" "}
-                <Link to="/sign-in" className="font-bold text-dark">
-                  Sign In
-                </Link>
-              </p>
-            </Card>
-          </Content>
-          <Footer>
-            <Menu mode="horizontal">
-              <Menu.Item>Company</Menu.Item>
-              <Menu.Item>About Us</Menu.Item>
-              <Menu.Item>Teams</Menu.Item>
-              <Menu.Item>Products</Menu.Item>
-              {/* <Menu.Item>Blogs</Menu.Item>
+                  style={{ width: "100%" }}
+                  type="primary"
+                  htmlType="submit"
+                  onClick={action}
+                >
+                  SIGN UP
+                </Button>
+              </Form.Item>
+            </Form>
+            <p className="font-semibold text-muted text-center">
+              Already have an account?{" "}
+              <Link to="/sign-in" className="font-bold text-dark">
+                Sign In
+              </Link>
+            </p>
+          </Card>
+        </Content>
+        <Footer>
+          <Menu mode="horizontal">
+            <Menu.Item>Company</Menu.Item>
+            <Menu.Item>About Us</Menu.Item>
+            <Menu.Item>Teams</Menu.Item>
+            <Menu.Item>Products</Menu.Item>
+            {/* <Menu.Item>Blogs</Menu.Item>
               <Menu.Item>Pricing</Menu.Item> */}
-            </Menu>
-            <Menu mode="horizontal" className="menu-nav-social">
-              {/* <Menu.Item>
+          </Menu>
+          <Menu mode="horizontal" className="menu-nav-social">
+            {/* <Menu.Item>
                 <Link to="#">{<DribbbleOutlined />}</Link>
               </Menu.Item> */}
-              <Menu.Item>
-                <Link to="#">{<TwitterOutlined />}</Link>
-              </Menu.Item>
-              <Menu.Item>
-                <Link to="#">{<InstagramOutlined />}</Link>
-              </Menu.Item>
-              {/* <Menu.Item>
+            <Menu.Item>
+              <Link to="#">{<TwitterOutlined />}</Link>
+            </Menu.Item>
+            <Menu.Item>
+              <Link to="#">{<InstagramOutlined />}</Link>
+            </Menu.Item>
+            {/* <Menu.Item>
                 <Link to="#">
                   <svg
                     width="18"
@@ -322,18 +324,18 @@ function SignUp() {
                   </svg>
                 </Link>
               </Menu.Item> */}
-              <Menu.Item>
-                <Link to="#">{<GithubOutlined />}</Link>
-              </Menu.Item>
-            </Menu>
-            <p className="copyright">
-              {" "}
-              Copyright © 2021 Muse by <a href="#pablo">Creative Tim</a>.{" "}
-            </p>
-          </Footer>
-        </div>
-      </>
-    );
-  }
+            <Menu.Item>
+              <Link to="#">{<GithubOutlined />}</Link>
+            </Menu.Item>
+          </Menu>
+          <p className="copyright">
+            {" "}
+            Copyright © 2021 Muse by <a href="#pablo">Creative Tim</a>.{" "}
+          </p>
+        </Footer>
+      </div>
+    </>
+  );
+}
 
-  export default SignUp;
+export default SignUp;
