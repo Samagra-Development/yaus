@@ -1,0 +1,81 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "defaultTitle",
+    "description": "defaultDescription",
+    "version": "0.1"
+  },
+  "servers": [
+    {
+      "url": "https://3333-samagradevelopme-yaus-dovyhk29qw5.ws-us54.gitpod.io"
+    }
+  ],
+  "paths": {
+    "/api/register": {
+      "post": {
+        "description": "Auto generated using Swagger Inspector",
+        "parameters": [
+          {
+            "name": "Access-Control-Allow-Origin",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "*"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "customHashId": {
+                    "type": "string"
+                  },
+                  "project": {
+                    "type": "string"
+                  },
+                  "user": {
+                    "type": "string"
+                  },
+                  "url": {
+                    "type": "string"
+                  }
+                }
+              },
+              "examples": {
+                "0": {
+                  "value": "{\r\n  \"url\": \"https://www.facebook.com/\",\r\n  \"user\": \"0fe6ff38-fc46-11ec-b939-0242ac120001\",\r\n  \"project\": \"0fe6ff38-fc46-11ec-b939-0242ac120002\",\r\n  \"customHashId\": \"facebook43012\"\r\n}"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "500": {
+            "description": "Auto generated using Swagger Inspector",
+            "content": {
+              "application/json; charset=utf-8": {
+                "schema": {
+                  "type": "string"
+                },
+                "examples": {}
+              }
+            }
+          }
+        },
+        "servers": [
+          {
+            "url": "https://3333-samagradevelopme-yaus-dovyhk29qw5.ws-us54.gitpod.io"
+          }
+        ]
+      },
+      "servers": [
+        {
+          "url": "https://3333-samagradevelopme-yaus-dovyhk29qw5.ws-us54.gitpod.io"
+        }
+      ]
+    }
+  }
+}
