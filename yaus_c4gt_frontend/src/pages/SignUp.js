@@ -1,5 +1,6 @@
 import React, { Component, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
+import Routes from "../assets/constants/routes.js";
 import { ReactComponent as DashboardIcon } from "../assets/icons/dashboardIcon.svg";
 import { ReactComponent as ProfileIcon } from "../assets/icons/profileIcon.svg";
 import { ReactComponent as SigninIcon } from "../assets/icons/signinIcon.svg";
@@ -42,7 +43,7 @@ function SignUp() {
   async function action() {
     let item = {
       registration: {
-        applicationId: "650c50b5-eae9-442e-88de-fc36be10a21b",
+        applicationId: `${process.env.REACT_APP_APPLICATION_ID}`,
       },
       user: {
         name: name,
@@ -87,25 +88,25 @@ function SignUp() {
           <div className="header-col header-nav">
             <Menu mode="horizontal" defaultSelectedKeys={["1"]}>
               <Menu.Item key="1">
-                <Link to="/dashboard">
+                <Link to={Routes.DASHBOARD}>
                   <DashboardIcon />
                   <span> Dashboard</span>
                 </Link>
               </Menu.Item>
               <Menu.Item key="2">
-                <Link to="/profile">
+                <Link to={Routes.PROFILE}>
                   <ProfileIcon />
                   <span>Profile</span>
                 </Link>
               </Menu.Item>
               <Menu.Item key="3">
-                <Link to="/sign-up">
+                <Link to={Routes.SIGN_UP}>
                   <SignupIcon />
                   <span> Sign Up</span>
                 </Link>
               </Menu.Item>
               <Menu.Item key="4">
-                <Link to="/sign-in">
+                <Link to={Routes.SIGN_IN}>
                   <SigninIcon />
                   <span> Sign In</span>
                 </Link>
