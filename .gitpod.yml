@@ -1,8 +1,6 @@
 tasks:
   - name: YAUS Server
     init: bash ./deploy.sh
-    env:
-      DATABASE_URL: "postgresql://postgres:yoursupersecret@localhost:5432/shortdb?schema=public"
 
 ports:
   - port: 5432
@@ -27,5 +25,11 @@ ports:
     onOpen: ignore
     visibility: public
   - port: 3333
+    onOpen: open-browser
+    visibility: public
+  - port: 9229
     onOpen: ignore
-    visibility: public  
+    visibility: public
+  - port: 6381
+    onOpen: ignore
+    visibility: public
