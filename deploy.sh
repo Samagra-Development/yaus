@@ -8,7 +8,7 @@ export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || pr
 nvm install 16
 nvm use 16
 
-cp sample.env .env
+cp sample.gitpod.env .env
 # sudo apt-get install unzip
 # unzip pgdata.zip
 # rm -rf pgdata.zip
@@ -31,10 +31,10 @@ npx prisma db seed
 sleep 30
 
 # Starting Server - https://8888-
-serverBaseURL=${GITPOD_WORKSPACE_URL:-default_value}
-serverBaseURL="https://8088-${serverBaseURL:8}/add/?name=shortnr&host=shortnr-cache&port=6379"
-curl "${serverBaseURL}"
-echo "Open this URL in a the browser to add redis to redisInsight ${serverBaseURL}"
+# serverBaseURL=${GITPOD_WORKSPACE_URL:-default_value}
+# serverBaseURL="https://8088-${serverBaseURL:8}/add/?name=shortnr&host=shortnr-cache&port=6379"
+# curl "${serverBaseURL}"
+# echo "Open this URL in a the browser to add redis to redisInsight ${serverBaseURL}"
 
 # start api server
 npx nx serve api
