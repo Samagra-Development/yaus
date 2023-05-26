@@ -1,5 +1,7 @@
 import React, { Component, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
+import * as apiUtil from "../apis/index.js";
+import { onFinishFailed, onFinish } from "../utils/outputResponse.js";
 import Routes from "../assets/constants/routes.js";
 import { ReactComponent as DashboardIcon } from "../assets/icons/dashboardIcon.svg";
 import { ReactComponent as ProfileIcon } from "../assets/icons/profileIcon.svg";
@@ -40,44 +42,55 @@ function SignUp() {
 
   const history = useHistory();
 
-  async function action() {
-    let item = {
-      registration: {
-        applicationId: `${process.env.REACT_APP_APPLICATION_ID}`,
-      },
-      user: {
-        name: name,
-        email: email,
-        password: password,
-      },
-    };
+  // async function action() {
+  //   let item = {
+  //     registration: {
+  //       applicationId: `${process.env.REACT_APP_APPLICATION_ID}`,
+  //     },
+  //     user: {
+  //       name: name,
+  //       email: email,
+  //       password: password,
+  //     },
+  //   };
+  //   let result = await fetch(
+  //     "https://fa.chakshu-rd.samagra.io/api/user/registration",
+  //     {
+  //       method: "POST",
+  //       credentials: "omit",
+  //       headers: {
+  //         Authorization: `${process.env.REACT_APP_AUTH_TOKEN}`,
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify(item),
+  //     }
+  //   );
+  //   result = await result.json();
+  //   // console.warn("Result", result)
+  //   localStorage.setItem("user-info", JSON.stringify(result));
+  //   history.push("/dashboard");
+  // }
 
-    let result = await fetch(
-      "https://fa.chakshu-rd.samagra.io/api/user/registration",
-      {
-        method: "POST",
-        credentials: "omit",
-        headers: {
-          Authorization: `${process.env.REACT_APP_AUTH_TOKEN}`,
-          "Content-Type": "application/json",
-        },
-
-        body: JSON.stringify(item),
-      }
-    );
-    result = await result.json();
-    // console.warn("Result", result)
-    localStorage.setItem("user-info", JSON.stringify(result));
-    history.push("/dashboard");
+  async function signUp() {
+    const reqBody = apiUtil.getSignUpReqBody({
+      name: name,
+      email: email,
+      password: password,
+    });
+    try {
+      const result = await apiUtil.getResponse(
+        apiUtil.baseUrl + "/user/registration",
+        reqBody
+      );
+      console.log("Api call Successful");
+      console.log(result);
+      localStorage.setItem("user-info", JSON.stringify(result));
+      history.push("/dashboard");
+    } catch (e) {
+      console.log(e);
+    }
   }
 
-  const onFinish = (values) => {
-    console.log("Success:", values);
-  };
-
-  const onFinishFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
-  };
   return (
     <>
       <div className="layout-default ant-layout layout-sign-up">
@@ -205,7 +218,7 @@ function SignUp() {
                   style={{ width: "100%" }}
                   type="primary"
                   htmlType="submit"
-                  onClick={action}
+                  onClick={signUp}
                 >
                   SIGN UP
                 </Button>

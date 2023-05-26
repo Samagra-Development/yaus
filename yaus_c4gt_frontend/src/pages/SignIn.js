@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import Routes from "../assets/constants/routes.js";
+import * as apiUtil from "../apis/index.js";
+import { onFinish, onFinishFailed } from "../utils/outputResponse.js";
 import {
   Layout,
   Menu,
@@ -16,7 +18,6 @@ import { ReactComponent as DashboardIcon } from "../assets/icons/dashboardIcon.s
 import { ReactComponent as ProfileIcon } from "../assets/icons/profileIcon.svg";
 import { ReactComponent as SigninIcon } from "../assets/icons/signinIcon.svg";
 import { ReactComponent as SignupIcon } from "../assets/icons/signupIcon.svg";
-
 import signinbg from "../assets/images/img-signin.jpg";
 import {
   DribbbleOutlined,
@@ -43,35 +44,19 @@ function SignIn() {
     }
   }, []);
 
-  const onFinish = (values) => {
-    console.log("Success:", values);
-  };
-
-  const onFinishFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
-  };
-
   async function login() {
-    let item = {
-      loginId: email,
-      password: password,
-      applicationId: `${process.env.REACT_APP_APPLICATION_ID}`,
-    };
-
-    let result = await fetch("https://fa.chakshu-rd.samagra.io/api/login", {
-      method: "POST",
-      credentials: "omit",
-      headers: {
-        Authorization: `${process.env.REACT_APP_AUTH_TOKEN}`,
-        "Content-Type": "application/json",
-      },
-
-      body: JSON.stringify(item),
-    });
-    result = await result.json();
-    localStorage.setItem("user-info", JSON.stringify(result));
-    history.push("/dashboard");
-    console.log("Result");
+    const reqBody = apiUtil.getSignInReqBody(email, password);
+    try {
+      const result = await apiUtil.getResponse(
+        apiUtil.baseUrl + "/login",
+        reqBody
+      );
+      localStorage.setItem("user-info", JSON.stringify(result));
+      history.push("/dashboard");
+      console.log("Result");
+    } catch (e) {
+      console.log(e);
+    }
   }
   return (
     <>
