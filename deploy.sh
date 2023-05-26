@@ -8,7 +8,7 @@ export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || pr
 nvm install 16
 nvm use 16
 
-cp sample.gitpod.env .env
+cp gitpod.env .env
 # sudo apt-get install unzip
 # unzip pgdata.zip
 # rm -rf pgdata.zip
