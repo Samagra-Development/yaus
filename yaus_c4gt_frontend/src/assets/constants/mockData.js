@@ -272,3 +272,36 @@ export const myData = [
   { x: "Nov", y: 0 },
   { x: "Dec", y: 0 },
 ];
+
+export const colBulkLink = [
+  {
+    title: "Name",
+    dataIndex: "Name",
+    key: "Name",
+  },
+  {
+    title: "Email Id",
+    dataIndex: "EmailId",
+    key: "EmailId",
+  },
+  {
+    title: "URL",
+    dataIndex: "Url",
+    key: "Url",
+  },
+  {
+    title: "UTM Source",
+    dataIndex: "utm_src",
+    key: "utm_src",
+  },
+  {
+    title: "UTM Campaign",
+    dataIndex: "utm_camp",
+    key: "utm_camp",
+  },
+  {
+    title: "Short URL",
+    dataIndex: "ShortUrl",
+    key: "ShortUrl",
+  },
+];
