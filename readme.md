@@ -81,6 +81,8 @@ This command will seed the dummy data.
 
 8. If everything is set up correctly, you should be able to access your application at `localhost:3000/api`. If this opens swagger ui your setup is correct.
 
+**Frontend is deployed at: `localhost:4200` and backend is deployed at: `localhost:3000`.**
+
 > _Note: You may want type hints as you code for that we would suggest you to install `node 16` and `yarn 1` and run command `yarn install` for installing local node modules. Do note that this is only for getting type hints and syntax highlighting. Docker will only be using node_modules that is inside the container. If you make any changes to `package.json` then you have to rebuild the container using `docker-compose -f docker-compose.local.yml up -d --build`_
 
 ### Contributing
