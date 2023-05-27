@@ -6,6 +6,18 @@ Batteries included URL Shortener that is designed for speed and scalability.
 
 [Docs here](https://github.com/Samagra-Development/yaus/tree/master/docs)
 
+## Setup
+
+There are two ways in which you can get up and running with this project.
+
+If you are just looking around and want to see quickly how this project works we recommend you start with [Gitpod](https://www.gitpod.io/) it is a service that runs your code in the cloud.
+
+All you have to do is click the button below. This will open this project in Gitpod and launch a new tab with the `https://3333-XXXXX.gitpod.io` type of link. (In case your browser doesn't launch this in a new tab then please check the browser's popup setting).
+
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/Samagra-Development/yaus)
+
+The other usual way is to set up everything locally on your system, for that, you can follow the instructions given below.
+
 ## Installation
 
 ### Prerequisites
