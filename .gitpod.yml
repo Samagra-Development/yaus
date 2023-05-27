@@ -33,3 +33,6 @@ ports:
   - port: 6381
     onOpen: ignore
     visibility: public
+  - port: 4200
+    onOpen: open-browser
+    visibility: public

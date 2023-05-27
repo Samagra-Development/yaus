@@ -12,9 +12,12 @@ There are two ways in which you can get up and running with this project.
 
 If you are just looking around and want to see quickly how this project works we recommend you start with [Gitpod](https://www.gitpod.io/) it is a service that runs your code in the cloud.
 
-All you have to do is click the button below. This will open this project in Gitpod and launch a new tab with the `https://3333-XXXXX.gitpod.io` type of link. (In case your browser doesn't launch this in a new tab then please check the browser's popup setting).
-
+All you have to do is click the button below.
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/Samagra-Development/yaus)
+
+This will open this project in Gitpod and launch two new tabs. The one with the `https://3333-XXXXX.gitpod.io` type of link is for the backend and the other with the `https://4200-XXXXX.gitpod.io` type of link is for frontend.
+
+(In case your browser doesn't launch these tabs then please check the browser's popup setting).
 
 The other usual way is to set up everything locally on your system, for that, you can follow the instructions given below.
 

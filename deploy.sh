@@ -37,4 +37,4 @@ sleep 30
 # echo "Open this URL in a the browser to add redis to redisInsight ${serverBaseURL}"
 
 # start api server
-npx nx serve api
+npx nx run-many --target=serve --all
