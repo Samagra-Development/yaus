@@ -1,4 +1,4 @@
-FROM node:16 AS builder
+FROM node:16
 
 # Create app directory
 WORKDIR /app
@@ -17,7 +17,6 @@ RUN yarn install
 
 COPY . .
 
-
 RUN npx prisma generate --schema=./apps/api/src/app/prisma/schema.prisma
 
 COPY . .
@@ -25,4 +24,4 @@ COPY . .
 # Generate build
 RUN yarn run build
 
-CMD [ "npx", "nx", "serve", "api" ]
+CMD [ "npx", "nx", "run-many", "--target=serve", "--all" ]
