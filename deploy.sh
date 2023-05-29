@@ -23,8 +23,8 @@ sudo chown -R 1001:1001 redisinsight
 docker-compose -f docker-compose.gitpod.yml up -d
 
 yarn install
-npx prisma generate --schema=/workspace/yaus/apps/api/src/app/prisma/schema.prisma
-npx prisma migrate dev --schema=/workspace/yaus/apps/api/src/app/prisma/schema.prisma
+npx prisma generate --schema=./apps/api/src/app/prisma/schema.prisma
+npx prisma migrate dev --schema=./apps/api/src/app/prisma/schema.prisma
 npx prisma db seed
 
 # sleep for 15 seconds
