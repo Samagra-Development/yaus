@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "@api/yaus_link_generation": "file:.api/apis/yaus_link_generation",
-    "api": "^5.0.0-beta.1"
-  }
-}
