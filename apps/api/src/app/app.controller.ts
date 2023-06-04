@@ -59,8 +59,8 @@ export class AppController {
   @ApiResponse({ status: 200, description: 'Result Report for All the Health Check Services' })
   async checkHealth() {
     return this.healthCheckService.check([
-      async () => this.http.pingCheck('RabbitMQ', 'http://localhost:15672/'),
-      async () => this.http.pingCheck('Basic Check', 'http://localhost:3333/api'),
+      async () => this.http.pingCheck('RabbitMQ', this.configService.get('RABBITMQ_HEALTH_URL')),
+      async () => this.http.pingCheck('Basic Check', this.configService.get('BASE_URL')),
       async () => this.redisIndicator.checkHealth('Redis', { type: 'redis', client: this.redis, timeout: 500 }),
       async () => this.prismaIndicator.isHealthy('Db'),
     ])
