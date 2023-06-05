@@ -1,4 +1,4 @@
-FROM node:16 AS builder
+FROM node:16
 
 # Create app directory
 WORKDIR /app
@@ -14,6 +14,10 @@ COPY yarn.lock ./
 
 # Install app dependencies
 RUN yarn install
+
+COPY . .
+
+RUN npx prisma generate --schema=./apps/api/src/app/prisma/schema.prisma
 
 COPY . .
 
