@@ -8,8 +8,8 @@
 
 The figma designs of the above features can be found here:
 
-- [Campaign Folders](url)
-- [Expiry Status Icon](url)
-- [Link Expiry Editor](url)
+- [Campaign Folders](../../images/Folder.png)
+- [Expiry Status Icon](../../images/Expiry%20Status.png)
+- [Link Expiry Editor](../../images/Expiry%20Editor.png)
 
 The figma walkthrough can be viewed [here](https://www.figma.com/proto/IFo3ZztIKWZYFc8qTUeFFT/Link-Shortner-App-Design?type=design&node-id=10-50&scaling=min-zoom&page-id=0%3A1&starting-point-node-id=10%3A50).
