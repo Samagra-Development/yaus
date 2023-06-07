@@ -104,7 +104,7 @@ export class AppService {
       });
     }
 
-    async redirect(hashid: string): Promise<string> {
+    async redirect(hashid: string, queryParams?: Record<string, string | string[]>): Promise<string> {
         return this.prisma.link.findMany({
           where: {
             OR: [
@@ -122,20 +122,39 @@ export class AppService {
           take: 1
         })
         .then(response => {
-          const url = response[0].url
+          let url = response[0].url
           const params = response[0].params
           const ret = [];
           
           this.updateClicks(response[0].hashid.toString());
 
-          if(params == null){
-            return url;
-          }else {
+          if(params != null){
             Object.keys(params).forEach(function(d) {
               ret.push(encodeURIComponent(d) + '=' + encodeURIComponent(params[d]));
             })
-            return `${url}?${ret.join('&')}` || '';
+            url = `${url}?${ret.join('&')}` || '';
           }
+
+          if (queryParams && Object.keys(queryParams).length) {
+            if (params == null) {
+              url += "?";
+            } else {
+              url += "&";
+            }
+            const qparams = [];
+            Object.keys(queryParams).forEach((d: string) => {
+              if (Array.isArray(queryParams[d])) {
+                (queryParams[d] as string[]).forEach(val => {
+                  qparams.push(encodeURIComponent(d) + "=" + encodeURIComponent(val));
+                });
+              } else {
+                qparams.push(encodeURIComponent(d) + "=" + encodeURIComponent(queryParams[d] as string));
+              }
+            });
+            url += qparams.join("&") || "";
+          }
+
+          return url;
         })
         .catch(err => {
           this.telemetryService.sendEvent(this.configService.get<string>('POSTHOG_DISTINCT_KEY'), "Exception in getLinkFromHashIdOrCustomHashId query", {error: err.message})

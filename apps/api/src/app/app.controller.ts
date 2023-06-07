@@ -8,6 +8,7 @@ import {
   Patch,
   Post,
   Put,
+  Query,
   Res,
   UseInterceptors,
 } from '@nestjs/common';
@@ -90,8 +91,8 @@ export class AppController {
   @Get('/:hashid')
   @ApiOperation({ summary: 'Redirect Links' })
   @ApiResponse({ status: 301, description: 'will be redirected to the specified link'})
-  async redirect(@Param('hashid') hashid: string, @Res() res) {
-    const reRouteURL: string = await this.appService.redirect(hashid);
+  async redirect(@Param('hashid') hashid: string, @Query() queryParams: Record<string, string | string[]>, @Res() res) {
+    const reRouteURL: string = await this.appService.redirect(hashid, queryParams);
     this.clickServiceClient
       .send('onClick', {
         hashid: hashid,
