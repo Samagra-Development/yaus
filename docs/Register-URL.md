@@ -10,7 +10,6 @@
 | ------------ | -------- | -------- | ------------------------------------------------------------------- |
 | user         | `string` | `true`   | User Id(UUID) of the user creating the url                          |
 | tags         | `array`  | `false`  | Defined tags for the URL which can be tracked for future analysis   |
-| clicks       | `int`    | `false`  | Number of present clicks on the URL (Defaults to 0)                 |
 | url          | `string` | `false`  | Number of present clicks on the URL (Defaults to 0)                 |
 | hashid       | `int`    | `false`  | Auto Incremented Id for the URL                                     |
 | project      | `string` | `false`  | Project Id(UUID) for the the project for which the URL is created   |
@@ -25,7 +24,6 @@ Example:
   "tags": [
     "string",
   ],
-  "clicks": "integer",
   "url": "string",
   "hashid": "integer",
   "project": "string",
@@ -51,7 +49,6 @@ Example:
   "tags": [
     "string"
   ],
-  "clicks": "integer",
   "url": "string",
   "hashid": "integer",
   "project": "string: UUID",
