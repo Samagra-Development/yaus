@@ -34,7 +34,7 @@ async function bootstrap() {
   //   },
   // });
 
-  const globalPrefix = 'api';
+  const globalPrefix = process.env.APP_GLOBAL_PREFIX || '';
   app.setGlobalPrefix(globalPrefix);
 
   const config = new DocumentBuilder()
