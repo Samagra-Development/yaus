@@ -1,12 +1,12 @@
 import { Menu } from "antd";
 import { NavLink, useLocation } from "react-router-dom";
-import logo from "../../assets/images/logo.png";
-import { ReactComponent as DashboardIcon } from "../../assets/icons/dashboardIcon.svg";
-import { ReactComponent as SigninIcon } from "../../assets/icons/signinIcon.svg";
-import { ReactComponent as SignupIcon } from "../../assets/icons/signupIcon.svg";
-import { ReactComponent as LinkManagerIcon } from "../../assets/icons/linkManager.svg";
-import { ReactComponent as RecentActivitiesIcon } from "../../assets/icons/recentActivities.svg";
-import { ReactComponent as FormWizardIcon } from "../../assets/icons/formWizard.svg";
+import logo from "app/assets/images/logo.png";
+import { ReactComponent as DashboardIcon } from "app/assets/icons/dashboardIcon.svg";
+import { ReactComponent as SigninIcon } from "app/assets/icons/signinIcon.svg";
+import { ReactComponent as SignupIcon } from "app/assets/icons/signupIcon.svg";
+import { ReactComponent as LinkManagerIcon } from "app/assets/icons/linkManager.svg";
+import { ReactComponent as RecentActivitiesIcon } from "app/assets/icons/recentActivities.svg";
+import { ReactComponent as FormWizardIcon } from "app/assets/icons/formWizard.svg";
 
 function Sidenav({ color }) {
   const { pathname } = useLocation();

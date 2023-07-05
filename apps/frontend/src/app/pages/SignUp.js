@@ -6,9 +6,9 @@ import { Layout, Menu, Button, Typography, Form, Input,Checkbox,Card } from "ant
 // prettier-ignore
 import { TwitterOutlined, InstagramOutlined, GithubOutlined } from "@ant-design/icons";
 
-import { onFinishFailed, onFinish } from "../utils/outputResponse.js";
-import * as apiUtil from "../apis/index.js";
-import Navbar from "../components/layout/NavBar.js";
+import { onFinishFailed, onFinish } from "app/utils/outputResponse.js";
+import * as apiUtil from "app/apis/index.js";
+import Navbar from "app/components/layout/NavBar.js";
 
 const { Title } = Typography;
 const { Footer, Content } = Layout;
@@ -23,7 +23,6 @@ function SignUp() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
   const history = useNavigate();
 
   async function signUp() {

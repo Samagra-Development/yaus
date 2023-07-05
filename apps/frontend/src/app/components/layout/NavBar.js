@@ -1,8 +1,8 @@
-import Routes from "../../assets/constants/routes";
-import { ReactComponent as DashboardIcon } from "../../assets/icons/dashboardIcon.svg";
-import { ReactComponent as ProfileIcon } from "../../assets/icons/profileIcon.svg";
-import { ReactComponent as SigninIcon } from "../../assets/icons/signinIcon.svg";
-import { ReactComponent as SignupIcon } from "../../assets/icons/signupIcon.svg";
+import Routes from "app/assets/constants/routes";
+import { ReactComponent as DashboardIcon } from "app/assets/icons/dashboardIcon.svg";
+import { ReactComponent as ProfileIcon } from "app/assets/icons/profileIcon.svg";
+import { ReactComponent as SigninIcon } from "app/assets/icons/signinIcon.svg";
+import { ReactComponent as SignupIcon } from "app/assets/icons/signupIcon.svg";
 import { Link } from "react-router-dom";
 import { Layout, Menu } from "antd";
 const { Header } = Layout;

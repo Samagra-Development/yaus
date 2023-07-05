@@ -3,12 +3,12 @@ import { Layout, Menu, Button, Row, Col, Typography, Form, Input, Switch } from 
 // prettier-ignore
 import { TwitterOutlined, InstagramOutlined, GithubOutlined } from "@ant-design/icons";
 
-import signinbg from "../assets/images/img-signin.jpg";
+import signinbg from "app/assets/images/img-signin.jpg";
 import { useEffect, useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
-import * as apiUtil from "../apis/index.js";
-import { onFinish, onFinishFailed } from "../utils/outputResponse.js";
-import Navbar from "../components/layout/NavBar";
+import * as apiUtil from "app/apis/index.js";
+import { onFinish, onFinishFailed } from "app/utils/outputResponse.js";
+import Navbar from "app/components/layout/NavBar";
 
 function onChange(checked) {
   console.log(`switch to ${checked}`);

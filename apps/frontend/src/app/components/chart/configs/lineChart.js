@@ -1,4 +1,4 @@
-import { mainDashboardChart } from "../../../assets/constants/mockData";
+import { mainDashboardChart } from "app/assets/constants/mockData";
 
 async function action() {
   return mainDashboardChart;

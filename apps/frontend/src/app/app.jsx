@@ -2,15 +2,15 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import "antd/dist/antd.css";
 import "./assets/styles/main.css";
 import "./assets/styles/responsive.css";
-import Home from "./pages/Home";
-import SignIn from "./pages/SignIn";
-import SignUp from "./pages/SignUp";
-import Main from "./components/layout/Main";
-import Protect from "./Protect";
-import FormWizard from "./pages/FormWizard";
-import BulkLink from "./pages/BulkLink";
-import LinkManager from "./pages/Link_Manager";
-import Recent_Activities from "./pages/Recent_Activities";
+import Home from "app/pages/Home";
+import SignIn from "app/pages/SignIn";
+import SignUp from "app/pages/SignUp";
+import Main from "app/components/layout/Main";
+import Protect from "app/Protect";
+import FormWizard from "app/pages/FormWizard";
+import BulkLink from "app/pages/BulkLink";
+import LinkManager from "app/pages/Link_Manager";
+import Recent_Activities from "app/pages/Recent_Activities";
 function App() {
   return (
     <div className="App">

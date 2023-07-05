@@ -4,18 +4,18 @@ import { Card, Modal, Avatar, Alert, Row, Col } from "antd";
 import axios from "axios";
 import { CopyOutlined } from "@ant-design/icons";
 import { LinkPreview } from "@dhaiwat10/react-link-preview";
-import Interaction from "../components/layout/Interaction";
+import Interaction from "app/components/layout/Interaction";
 import { nanoid } from "nanoid";
 import {
   LOVE_ICON,
   COMMENT_ICON,
   SHARE_ICON,
-} from "../components/layout/icons";
-import FormHomePage from "./FormHomePage";
-import FormAnalyticsPage from "./FormAnalyticsPage";
-import FormRedirectPage from "./FormRedirectPage";
-import FormLinkDataPage from "./FormLinkDataPage";
-import FormTagsPage from "./FormTagsPage";
+} from "app/components/layout/icons";
+import FormHomePage from "app/pages/FormHomePage";
+import FormAnalyticsPage from "app/pages/FormAnalyticsPage";
+import FormRedirectPage from "app/pages/FormRedirectPage";
+import FormLinkDataPage from "app/pages/FormLinkDataPage";
+import FormTagsPage from "app/pages/FormTagsPage";
 const { Footer } = Layout;
 const { Step } = Steps;
 const { Meta } = Card;

@@ -16,10 +16,10 @@ import {
   LOVE_ICON,
   COMMENT_ICON,
   SHARE_ICON,
-} from "../components/layout/icons";
+} from "app/components/layout/icons";
 
 import { InfoCircleOutlined } from "@ant-design/icons";
-import Interaction from "../components/layout/Interaction";
+import Interaction from "app/components/layout/Interaction";
 import { LinkPreview } from "@dhaiwat10/react-link-preview";
 import { nanoid } from "nanoid";
 const { Meta } = Card;

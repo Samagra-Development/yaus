@@ -8,7 +8,7 @@ const getSignUpReqBody = (user) => {
   console.log(
     JSON.stringify({
       registration: {
-        applicationId: "650c50b5-eae9-442e-88de-fc36be10a21b",
+        applicationId: "650c50b5-eae9-442e-88de-fc36be10a21b", // TO DO : Change this to env variable
       },
       user: {
         name: "test",

@@ -1,4 +1,4 @@
-import { piedata } from "./mockData";
+import { piedata } from "app/assets/constants/mockData";
 export const config = {
   appendPadding: 10,
   data: piedata,

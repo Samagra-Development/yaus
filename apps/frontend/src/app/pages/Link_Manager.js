@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { AudioOutlined } from "@ant-design/icons";
 import { Input, Space } from "antd";
 import { NavLink, useLocation } from "react-router-dom";
-import { linkManagerData } from "../assets/constants/mockData";
+import { linkManagerData } from "app/assets/constants/mockData";
 const { Search } = Input;
 const suffix = (
   <AudioOutlined
