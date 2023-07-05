@@ -3,7 +3,11 @@ import React, { useState } from "react";
 import { AudioOutlined } from "@ant-design/icons";
 import { Input, Space } from "antd";
 import { NavLink, useLocation } from "react-router-dom";
-import { colRecentActivities, data } from "../assets/constants/mockData";
+import {
+  colRecentActivities,
+  data,
+  recentActivityData,
+} from "../assets/constants/mockData";
 import { Excel } from "antd-table-saveas-excel";
 const { Search } = Input;
 const suffix = (
@@ -46,12 +50,7 @@ const App = () => (
 );
 
 async function recent() {
-  const url = "http://localhost:3233/recent_activity_data";
-  const response = await fetch(url);
-
-  const recent_data = await response.json();
-  console.log(recent_data);
-  return recent_data;
+  return recentActivityData;
 }
 
 recent();

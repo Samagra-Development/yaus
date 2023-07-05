@@ -1,10 +1,7 @@
-async function action() {
-  const url = "http://localhost:3233/main_dashboard_chart";
-  const response = await fetch(url);
+import { mainDashboardChart } from "../../../assets/constants/mockData";
 
-  const dataset = await response.json();
-  console.log(dataset);
-  return dataset;
+async function action() {
+  return mainDashboardChart;
 }
 
 action();

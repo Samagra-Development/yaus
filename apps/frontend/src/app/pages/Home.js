@@ -19,8 +19,14 @@ import { OnBoarding } from "antd-onboarding";
 import "antd-onboarding/assets/index.css";
 import "antd/dist/antd.css";
 import lineChart from "../components/chart/configs/lineChart";
-import { columns, myData, count } from "../assets/constants/mockData";
+import {
+  columns,
+  myData,
+  count,
+  dashboardTable,
+} from "../assets/constants/mockData";
 import { config } from "../assets/constants/DashboardConfig";
+import Navbar from "../components/layout/NavBar";
 
 const { Search } = Input;
 
@@ -40,12 +46,7 @@ function Home() {
   };
 
   async function tab() {
-    const url = "http://localhost:3233/dashboard_table";
-    const response = await fetch(url);
-
-    const objectData = await response.json();
-    console.log(objectData);
-    return objectData;
+    return dashboardTable;
   }
 
   tab();

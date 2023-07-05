@@ -305,3 +305,167 @@ export const colBulkLink = [
     key: "ShortUrl",
   },
 ];
+
+export const dashboardTable = [
+  {
+    url: " https://yaus.xyz/education",
+    date_created: "2022-07-09",
+    no_of_clicks: "3",
+    no_of_views: "8",
+    no_of_opens: "5",
+    no_of_installs: "89",
+    userID: "0fe6ff38-fc46-11ec-b939-0242ac120001",
+    projectID: "0fe6ff38-fc46-11ec-b939-0242ac120002",
+  },
+  {
+    url: " https://yaus.xyz/govt",
+    date_created: "2022-06-22",
+    no_of_clicks: "33",
+    no_of_views: "28",
+    no_of_opens: "95",
+    no_of_installs: "64",
+    userID: "0fe6ff38-fc46-11ec-b939-0242ac120007",
+    projectID: "0fe6ff38-fc46-11ec-b939-0242ac120003",
+  },
+  {
+    url: " https://yaus.xyz/design",
+    date_created: "2022-07-19",
+    no_of_clicks: "34",
+    no_of_views: "86",
+    no_of_opens: "19",
+    no_of_installs: "23",
+    userID: "0fe6ff38-fc46-11ec-b939-0242ac120008",
+    projectID: "0fe6ff38-fc46-11ec-b939-0242ac120004",
+  },
+  {
+    url: " https://yaus.xyz/create",
+    date_created: "2022-07-03",
+    no_of_clicks: "31",
+    no_of_views: "68",
+    no_of_opens: "55",
+    no_of_installs: "32",
+    userID: "0fe6ff38-fc46-11ec-b939-0242ac120009",
+    projectID: "0fe6ff38-fc46-11ec-b939-0242ac120005",
+  },
+  {
+    url: " https://yaus.xyz/create",
+    date_created: "2022-06-15",
+    no_of_clicks: "78",
+    no_of_views: "15",
+    no_of_opens: "46",
+    no_of_installs: "85",
+    userID: "0fe6ff38-fc46-11ec-b939-0242ac120000",
+    projectID: "0fe6ff38-fc46-11ec-b939-0242ac120006",
+  },
+];
+
+export const linkManagerData = [
+  {
+    url: " https://yaus.xyz/sunbird437",
+    date_created: "2022-07-09",
+    title: "Test",
+    no_of_clicks: "335",
+    no_of_opens: "144",
+  },
+  {
+    url: " https://yaus.xyz/sunbird842",
+    date_created: "2022-06-22",
+    title: "Test",
+    no_of_clicks: "125",
+    no_of_opens: "110",
+  },
+  {
+    url: " https://yaus.xyz/sunbird371",
+    date_created: "2022-07-19",
+    no_of_clicks: "194",
+    title: "Test",
+    no_of_opens: "139",
+  },
+  {
+    url: " https://yaus.xyz/sunbird752",
+    date_created: "2022-07-03",
+    title: "Test",
+    no_of_clicks: "168",
+    no_of_opens: "128",
+  },
+  {
+    url: " https://yaus.xyz/create",
+    date_created: "2022-06-15",
+    no_of_clicks: "178",
+    title: "Test",
+    no_of_opens: "146",
+  },
+];
+
+export const recentActivityData = [
+  {
+    activity: " https://yaus.xyz/design_draft",
+    date_created: "2022-07-19",
+    title: "Design Draft",
+    name: "Chakshu",
+    email: "chakshu@gmail.com",
+  },
+  {
+    activity: " https://yaus.xyz/education_proposal",
+    date_created: "2022-07-09",
+    title: "Education Proposal",
+    name: "Kanika",
+    email: "kanikagola26@gmail.com",
+  },
+  {
+    activity: " https://yaus.xyz/Tax_bill",
+    date_created: "2022-07-03",
+    title: "Tax Expense",
+    name: "Manav",
+    email: "manav@gmail.com",
+  },
+  {
+    activity: " https://yaus.xyz/govt_docs",
+    date_created: "2022-06-22",
+    title: "Goverment Docs",
+    name: "Akshay",
+    email: "akshay@gmail.com",
+  },
+  {
+    activity: " https://yaus.xyz/property_stats",
+    date_created: "2022-06-15",
+    title: "Property Stats",
+    name: "Shruti",
+    email: "shruti@gmail.com",
+  },
+];
+
+export const mainDashboardChart = [
+  {
+    month: "jan",
+    url_created: "53",
+  },
+  {
+    month: "feb",
+    url_created: "62",
+  },
+  {
+    month: "mar",
+    url_created: "70",
+  },
+  {
+    month: "apr",
+    url_created: "67",
+  },
+  {
+    month: "may",
+    url_created: "77",
+  },
+  {
+    month: "jun",
+    url_created: "84",
+  },
+  {
+    month: "jul",
+    url_created: "90",
+  },
+  {
+    month: "aug",
+    url_created: "95",
+  },
+];

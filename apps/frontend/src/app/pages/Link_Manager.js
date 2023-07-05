@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { AudioOutlined } from "@ant-design/icons";
 import { Input, Space } from "antd";
 import { NavLink, useLocation } from "react-router-dom";
+import { linkManagerData } from "../assets/constants/mockData";
 const { Search } = Input;
 const suffix = (
   <AudioOutlined
@@ -108,12 +109,7 @@ const columns = [
 ];
 
 async function manager() {
-  const url = "http://localhost:3233/link_manager_data";
-  const response = await fetch(url);
-
-  const manager_data = await response.json();
-  console.log(manager_data);
-  return manager_data;
+  return linkManagerData;
 }
 
 manager();
