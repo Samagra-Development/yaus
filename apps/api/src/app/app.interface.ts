@@ -1,5 +1,4 @@
 import { ApiProperty } from "@nestjs/swagger"
-
 export class Link {
     @ApiProperty({
         description: 'Unique Id of Link',
