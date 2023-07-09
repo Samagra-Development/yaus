@@ -16,9 +16,6 @@ action()
       return index.url_created;
     });
 
-    console.log(month);
-    console.log(url_created);
-
     for (let i = 0; i < month.length; i++) {
       lineChart.options.xaxis.categories[i] = month[i];
     }

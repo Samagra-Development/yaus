@@ -7,6 +7,7 @@ import { Row, Col, Breadcrumb, Button } from "antd";
 
 import { NavLink, Link } from "react-router-dom";
 
+// TO DO: Shift these to constants file
 const profile = [
   <svg
     width="20"
@@ -39,13 +40,13 @@ const toggler = [
 
 function Header({ name, subName, onPress }) {
   const local_info = JSON.parse(localStorage.getItem("user-info"));
-  const Navigate = useNavigate();
+  const navigate = useNavigate();
 
   useEffect(() => window.scrollTo(0, 0));
 
   function logout() {
     localStorage.clear();
-    Navigate.push("/signup");
+    navigate("/signup");
   }
 
   return (

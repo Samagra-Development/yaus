@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 function Protect(props) {
-  let Cmp = props.Cmp;
+  let Component = props.Component;
   const history = useNavigate();
   useEffect(() => {
     if (!localStorage.getItem("user-info")) {
@@ -13,7 +13,7 @@ function Protect(props) {
 
   return (
     <div>
-      <Cmp />
+      <Component />
     </div>
   );
 }

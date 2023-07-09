@@ -1,23 +1,5 @@
-export const mockUser = {
-  name: "Test User",
-  email: "test@gmail.com",
-  password: "test@123",
-};
 const baseUrl = "https://fa.chakshu-rd.samagra.io/api";
 const getSignUpReqBody = (user) => {
-  console.log(
-    JSON.stringify({
-      registration: {
-        applicationId: "650c50b5-eae9-442e-88de-fc36be10a21b", // TO DO : Change this to env variable
-      },
-      user: {
-        name: "test",
-        email: "test@gmail.com",
-        password: "test@123",
-      },
-    })
-  );
-
   return {
     registration: {
       applicationId: `${process.env.REACT_APP_APPLICATION_ID}`,

@@ -9,37 +9,43 @@ import { Link, Navigate, useNavigate } from "react-router-dom";
 import * as apiUtil from "app/apis/index.js";
 import { onFinish, onFinishFailed } from "app/utils/outputResponse.js";
 import Navbar from "app/components/layout/NavBar";
-
+import Footer from "app/components/layout/Footer.js";
+import { mockUser } from "app/assets/constants/mockData"; // TODO: Remove this line
 function onChange(checked) {
   console.log(`switch to ${checked}`);
 }
 const { Title } = Typography;
-const { Footer, Content } = Layout;
+const { Content } = Layout;
 
 function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const history = useNavigate();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (localStorage.getItem("user-info")) {
-      Navigate.push("/dashboard");
+      navigate("/dashboard");
     }
   }, []);
 
   async function login() {
+    // comment this out after testing the api call
+    localStorage.setItem("user-info", JSON.stringify(mockUser));
     // Get Request Body
     const reqBody = apiUtil.getSignInReqBody(email, password);
     try {
+      // Uncomment this block to make API call
+      /**
       // Get Response
       const result = await apiUtil.getResponse(
         apiUtil.baseUrl + "/login",
         reqBody
-      );
-      // Set Local Storage
-      localStorage.setItem("user-info", JSON.stringify(result));
-      history.push("/dashboard");
+        );
+        // Set Local Storage
+        localStorage.setItem("user-info", JSON.stringify(result));
+      */
+      navigate("/dashboard");
     } catch (e) {
       console.log(e);
     }
@@ -137,27 +143,7 @@ function SignIn() {
           </Col>
         </Row>
       </Content>
-
-      {/* TO DO : Made a separete component */}
-      <Footer>
-        <Menu mode="horizontal">
-          <Menu.Item>Company</Menu.Item>
-          <Menu.Item>About Us</Menu.Item>
-          <Menu.Item>Teams</Menu.Item>
-          <Menu.Item>Blogs</Menu.Item>
-        </Menu>
-        <Menu mode="horizontal" className="menu-nav-social">
-          <Menu.Item>
-            <Link to="#">{<TwitterOutlined />}</Link>
-          </Menu.Item>
-          <Menu.Item>
-            <Link to="#">{<InstagramOutlined />}</Link>
-          </Menu.Item>
-          <Menu.Item>
-            <Link to="#">{<GithubOutlined />}</Link>
-          </Menu.Item>
-        </Menu>
-      </Footer>
+      <Footer />
     </Layout>
   );
 }

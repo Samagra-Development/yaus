@@ -1,13 +1,19 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { Layout, Drawer, Affix } from "antd";
+import { Route, Navigate, Routes } from "react-router-dom";
+import Home from "app/pages/Home";
+import Protect from "app/Protect";
+import FormWizard from "app/pages/FormWizard";
+import BulkLink from "app/pages/BulkLink";
+import LinkManager from "app/pages/Link_Manager";
+import Recent_Activities from "app/pages/Recent_Activities";
 import Sidenav from "app/components/layout/Sidenav";
 import Header from "app/components/layout/Header";
-import Footer from "app/components/layout/Footer";
 
 const { Header: AntHeader, Content, Sider } = Layout;
 
-function Main({ children }) {
+function Main() {
   const [visible, setVisible] = useState(false);
   const [placement, setPlacement] = useState("right");
   const [sidenavColor, setSidenavColor] = useState("#1890ff");
@@ -108,8 +114,22 @@ function Main({ children }) {
             />
           </AntHeader>
         )}
-        <Content className="content-ant">{children}</Content>
-        <Footer />
+        <Content className="content-ant">
+          <Routes>
+            <Route path="LinkCreate" element={<FormWizard />} />
+            <Route path="dashboard" element={<Home />} />
+            <Route path="Bulk" element={<Protect Component={BulkLink} />} />
+            <Route
+              path="linkmanager"
+              element={<Protect Component={LinkManager} />}
+            />
+            <Route
+              path="recent"
+              element={<Protect Component={Recent_Activities} />}
+            />
+            <Route path="*" element={<Navigate to="/dashboard" />} />
+          </Routes>
+        </Content>
       </Layout>
     </Layout>
   );

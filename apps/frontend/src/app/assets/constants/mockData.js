@@ -469,3 +469,21 @@ export const mainDashboardChart = [
     url_created: "95",
   },
 ];
+
+export const mockUser = {
+  user: {
+    active: true,
+    connectorId: "",
+    email: "test1@gmail.com",
+    id: "",
+    insertInstant: 1688576545215,
+    lastLoginInstant: 1688576545248,
+    lastUpdateInstant: 1688576545215,
+    passwordChangeRequired: false,
+    passwordLastUpdateInstant: 1688576545243,
+    tenantId: "",
+    twoFactor: {},
+    usernameStatus: "ACTIVE",
+    verified: true,
+  },
+};

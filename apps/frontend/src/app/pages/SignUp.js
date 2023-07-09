@@ -11,7 +11,8 @@ import * as apiUtil from "app/apis/index.js";
 import Navbar from "app/components/layout/NavBar.js";
 
 const { Title } = Typography;
-const { Footer, Content } = Layout;
+const { Content } = Layout;
+import Footer from "app/components/layout/Footer.js";
 
 function SignUp() {
   useEffect(() => {
@@ -134,25 +135,7 @@ function SignUp() {
           </p>
         </Card>
       </Content>
-      <Footer>
-        <Menu mode="horizontal">
-          <Menu.Item>Company</Menu.Item>
-          <Menu.Item>About Us</Menu.Item>
-          <Menu.Item>Teams</Menu.Item>
-          <Menu.Item>Products</Menu.Item>
-        </Menu>
-        <Menu mode="horizontal" className="menu-nav-social">
-          <Menu.Item>
-            <Link to="#">{<TwitterOutlined />}</Link>
-          </Menu.Item>
-          <Menu.Item>
-            <Link to="#">{<InstagramOutlined />}</Link>
-          </Menu.Item>
-          <Menu.Item>
-            <Link to="#">{<GithubOutlined />}</Link>
-          </Menu.Item>
-        </Menu>
-      </Footer>
+      <Footer />
     </div>
   );
 }

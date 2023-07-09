@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { AudioOutlined } from "@ant-design/icons";
 import { Line, Pie } from "@ant-design/charts";
 import { NavLink } from "react-router-dom";
