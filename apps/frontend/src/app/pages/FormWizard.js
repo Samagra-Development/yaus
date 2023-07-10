@@ -138,9 +138,6 @@ const FormDemo = () => {
         )}
         {current === 4 && (
           <>
-            {/*  <Button form="myForm" type="submit" htmlType="submit" align="right" onClick={() => navigator.clipboard.writeText(`${baseUrl}/${state.customHashId}`)}>
-                        Done
-                    </Button> */}
             <Button
               form="myForm"
               type="submit"

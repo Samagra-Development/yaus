@@ -1,0 +1,6 @@
+@media (max-width: 767px) {
+    .logout-span {
+      display: inline-block; /* show the span on small screens */
+    }
+  }
+  

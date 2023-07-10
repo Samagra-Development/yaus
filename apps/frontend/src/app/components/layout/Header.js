@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { LogoutOutlined } from "@ant-design/icons";
 import { Space } from "antd";
 import { useNavigate } from "react-router-dom";
-
+import "app/assets/styles/header.css";
 import { Row, Col, Breadcrumb, Button } from "antd";
 
 import { NavLink, Link } from "react-router-dom";
@@ -81,7 +81,7 @@ function Header({ name, subName, onPress }) {
         {localStorage.getItem("user-info") ? (
           <>
             {" "}
-            <Link to="/sign-up" className="btn-sign-in">
+            <Link to="/sign-up" className="logout-span ">
               <span onClick={logout}>
                 <LogoutOutlined />
                 Sign Out
@@ -89,7 +89,7 @@ function Header({ name, subName, onPress }) {
             </Link>
           </>
         ) : (
-          <Link to="/sign-in" className="btn-sign-in">
+          <Link to="/sign-in" className="logout-span">
             {profile}
             <span>Sign in</span>
           </Link>

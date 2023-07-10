@@ -54,7 +54,7 @@ function FormAnalyticsPage() {
           <Space>
             <Input
               style={{
-                width: 500,
+                width: "100%",
               }}
               placeholder="e.g.Facebook,Twitter"
               /* onChange={handleChange} */
@@ -79,7 +79,7 @@ function FormAnalyticsPage() {
           <Space>
             <Input
               style={{
-                width: 500,
+                width: "100%",
               }}
               placeholder="Black Friday"
               /*  onChange={handleChange} */

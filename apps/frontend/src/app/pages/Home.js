@@ -222,7 +222,7 @@ function Home() {
         visible={visible}
         onOk={() => setVisible(false)}
         onCancel={() => setVisible(false)}
-        width={1200}
+        width="100%"
       >
         <>
           <div>
@@ -304,27 +304,29 @@ function Home() {
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       &nbsp;
-      <NavLink to="/LinkCreate" className="linkcreate">
-        <Button type="primary">Create Link</Button>
-      </NavLink>
+      <div style={{ textAlign: "center" }}>
+        <NavLink to="/LinkCreate" className="linkcreate">
+          <Button type="primary">Create Link</Button>
+        </NavLink>
+      </div>
       <div id="linechart">
         <div>
-          <Title level={5}> Links Generated Till Now </Title>
+          <Title level={5} style={{ margin: "16px 0" }}>
+            {" "}
+            Links Generated Till Now{" "}
+          </Title>
         </div>
         <div className="sales">
           <ul></ul>
         </div>
       </div>
-      {console.log(
-        "-------------------------Home page display------------------------------"
-      )}
       <ReactApexChart
         className="full-width"
         options={lineChart.options}
         series={lineChart.series}
         type="area"
         height={350}
-        width={"100%"}
+        width="100%"
       />
       <br></br>
       <br></br>
@@ -333,6 +335,7 @@ function Home() {
         columns={columns}
         dataSource={data}
         onChange={onChange1}
+        scroll={{ x: 400 }}
       />
       ;
       <OnBoarding

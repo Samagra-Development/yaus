@@ -37,13 +37,14 @@ const App = () => (
         width: 320,
       }}
     />
-    <h2>Start editing to see some magic happen!</h2>
+    {/* <h2>Start editing to see some magic happen!</h2> */}
     <br></br>
     <br></br>
     <Table
       columns={colRecentActivities}
       dataSource={data}
       onChange={onChange}
+      scroll={{ x: 400 }}
     />
     ;
   </>
