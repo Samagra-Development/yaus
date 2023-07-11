@@ -1,15 +1,13 @@
 // prettier-ignore
 import { Layout, Menu, Button, Row, Col, Typography, Form, Input, Switch } from "antd";
-// prettier-ignore
-import { TwitterOutlined, InstagramOutlined, GithubOutlined } from "@ant-design/icons";
 
 import signinbg from "app/assets/images/img-signin.jpg";
 import { useEffect, useState } from "react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import * as apiUtil from "app/apis/index.js";
 import { onFinish, onFinishFailed } from "app/utils/outputResponse.js";
-import Navbar from "app/components/layout/NavBar";
-import Footer from "app/components/layout/Footer.js";
+import Navbar from "app/components/Navbar";
+import Footer from "app/components/Footer";
 import { mockUser } from "app/assets/constants/mockData"; // TODO: Remove this line
 function onChange(checked) {
   console.log(`switch to ${checked}`);

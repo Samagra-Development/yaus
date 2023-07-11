@@ -18,14 +18,14 @@ import ReactApexChart from "react-apexcharts";
 import { OnBoarding } from "antd-onboarding";
 import "antd-onboarding/assets/index.css";
 import "antd/dist/antd.css";
-import lineChart from "app/components/chart/configs/lineChart";
+import lineChart from "app/assets/constants/Config/LineChartConfig";
 import {
   columns,
   myData,
   count,
   dashboardTable,
 } from "app/assets/constants/mockData";
-import { config } from "app/assets/constants/DashboardConfig";
+import { config } from "app/assets/constants/Config/DashboardConfig";
 const { Search } = Input;
 
 function Home() {

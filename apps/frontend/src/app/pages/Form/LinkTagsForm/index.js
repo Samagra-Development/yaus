@@ -12,14 +12,10 @@ import {
   Avatar,
   Layout,
 } from "antd";
-import {
-  LOVE_ICON,
-  COMMENT_ICON,
-  SHARE_ICON,
-} from "app/components/layout/icons";
+import { LOVE_ICON, COMMENT_ICON, SHARE_ICON } from "app/components/Icons";
 
 import { InfoCircleOutlined } from "@ant-design/icons";
-import Interaction from "app/components/layout/Interaction";
+import Interaction from "app/components/Interaction";
 import { LinkPreview } from "@dhaiwat10/react-link-preview";
 import { nanoid } from "nanoid";
 const { Meta } = Card;

@@ -2,14 +2,14 @@ import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { Layout, Drawer, Affix } from "antd";
 import { Route, Navigate, Routes } from "react-router-dom";
-import Home from "app/pages/Home";
+import Home from "app/pages/Dashboard";
 import Protect from "app/Protect";
-import FormWizard from "app/pages/FormWizard";
-import BulkLink from "app/pages/BulkLink";
-import LinkManager from "app/pages/Link_Manager";
-import Recent_Activities from "app/pages/Recent_Activities";
-import Sidenav from "app/components/layout/Sidenav";
-import Header from "app/components/layout/Header";
+import FormWizard from "app/pages/CreateLink";
+import BulkLink from "app/pages/CreateBulkLink";
+import LinkManager from "app/pages/LinkManager";
+import Recent_Activities from "app/pages/RecentActivities";
+import Sidenav from "app/components/Sidenav";
+import Header from "app/components/Header";
 
 const { Header: AntHeader, Content, Sider } = Layout;
 

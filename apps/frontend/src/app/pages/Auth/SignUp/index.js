@@ -8,11 +8,11 @@ import { TwitterOutlined, InstagramOutlined, GithubOutlined } from "@ant-design/
 
 import { onFinishFailed, onFinish } from "app/utils/outputResponse.js";
 import * as apiUtil from "app/apis/index.js";
-import Navbar from "app/components/layout/NavBar.js";
+import Navbar from "app/components/Navbar";
 
 const { Title } = Typography;
 const { Content } = Layout;
-import Footer from "app/components/layout/Footer.js";
+import Footer from "app/components/Footer";
 
 function SignUp() {
   useEffect(() => {
