@@ -4,6 +4,8 @@
   "projects": {
     "admin": "apps/admin",
     "admin-e2e": "apps/admin-e2e",
-    "api": "apps/api"
+    "api": "apps/api",
+    "yaus-app": "apps/yaus-app",
+    "yaus-app-e2e": "apps/yaus-app-e2e"
   }
 }
