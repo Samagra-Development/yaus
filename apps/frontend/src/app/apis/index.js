@@ -1,4 +1,4 @@
-const baseUrl = "https://fa.chakshu-rd.samagra.io/api";
+import routes from "app/constants/Routes";
 const getSignUpReqBody = (user) => {
   return {
     registration: {
@@ -33,7 +33,7 @@ const Login = async (email, password, history) => {
   const reqBody = getSignInReqBody(email, password);
   console.log(reqBody);
   try {
-    const result = await getResponse(baseUrl + "/login", reqBody);
+    const result = await getResponse(routes.AUTH_BASE_URL + "/login", reqBody);
     localStorage.setItem("user-info", JSON.stringify(result));
     history.push("/dashboard");
     console.log("Result");
@@ -45,7 +45,10 @@ const Login = async (email, password, history) => {
 const SignUp = async (user, history) => {
   const reqBody = getSignUpReqBody(user);
   try {
-    const result = await getResponse(baseUrl + "/user/registration", reqBody);
+    const result = await getResponse(
+      routes.AUTH_BASE_URL + "/user/registration",
+      reqBody
+    );
     localStorage.setItem("user-info", JSON.stringify(result));
     history.push("/dashboard");
   } catch (e) {
@@ -72,11 +75,4 @@ const SignUp = async (user, history) => {
 //     console.log(e);
 //   }
 // }
-export {
-  baseUrl,
-  getSignUpReqBody,
-  getSignInReqBody,
-  getResponse,
-  Login,
-  SignUp,
-};
+export { getSignUpReqBody, getSignInReqBody, getResponse, Login, SignUp };

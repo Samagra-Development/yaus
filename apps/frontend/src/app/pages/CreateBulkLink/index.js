@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { colBulkLink } from "app/assets/constants/mockData.js";
+import { colBulkLink } from "app/constants/mockData.js";
 import axios from "axios";
 import * as XLSX from "xlsx";
 import { Table } from "antd";

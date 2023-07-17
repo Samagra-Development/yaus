@@ -7,7 +7,7 @@ import { ReactComponent as SignupIcon } from "app/assets/icons/signupIcon.svg";
 import { ReactComponent as LinkManagerIcon } from "app/assets/icons/linkManager.svg";
 import { ReactComponent as RecentActivitiesIcon } from "app/assets/icons/recentActivities.svg";
 import { ReactComponent as FormWizardIcon } from "app/assets/icons/formWizard.svg";
-
+import routes from "app/constants/Routes";
 function Sidenav({ color }) {
   const { pathname } = useLocation();
   const page = pathname.replace("/", "");
@@ -23,7 +23,7 @@ function Sidenav({ color }) {
         {localStorage.getItem("user-info") ? (
           <>
             <Menu.Item key="1">
-              <NavLink to="/dashboard">
+              <NavLink to={`${routes.DASHBOARD}`}>
                 <span
                   className="icon"
                   style={{
@@ -38,7 +38,7 @@ function Sidenav({ color }) {
             </Menu.Item>
 
             <Menu.Item key="4">
-              <NavLink to="/LinkCreate">
+              <NavLink to={`${routes.CREATE_LINK}`}>
                 <span
                   className="icon"
                   style={{
@@ -51,7 +51,7 @@ function Sidenav({ color }) {
               </NavLink>
             </Menu.Item>
             <Menu.Item key="3">
-              <NavLink to="/Bulk">
+              <NavLink to={`${routes.CREATE_BULK_LINK}`}>
                 <span
                   className="icon"
                   style={{
@@ -65,7 +65,7 @@ function Sidenav({ color }) {
             </Menu.Item>
 
             <Menu.Item key="5">
-              <NavLink to="/linkmanager">
+              <NavLink to={`${routes.LINK_MANAGER}`}>
                 <span
                   className="icon"
                   style={{
@@ -79,7 +79,7 @@ function Sidenav({ color }) {
             </Menu.Item>
 
             <Menu.Item key="4">
-              <NavLink to="/recent">
+              <NavLink to={`${routes.RECENT_ACTIVITIES}`}>
                 <span
                   className="icon"
                   style={{
@@ -95,7 +95,7 @@ function Sidenav({ color }) {
         ) : (
           <>
             <Menu.Item key="7">
-              <NavLink to="/sign-in">
+              <NavLink to={`${routes.SIGN_IN}`}>
                 <span className="icon">
                   <SigninIcon />
                 </span>
@@ -103,7 +103,7 @@ function Sidenav({ color }) {
               </NavLink>
             </Menu.Item>
             <Menu.Item key="8">
-              <NavLink to="/sign-up">
+              <NavLink to={`${routes.SIGN_UP}`}>
                 <span className="icon">
                   <SignupIcon />
                 </span>

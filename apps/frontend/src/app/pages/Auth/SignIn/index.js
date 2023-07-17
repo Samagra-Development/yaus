@@ -8,7 +8,7 @@ import * as apiUtil from "app/apis/index.js";
 import { onFinish, onFinishFailed } from "app/utils/outputResponse.js";
 import Navbar from "app/components/Navbar";
 import Footer from "app/components/Footer";
-import { mockUser } from "app/assets/constants/mockData"; // TODO: Remove this line
+import { mockUser } from "app/constants/mockData"; // TODO: Remove this line
 function onChange(checked) {
   console.log(`switch to ${checked}`);
 }
@@ -37,7 +37,7 @@ function SignIn() {
       /**
       // Get Response
       const result = await apiUtil.getResponse(
-        apiUtil.baseUrl + "/login",
+        routes.AUTH_BASE_URL + "/login",
         reqBody
         );
         // Set Local Storage

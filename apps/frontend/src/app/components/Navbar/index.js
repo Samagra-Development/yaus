@@ -1,4 +1,4 @@
-import Routes from "app/assets/constants/Routes";
+import Routes from "app/constants/Routes";
 import { ReactComponent as DashboardIcon } from "app/assets/icons/dashboardIcon.svg";
 import { ReactComponent as ProfileIcon } from "app/assets/icons/profileIcon.svg";
 import { ReactComponent as SigninIcon } from "app/assets/icons/signinIcon.svg";

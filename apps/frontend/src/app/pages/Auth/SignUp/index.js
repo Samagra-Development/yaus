@@ -9,22 +9,22 @@ import { TwitterOutlined, InstagramOutlined, GithubOutlined } from "@ant-design/
 import { onFinishFailed, onFinish } from "app/utils/outputResponse.js";
 import * as apiUtil from "app/apis/index.js";
 import Navbar from "app/components/Navbar";
-
+import routes from "app/constants/Routes";
 const { Title } = Typography;
 const { Content } = Layout;
 import Footer from "app/components/Footer";
 
 function SignUp() {
+  const history = useNavigate();
   useEffect(() => {
     if (localStorage.getItem("user-info")) {
-      Navigate.push("/dashboard");
+      history.push("/dashboard");
     }
   }, []);
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const history = useNavigate();
 
   async function signUp() {
     // Get Request Body
@@ -37,7 +37,7 @@ function SignUp() {
     try {
       // Get Response
       const result = await apiUtil.getResponse(
-        apiUtil.baseUrl + "/user/registration", // TO DO: shift to constants
+        routes.AUTH_BASE_URL + "/user/registration", // TO DO: shift to constants
         reqBody
       );
       // Set Local Storage

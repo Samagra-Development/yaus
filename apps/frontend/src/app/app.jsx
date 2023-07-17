@@ -1,13 +1,14 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import SignIn from "app/pages/Auth/SignIn";
 import SignUp from "app/pages/Auth/SignUp";
 import Main from "app/components/Main";
+import routes from "app/constants/Routes";
 function App() {
   return (
     <div className="App">
       <Routes>
-        <Route path="/sign-up" element={<SignUp />} />
-        <Route path="/sign-in" element={<SignIn />} />
+        <Route path={`${routes.SIGN_UP}`} element={<SignUp />} />
+        <Route path={`${routes.SIGN_IN}`} element={<SignIn />} />
         <Route path="/*" element={<Main />}></Route>
       </Routes>
     </div>

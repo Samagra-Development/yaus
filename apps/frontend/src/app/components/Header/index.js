@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { LogoutOutlined } from "@ant-design/icons";
 import { Space } from "antd";
 import { useNavigate } from "react-router-dom";
-import "app/assets/styles/header.css";
+import "app/styles/header.css";
 import { Row, Col, Breadcrumb, Button } from "antd";
 
 import { NavLink, Link } from "react-router-dom";

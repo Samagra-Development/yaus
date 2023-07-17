@@ -3,14 +3,14 @@ import { useLocation } from "react-router-dom";
 import { Layout, Drawer, Affix } from "antd";
 import { Route, Navigate, Routes } from "react-router-dom";
 import Home from "app/pages/Dashboard";
-import Protect from "app/Protect";
+import Protect from "app/utils/Protect";
 import FormWizard from "app/pages/CreateLink";
 import BulkLink from "app/pages/CreateBulkLink";
 import LinkManager from "app/pages/LinkManager";
 import Recent_Activities from "app/pages/RecentActivities";
 import Sidenav from "app/components/Sidenav";
 import Header from "app/components/Header";
-
+import routes from "app/constants/Routes";
 const { Header: AntHeader, Content, Sider } = Layout;
 
 function Main() {
@@ -116,18 +116,21 @@ function Main() {
         )}
         <Content className="content-ant">
           <Routes>
-            <Route path="LinkCreate" element={<FormWizard />} />
-            <Route path="dashboard" element={<Home />} />
-            <Route path="Bulk" element={<Protect Component={BulkLink} />} />
+            <Route path={`${routes.CREATE_LINK}`} element={<FormWizard />} />
+            <Route path={`${routes.DASHBOARD}`} element={<Home />} />
             <Route
-              path="linkmanager"
+              path={`${routes.CREATE_BULK_LINK}`}
+              element={<Protect Component={BulkLink} />}
+            />
+            <Route
+              path={`${routes.LINK_MANAGER}`}
               element={<Protect Component={LinkManager} />}
             />
             <Route
-              path="recent"
+              path={`${routes.RECENT_ACTIVITIES}`}
               element={<Protect Component={Recent_Activities} />}
             />
-            <Route path="*" element={<Navigate to="/dashboard" />} />
+            <Route path="*" element={<Navigate to={`${routes.DASHBOARD}`} />} />
           </Routes>
         </Content>
       </Layout>

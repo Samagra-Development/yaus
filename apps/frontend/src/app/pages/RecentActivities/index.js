@@ -7,7 +7,7 @@ import {
   colRecentActivities,
   data,
   recentActivityData,
-} from "app/assets/constants/mockData";
+} from "app/constants/mockData";
 import { Excel } from "antd-table-saveas-excel";
 const { Search } = Input;
 const suffix = (

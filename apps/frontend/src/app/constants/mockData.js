@@ -1,7 +1,7 @@
-import dollor from "../icons/dollor.svg";
-import heart from "../icons/heart.svg";
-import cart from "../icons/cart.svg";
-import profile from "../icons/homeProfile.svg";
+import dollor from "app/assets/icons/dollor.svg";
+import heart from "app/assets/icons/heart.svg";
+import cart from "app/assets/icons/cart.svg";
+import profile from "app/assets/icons/homeProfile.svg";
 
 export const colRecentActivities = [
   {
