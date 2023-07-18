@@ -4,6 +4,8 @@
   "projects": {
     "admin": "apps/admin",
     "admin-e2e": "apps/admin-e2e",
-    "api": "apps/api"
+    "api": "apps/api",
+    "frontend": "apps/frontend",
+    "frontend-e2e": "apps/frontend-e2e"
   }
 }
