@@ -10,33 +10,37 @@ import {
   Put,
   Res,
   UseInterceptors,
-} from '@nestjs/common';
+} from "@nestjs/common";
 import {
   ClientProxy,
   Ctx,
   MessagePattern,
   Payload,
   RmqContext,
-} from '@nestjs/microservices';
+} from "@nestjs/microservices";
 
-import { HealthCheckService, HttpHealthIndicator, HealthCheck } from '@nestjs/terminus';
-import { PrismaHealthIndicator } from './prisma/prisma.health';
-import { RedisService } from '@liaoliaots/nestjs-redis';
-import { RedisHealthIndicator } from '@liaoliaots/nestjs-redis/health';
-import Redis from 'ioredis';
-import { Link } from './app.interface';
+import {
+  HealthCheckService,
+  HttpHealthIndicator,
+  HealthCheck,
+} from "@nestjs/terminus";
+import { PrismaHealthIndicator } from "./prisma/prisma.health";
+import { RedisService } from "@liaoliaots/nestjs-redis";
+import { RedisHealthIndicator } from "@liaoliaots/nestjs-redis/health";
+import Redis from "ioredis";
+import { Link } from "./app.interface";
 
-import { AppService } from './app.service';
-import { RouterService } from './router/router.service';
-import { link as LinkModel } from '@prisma/client';
-import { AddROToResponseInterceptor } from './interceptors/addROToResponseInterceptor';
-import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { ConfigService } from '@nestjs/config';
+import { AppService } from "./app.service";
+import { RouterService } from "./router/router.service";
+import { link as LinkModel } from "@prisma/client";
+import { AddROToResponseInterceptor } from "./interceptors/addROToResponseInterceptor";
+import { ApiBody, ApiOperation, ApiResponse } from "@nestjs/swagger";
+import { ConfigService } from "@nestjs/config";
 
 @Controller()
 @UseInterceptors(AddROToResponseInterceptor)
 export class AppController {
-  private readonly redis: Redis
+  private readonly redis: Redis;
 
   constructor(
     private readonly appService: AppService,
@@ -47,39 +51,54 @@ export class AppController {
     private prismaIndicator: PrismaHealthIndicator,
     private readonly configService: ConfigService,
     private readonly redisService: RedisService,
-    @Inject('CLICK_SERVICE') private clickServiceClient: ClientProxy
+    @Inject("CLICK_SERVICE") private clickServiceClient: ClientProxy
   ) {
-      this.redis = redisService.getClient(configService.get('REDIS_NAME'));
+    this.redis = redisService.getClient(configService.get("REDIS_NAME"));
   }
 
-
-  @Get('/health')
+  @Get("/health")
   @HealthCheck()
-  @ApiOperation({ summary: 'Get Health Check Status' })
-  @ApiResponse({ status: 200, description: 'Result Report for All the Health Check Services' })
+  @ApiOperation({ summary: "Get Health Check Status" })
+  @ApiResponse({
+    status: 200,
+    description: "Result Report for All the Health Check Services",
+  })
   async checkHealth() {
     return this.healthCheckService.check([
-      async () => this.http.pingCheck('RabbitMQ', this.configService.get('RABBITMQ_HEALTH_URL')),
-      async () => this.http.pingCheck('Basic Check', this.configService.get('BASE_URL')),
-      async () => this.redisIndicator.checkHealth('Redis', { type: 'redis', client: this.redis, timeout: 500 }),
-      async () => this.prismaIndicator.isHealthy('Db'),
-    ])
+      async () =>
+        this.http.pingCheck(
+          "RabbitMQ",
+          this.configService.get("RABBITMQ_HEALTH_URL")
+        ),
+      async () =>
+        this.http.pingCheck("Basic Check", this.configService.get("BASE_URL")),
+      async () =>
+        this.redisIndicator.checkHealth("Redis", {
+          type: "redis",
+          client: this.redis,
+          timeout: 500,
+        }),
+      async () => this.prismaIndicator.isHealthy("Db"),
+    ]);
   }
-  
-/*
+
+  /*
 @Deprecated
 */
-@Get('/sr/:code')
-@ApiOperation({ summary: 'Redirect with encoded parameters' })
-@ApiResponse({ status: 301, description: 'will be redirected to the specified encoded link'})
-  async handler(@Param('code') code: string, @Res() res) {
-    const resp = await this.routerService.decodeAndRedirect(code)
+  @Get("/sr/:code")
+  @ApiOperation({ summary: "Redirect with encoded parameters" })
+  @ApiResponse({
+    status: 301,
+    description: "will be redirected to the specified encoded link",
+  })
+  async handler(@Param("code") code: string, @Res() res) {
+    const resp = await this.routerService.decodeAndRedirect(code);
     this.clickServiceClient
-      .send('onClick', {
+      .send("onClick", {
         hashid: resp.hashid,
       })
       .subscribe();
-    if (resp.url !== '') {
+    if (resp.url !== "") {
       return res.redirect(resp.url);
     } else {
       throw new NotFoundException();
@@ -87,42 +106,47 @@ export class AppController {
   }
 
   //http://localhost:3333/api/redirect/208
-  @Get('/:hashid')
-  @ApiOperation({ summary: 'Redirect Links' })
-  @ApiResponse({ status: 301, description: 'will be redirected to the specified link'})
-  async redirect(@Param('hashid') hashid: string, @Res() res) {
+  @Get("/:hashid")
+  @ApiOperation({ summary: "Redirect Links" })
+  @ApiResponse({
+    status: 301,
+    description: "will be redirected to the specified link",
+  })
+  async redirect(@Param("hashid") hashid: string, @Res() res) {
     const reRouteURL: string = await this.appService.redirect(hashid);
     this.clickServiceClient
-      .send('onClick', {
+      .send("onClick", {
         hashid: hashid,
       })
       .subscribe();
-    if (reRouteURL !== '') {
-      console.log({reRouteURL}); 
+    console.log({ reRouteURL });
+    if (reRouteURL !== "") {
+      console.log({ reRouteURL });
       return res.redirect(302, reRouteURL);
     } else {
       throw new NotFoundException();
     }
   }
 
-
-  @Post('/register')
-  @ApiOperation({ summary: 'Create New Links' })
+  @Post("/register")
+  @ApiOperation({ summary: "Create New Links" })
   @ApiBody({ type: Link })
-  @ApiResponse({ type: Link, status: 200})
+  @ApiResponse({ type: Link, status: 200 })
   async register(@Body() link: Link): Promise<LinkModel> {
     return this.appService.createLink(link);
   }
 
-  
-  @Patch('update/:id')
-  @ApiOperation({ summary: 'Update Existing Links' })
+  @Patch("update/:id")
+  @ApiOperation({ summary: "Update Existing Links" })
   @ApiBody({ type: Link })
-  @ApiResponse({ type: Link, status: 200})
-  async update(@Param('id') id: string, @Body() link: Link ): Promise<LinkModel> {
+  @ApiResponse({ type: Link, status: 200 })
+  async update(
+    @Param("id") id: string,
+    @Body() link: Link
+  ): Promise<LinkModel> {
     return this.appService.updateLink({
       where: { customHashId: id },
-      data: { 
+      data: {
         userID: link.user || null,
         tags: link.tags || null,
         clicks: link.clicks || null,
@@ -130,11 +154,11 @@ export class AppController {
         hashid: link.hashid || null,
         project: link.project || null,
         customHashId: link.customHashId || null,
-       },
+      },
     });
   }
 
-  @MessagePattern('onClick')
+  @MessagePattern("onClick")
   async getNotifications(
     @Payload() data: number[],
     @Ctx() context: RmqContext
@@ -145,5 +169,4 @@ export class AppController {
     console.log(`Message: ${originalMsg}`);
     await this.appService.updateClicks(JSON.parse(originalMsg).data.hashid);
   }
-
 }

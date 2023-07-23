@@ -17,8 +17,6 @@ model link {
   project      String?  @db.Uuid
   customHashId String?  @unique
   params       Json?
-  state        State    @default(Draft)
-  expiry       BigInt?
   @@unique([userID, project, url, customHashId])
 }
 
@@ -26,10 +24,4 @@ model template {
   id   String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   text String?
   name Unsupported("name")
-}
-
-enum State {
-  Draft
-  Live
-  Expire
 }
