@@ -29,7 +29,7 @@ async function bootstrap() {
       urls: ["amqp://username:password@localhost:5672"],
       queue: "clicks",
       queueOptions: {
-        durable: false, // was false
+        durable: true,
       },
     },
   });
