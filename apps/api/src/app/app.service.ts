@@ -5,6 +5,7 @@ import { link, Prisma } from '@prisma/client';
 import { ConfigService } from '@nestjs/config'
 import { TelemetryService } from './telemetry/telemetry.service';
 import { Link } from './app.interface';
+import { randomUUID } from 'crypto';
 
 @Injectable()
 export class AppService {
@@ -15,17 +16,18 @@ export class AppService {
     private telemetryService: TelemetryService,
     ) {}
 
-  async setKey(link:Link,Data:Prisma.linkCreateInput): Promise<void> {
+  async setKey(Data:link): Promise<void> {
     const client = await this.redisService.getClient(this.configService.get<string>('REDIS_NAME'));
     // get expiration time from params field in link
     let ttl = parseInt(Data.params["expiry"]);  // time to live in seconds
     console.log("The link expiry is set to:"+ ttl);
-    client.set(link.hashid.toString(), JSON.stringify(link));
-    !Number.isNaN(ttl) ? client.expire(link.hashid.toString(), ttl) : 0;
+    client.set(Data.hashid.toString(), JSON.stringify(Data));
+    !Number.isNaN(ttl) ? client.expire(Data.hashid.toString(), ttl) : 0;
   }
   
   async updateClicks(urlId: string): Promise<void> {
     const client = await this.redisService.getClient(this.configService.get<string>('REDIS_NAME'));
+    // client.get(urlId).then(async (value: string) => {});
     client.incr(urlId);
   }
 
@@ -36,7 +38,7 @@ export class AppService {
   }
   async fetchAKey(key: string): Promise<string> {
     const client = await this.redisService.getClient(this.configService.get<string>('REDIS_NAME'));
-    const value: string = (await client.get(key)).toString();
+    const value: string = (await client.get(key))?.toString();
     return value
   }
   async updateClicksInDb(): Promise<void> {
@@ -87,15 +89,35 @@ export class AppService {
       });
     }
   
-    async createLink(data: Prisma.linkCreateInput): Promise<link> {
-      const link = await this.prisma.link.create({
-        data,
-      });
-
-      this.setKey(link,data);
-      return link;
+    async createLinkInCache(data: link): Promise<link> {
+      this.setKey(data);
+      return data;
     }
+    // TO DO : Error handling if the key already exists
+    // DB --> Redis
+    async createLinkInDB(data: Prisma.linkCreateInput): Promise<link> {
 
+      try {
+        const link = await this.prisma.link.create({
+          data,
+        });
+        
+        this.fetchAKey(link.hashid.toString()).then((value: string) => {
+          if(value == undefined){
+            this.setKey(link);
+          }
+          else{
+            console.error(`Error: The key ${link.hashid} already exists in the Redis database.`);
+            // TO DO : Handle error when key already exists in Redis
+          }
+        });
+        return link;
+      } catch (error) {
+          console.log("Failed to create link in the database:"+ error.message);
+          throw new Error('Failed to create link in the database.');
+        }
+    }
+    
     async updateLink(params: {
       where: Prisma.linkWhereUniqueInput;
       data: Prisma.linkUpdateInput;

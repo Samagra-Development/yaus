@@ -28,7 +28,7 @@ import { Link } from './app.interface';
 
 import { AppService } from './app.service';
 import { RouterService } from './router/router.service';
-import { link as LinkModel } from '@prisma/client';
+import { link as LinkModel, Prisma, link } from '@prisma/client';
 import { AddROToResponseInterceptor } from './interceptors/addROToResponseInterceptor';
 import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
@@ -92,13 +92,14 @@ export class AppController {
   @ApiResponse({ status: 301, description: 'will be redirected to the specified link'})
   async redirect(@Param('hashid') hashid: string, @Res() res) {
     const reRouteURL: string = await this.appService.redirect(hashid);
-    this.clickServiceClient
+
+    if (reRouteURL !== '') {
+      console.log({reRouteURL});
+      this.clickServiceClient
       .send('onClick', {
         hashid: hashid,
       })
       .subscribe();
-    if (reRouteURL !== '') {
-      console.log({reRouteURL}); 
       return res.redirect(302, reRouteURL);
     } else {
       throw new NotFoundException();
@@ -111,7 +112,13 @@ export class AppController {
   @ApiBody({ type: Link })
   @ApiResponse({ type: Link, status: 200})
   async register(@Body() link: Link): Promise<LinkModel> {
-    return this.appService.createLink(link);
+      return this.appService.createLinkInDB(link);
+    // // push to RMQ to persist to postgres aysnc
+    // // TO DO : Validate the request for unique hashid
+    // this.clickServiceClient.send('onCreate', {  link: link }).subscribe();
+    // // add to redis db
+    // // TO DO : where do we get hashId from if it's not provided?
+    // return this.appService.createLink(link);
   }
 
   
@@ -133,7 +140,7 @@ export class AppController {
        },
     });
   }
-
+  // TO DO : Handle clicks count in JSON only
   @MessagePattern('onClick')
   async getNotifications(
     @Payload() data: number[],
@@ -145,5 +152,23 @@ export class AppController {
     console.log(`Message: ${originalMsg}`);
     await this.appService.updateClicks(JSON.parse(originalMsg).data.hashid);
   }
+  
+  // async persist the link to postgres
+  // @MessagePattern('onCreate')
+  async persistToPostgresOnCreate(@Payload() data: number[], @Ctx() context: RmqContext) {
+    console.log(`Pattern: ${context.getPattern()}`);
+    const channel = context.getChannelRef();
+    const originalMsg = context.getMessage().content.toString();
+    console.log(`Message: ${originalMsg}`);
 
+    // TO DO: catch the error and log it
+    // Do we need to remove this link from redis as well? 
+    // How to make sure they both are in sync?
+    try {
+      await this.appService.createLinkInDB(JSON.parse(originalMsg).data.link);
+    } catch (error) {
+      console.log(error); 
+    }
+  }
+    // TO DO: add a new pattern for on update 
 }
