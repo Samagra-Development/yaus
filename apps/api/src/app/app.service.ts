@@ -15,20 +15,62 @@ export class AppService {
     private prisma: PrismaService,
     private telemetryService: TelemetryService,
     ) {}
-
-  async setKey(Data:link): Promise<void> {
-    const client = await this.redisService.getClient(this.configService.get<string>('REDIS_NAME'));
-    // get expiration time from params field in link
-    let ttl = parseInt(Data.params["expiry"]);  // time to live in seconds
-    console.log("The link expiry is set to:"+ ttl);
-    client.set(Data.hashid.toString(), JSON.stringify(Data));
-    !Number.isNaN(ttl) ? client.expire(Data.hashid.toString(), ttl) : 0;
+    /**
+     * A generic function to set key value in redis
+     * @param key 
+     * @param value 
+     */
+  async setKeyValueInRedis(key: string, value: string): Promise<void> {
+      const client = await this.redisService.getClient(this.configService.get<string>('REDIS_NAME'));
+      client.set(key, value);
   }
-  
-  async updateClicks(urlId: string): Promise<void> {
+  /**
+   * A generic function to set expiry for a key
+   * @param key 
+   * @param ttl 
+   */
+  async setKeyWithExpiry(key:string,ttl:number): Promise<void> {
     const client = await this.redisService.getClient(this.configService.get<string>('REDIS_NAME'));
+    client.expire(key, ttl);
+  }
+  /**
+   * set the link data in redis with expiry
+   * @param Data 
+   */
+  async setKey(Data:link): Promise<void> {
+    // expiration in seconds
+    let ttl = parseInt(Data?.params["expiry"]);  
+    this.setKeyValueInRedis(Data.hashid.toString(), JSON.stringify(Data));
+    !Number.isNaN(ttl) ? this.setKeyWithExpiry(Data.hashid.toString(), ttl) : 0;
+
+    if(!Number.isNaN(Data.customHashId)) {
+      this.setKeyValueInRedis(Data.customHashId, Data.hashid.toString());
+      !Number.isNaN(ttl) ? this.setKeyWithExpiry(Data.customHashId, ttl) : 0;
+    }
+  }
+
+  async updateClicks(urlId: string): Promise<void> {
+    const client =  this.redisService.getClient(this.configService.get<string>('REDIS_NAME'));
     // client.get(urlId).then(async (value: string) => {});
     client.incr(urlId);
+  }
+ /**
+ * Updates the click count in the postgres db based on hashId or customhashid
+ * @param hashID 
+ */
+  async updateClicksInPostgresDB(hashID: string): Promise<void> {
+   
+    // Check if given id is customhashid  
+    Number.isNaN(parseInt(hashID)) ? hashID = await this.fetchAKey(hashID):0;
+
+    const link = await this.prisma.link.findFirst({
+      where: { hashid: parseInt(hashID)},
+    })
+
+    let cnt = await this.prisma.link.update({
+           where: { id: link.id },
+           data: { clicks: link.clicks + 1 }
+       });
   }
 
   async fetchAllKeys(): Promise<string[]> {
@@ -93,29 +135,43 @@ export class AppService {
       this.setKey(data);
       return data;
     }
-    // TO DO : Error handling if the key already exists
-    // DB --> Redis
+/**
+ * #### Persist the links in DB as well as cache to Redis after due validation.
+ * 
+ * A valid customHashId should not be a number and shouldn't have any special characters other than hyphen and underscore.
+ * 
+ * - Example of a valid customHashId: "my-custom-hash-id", "hasd1212"
+ * - Example of an invalid customHashId: "123", "my-custom-hash-id!"
+ * 
+ * @param data - The link data to be persisted.
+ * @returns The link object that has been persisted.
+ */
     async createLinkInDB(data: Prisma.linkCreateInput): Promise<link> {
-
+      const validCustomHashIdRegex = /^(?!^[0-9]+$)[a-zA-Z0-9_-]+$/;
+      // validate the incoming request for custom hashId
+      if (data.customHashId != undefined && !validCustomHashIdRegex.exec(data.customHashId)) {
+        return Promise.reject(new Error('Invalid custom hashId. Only alphanumeric characters, hyphens and underscores are allowed.'));
+      }
+    
       try {
+        // create the link in DB
         const link = await this.prisma.link.create({
           data,
         });
-        
+    
+        // create it in redis
         this.fetchAKey(link.hashid.toString()).then((value: string) => {
-          if(value == undefined){
+          if (value == undefined) {
             this.setKey(link);
-          }
-          else{
+          } else {
             console.error(`Error: The key ${link.hashid} already exists in the Redis database.`);
-            // TO DO : Handle error when key already exists in Redis
           }
         });
         return link;
       } catch (error) {
-          console.log("Failed to create link in the database:"+ error.message);
-          throw new Error('Failed to create link in the database.');
-        }
+        console.log("Failed to create link in the database: " + error.message);
+        throw new Error('Failed to create link in the database.');
+      }
     }
     
     async updateLink(params: {
@@ -134,16 +190,37 @@ export class AppService {
         where,
       });
     }
-
+/**
+ * resolve the id for hashId or customhashid and fetch the url from redis
+ * @param Id 
+ * @returns 
+ */
+    async resolveRedirect(Id: string): Promise<string> {
+      const validHashIdRegex = /^[0-9]*$/;
+      if(validHashIdRegex.exec(Id)){
+          return this.redirect(Id);
+      }
+      else
+      { 
+        console.log("The customHashId is:"+ Id);
+        const hashId = await this.fetchAKey(Id);
+        return this.redirect(hashId);
+      }
+    }
+/**
+ * A generic function to fetch the url from redis based on hashId 
+ * @param hashid 
+ * @returns 
+ */
     async redirect(hashid: string): Promise<string> {
 
           return this.fetchAKey(hashid).then((value: string) => {
           const link = JSON.parse(value);
-          console.log("The link is:"+ link.url);
+          // console.log("The link is:"+ link.url);
           const url = link.url
           const params = link.params
           const ret = [];
-          console.log("The params are:"+ params + url);
+          // console.log("The params are:"+ params + url);
           if(params == null){
             return url;
           }else {
@@ -157,41 +234,6 @@ export class AppService {
             this.telemetryService.sendEvent(this.configService.get<string>('POSTHOG_DISTINCT_KEY'), "Exception in getLinkFromHashIdOrCustomHashId query", {error: err.message})
             return '';
           });
-        // return this.prisma.link.findMany({
-        //   where: {
-        //     OR: [
-        //       {
-        //         hashid: Number.isNaN(Number(hashid))? -1:parseInt(hashid),
-        //       },
-        //       { customHashId: hashid },
-        //     ],
-        //   },
-        //   select: {
-        //     url: true,
-        //     params: true,
-        //     hashid: true,
-        //   },
-        //   take: 1
-        // })
-        // .then(response => {
-        //   const url = response[0].url
-        //   const params = response[0].params
-        //   const ret = [];
-          
-        //   // this.updateClicks(response[0].hashid.toString());
 
-        //   if(params == null){
-        //     return url;
-        //   }else {
-        //     Object.keys(params).forEach(function(d) {
-        //       ret.push(encodeURIComponent(d) + '=' + encodeURIComponent(params[d]));
-        //     })
-        //     return `${url}?${ret.join('&')}` || '';
-        //   }
-        // })
-        // .catch(err => {
-        //   this.telemetryService.sendEvent(this.configService.get<string>('POSTHOG_DISTINCT_KEY'), "Exception in getLinkFromHashIdOrCustomHashId query", {error: err.message})
-        //   return '';
-        // });
       }
 }
