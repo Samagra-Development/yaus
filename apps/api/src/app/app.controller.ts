@@ -114,15 +114,6 @@ export class AppController {
   @ApiResponse({ type: Link, status: 200})
   async register(@Body() link: Link): Promise<LinkModel> { 
       const response:Promise<link> =  this.appService.createLinkInDB(link);
-      response.then((res) => {
-        this.clickServiceClient
-        .send('onClick', {
-          hashid: res.hashid,
-        })
-        .subscribe();
-      }).catch((err) => {
-        console.log(err)
-      });
       return response;
   }
 
@@ -169,3 +160,5 @@ export class AppController {
 // DONE 5. Clicks should be updated even when customHashId is used
 // DONE 6. Not redirecting upon customHashId usage
 // DONE 7. invalid CustomHashId creation 
+
+// Register : default 0 , 

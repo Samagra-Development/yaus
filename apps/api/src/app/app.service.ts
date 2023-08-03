@@ -15,31 +15,34 @@ export class AppService {
     private prisma: PrismaService,
     private telemetryService: TelemetryService,
     ) {}
+
     /**
      * A generic function to set key value in redis
      * @param key 
      * @param value 
      */
-  async setKeyValueInRedis(key: string, value: string): Promise<void> {
+    async setKeyValueInRedis(key: string, value: string): Promise<void> {
       const client = await this.redisService.getClient(this.configService.get<string>('REDIS_NAME'));
       client.set(key, value);
-  }
-  /**
+    }
+
+    /**
    * A generic function to set expiry for a key
    * @param key 
    * @param ttl 
    */
-  async setKeyWithExpiry(key:string,ttl:number): Promise<void> {
+    async setKeyWithExpiry(key:string,ttl:number): Promise<void> {
     const client = await this.redisService.getClient(this.configService.get<string>('REDIS_NAME'));
     client.expire(key, ttl);
-  }
-  /**
+    }
+
+    /**
    * set the link data in redis with expiry
    * @param Data 
    */
-  async setKey(Data:link): Promise<void> {
+    async setKey(Data:link): Promise<void> {
     // expiration in seconds
-    let ttl = parseInt(Data?.params["expiry"]);  
+    let ttl = parseInt(Data?.params?.["expiry"]) ?? NaN;
     this.setKeyValueInRedis(Data.hashid.toString(), JSON.stringify(Data));
     !Number.isNaN(ttl) ? this.setKeyWithExpiry(Data.hashid.toString(), ttl) : 0;
 
@@ -47,21 +50,22 @@ export class AppService {
       this.setKeyValueInRedis(Data.customHashId, Data.hashid.toString());
       !Number.isNaN(ttl) ? this.setKeyWithExpiry(Data.customHashId, ttl) : 0;
     }
-  }
+    }
 
-  async updateClicks(urlId: string): Promise<void> {
+    async updateClicks(urlId: string): Promise<void> {
     const client =  this.redisService.getClient(this.configService.get<string>('REDIS_NAME'));
     // client.get(urlId).then(async (value: string) => {});
     client.incr(urlId);
-  }
- /**
+    }
+
+    /**
  * Updates the click count in the postgres db based on hashId or customhashid
  * @param hashID 
  */
-  async updateClicksInPostgresDB(hashID: string): Promise<void> {
+    async updateClicksInPostgresDB(hashID: string): Promise<void> {
    
     // Check if given id is customhashid  
-    Number.isNaN(parseInt(hashID)) ? hashID = await this.fetchAKey(hashID):0;
+    Number.isNaN(parseInt(hashID)) ? hashID = await this.fetchKey(hashID):0;
 
     const link = await this.prisma.link.findFirst({
       where: { hashid: parseInt(hashID)},
@@ -71,19 +75,21 @@ export class AppService {
            where: { id: link.id },
            data: { clicks: link.clicks + 1 }
        });
-  }
+    }
 
-  async fetchAllKeys(): Promise<string[]> {
+    async fetchAllKeys(): Promise<string[]> {
     const client = await this.redisService.getClient(this.configService.get<string>('REDIS_NAME'));
     const keys: string[] = await client.keys('*');
     return keys
-  }
-  async fetchAKey(key: string): Promise<string> {
+    }
+
+    async fetchKey(key: string): Promise<string> {
     const client = await this.redisService.getClient(this.configService.get<string>('REDIS_NAME'));
     const value: string = (await client.get(key))?.toString();
     return value
-  }
-  async updateClicksInDb(): Promise<void> {
+    }
+
+    async updateClicksInDb(): Promise<void> {
     const client = await this.redisService.getClient(this.configService.get<string>('REDIS_NAME'));
     const keys: string[] = await this.fetchAllKeys()
     for(const key of keys) {
@@ -105,9 +111,9 @@ export class AppService {
         });
       });
     }
-  }
+    }
 
-  async link(linkWhereUniqueInput: Prisma.linkWhereUniqueInput,
+    async link(linkWhereUniqueInput: Prisma.linkWhereUniqueInput,
     ): Promise<link | null> {
       return this.prisma.link.findUnique({
         where: linkWhereUniqueInput,
@@ -158,18 +164,11 @@ export class AppService {
         const link = await this.prisma.link.create({
           data,
         });
-    
-        // create it in redis
-        this.fetchAKey(link.hashid.toString()).then((value: string) => {
-          if (value == undefined) {
-            this.setKey(link);
-          } else {
-            console.error(`Error: The key ${link.hashid} already exists in the Redis database.`);
-          }
-        });
+        // set the link in redis
+        this.setKey(link);
         return link;
+
       } catch (error) {
-        console.log("Failed to create link in the database: " + error.message);
         throw new Error('Failed to create link in the database.');
       }
     }
@@ -190,6 +189,7 @@ export class AppService {
         where,
       });
     }
+
 /**
  * resolve the id for hashId or customhashid and fetch the url from redis
  * @param Id 
@@ -202,11 +202,22 @@ export class AppService {
       }
       else
       { 
-        console.log("The customHashId is:"+ Id);
-        const hashId = await this.fetchAKey(Id);
-        return this.redirect(hashId);
+        const hashId = await this.fetchKey(Id);
+        if(hashId == undefined ){
+          const linkData = await this.prisma.link.findFirst({
+            where: { customHashId: Id},
+          });
+          
+          let response = "";
+          !Number.isNaN(linkData?.hashid) ? response = await this.redirect(linkData.hashid.toString()):0;
+          return response;
+        }
+        else{
+          return this.redirect(hashId);
+        }
       }
     }
+
 /**
  * A generic function to fetch the url from redis based on hashId 
  * @param hashid 
@@ -214,13 +225,13 @@ export class AppService {
  */
     async redirect(hashid: string): Promise<string> {
 
-          return this.fetchAKey(hashid).then((value: string) => {
+          return this.fetchKey(hashid).then((value: string) => {
           const link = JSON.parse(value);
-          // console.log("The link is:"+ link.url);
+
           const url = link.url
           const params = link.params
           const ret = [];
-          // console.log("The params are:"+ params + url);
+
           if(params == null){
             return url;
           }else {
@@ -231,9 +242,43 @@ export class AppService {
           }
         })
         .catch(err => {
-            this.telemetryService.sendEvent(this.configService.get<string>('POSTHOG_DISTINCT_KEY'), "Exception in getLinkFromHashIdOrCustomHashId query", {error: err.message})
-            return '';
+            this.telemetryService.sendEvent(this.configService.get<string>('POSTHOG_DISTINCT_KEY'), "Exception in fetching data from redis falling back to DB", {error: err.message})
+            return this.redirectFromDB(hashid);
           });
 
-      }
+    }
+
+    async redirectFromDB(hashid: string): Promise<string> {
+        return this.prisma.link.findMany({
+          where: {
+            OR: [
+              {
+                hashid: Number.isNaN(Number(hashid)) ? -1 : parseInt(hashid),
+              },
+              { customHashId: hashid },
+            ]
+          },
+          take: 1
+        })
+        .then(response => {
+          const url = response[0].url
+          const params = response[0].params
+          const ret = [];
+          
+          this.setKey(response[0]); 
+
+          if(params == null){
+            return url;
+          }else {
+            Object.keys(params).forEach(function(d) {
+              ret.push(encodeURIComponent(d) + '=' + encodeURIComponent(params[d]));
+            })
+            return `${url}?${ret.join('&')}` || '';
+          }
+        })
+        .catch(err => {
+          this.telemetryService.sendEvent(this.configService.get<string>('POSTHOG_DISTINCT_KEY'), "Exception in getLinkFromHashIdOrCustomHashId query", {error: err.message})
+          return '';
+        });
+    }
 }
