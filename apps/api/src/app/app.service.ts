@@ -155,7 +155,7 @@ export class AppService {
     async createLinkInDB(data: Prisma.linkCreateInput): Promise<link> {
       const validCustomHashIdRegex = /^(?!^[0-9]+$)[a-zA-Z0-9_-]+$/;
       // validate the incoming request for custom hashId
-      if (data.customHashId != undefined && !validCustomHashIdRegex.exec(data.customHashId)) {
+      if (data.customHashId != undefined && !validCustomHashIdRegex.test(data.customHashId)) {
         return Promise.reject(new Error('Invalid custom hashId. Only alphanumeric characters, hyphens and underscores are allowed.'));
       }
     
@@ -197,7 +197,7 @@ export class AppService {
  */
     async resolveRedirect(Id: string): Promise<string> {
       const validHashIdRegex = /^[0-9]*$/;
-      if(validHashIdRegex.exec(Id)){
+      if(validHashIdRegex.test(Id)){
           return this.redirect(Id);
       }
       else
@@ -209,7 +209,7 @@ export class AppService {
           });
           
           let response = "";
-          !Number.isNaN(linkData?.hashid) ? response = await this.redirect(linkData.hashid.toString()):0;
+          !(linkData == null) ? response = await this.redirect(linkData.hashid.toString()):0;
           return response;
         }
         else{
