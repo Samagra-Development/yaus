@@ -52,6 +52,13 @@ export class AppService {
     }
     }
 
+    async clearKey(Data:link): Promise<void> {
+    const client = await this.redisService.getClient(this.configService.get<string>('REDIS_NAME'));
+    // Test this
+    client.del(Data.hashid.toString());
+    client.del(Data.customHashId);
+    }
+
     async updateClicks(urlId: string): Promise<void> {
     const client =  this.redisService.getClient(this.configService.get<string>('REDIS_NAME'));
     // client.get(urlId).then(async (value: string) => {});
@@ -178,9 +185,35 @@ export class AppService {
       data: Prisma.linkUpdateInput;
     }): Promise<link> {
       const { where, data } = params;
-      return this.prisma.link.update({
-        data,
-        where,
+      return this.prisma.link.findFirst({
+        where: {
+        OR: [ 
+          { hashid: Number.isNaN(Number(where.customHashId)) ? -1 : parseInt(where.customHashId) }, 
+          { customHashId: where.customHashId } 
+        ],
+        },
+      })
+      .then((link) => {
+        if(link == null){
+          return Promise.reject(new Error('Link not found.'));
+        }
+        this.clearKey(link); // to clear the old key from redis
+
+        if(data.tags == null) data.tags = link.tags
+        if(data.customHashId == null) data.customHashId = link.customHashId
+        if(data.hashid == null) data.hashid = link.hashid
+        if(data.url != link.url) data.clicks = 0;
+        else data.clicks = link.clicks;
+
+        return this.prisma.link.update({
+          data,
+          where : { id: link.id },
+        });
+
+      })
+      .then((link) => {
+        this.setKey(link); // to set the new key in redis
+        return link;
       });
     }
   

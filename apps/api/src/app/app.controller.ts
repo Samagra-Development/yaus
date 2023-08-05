@@ -124,7 +124,7 @@ export class AppController {
   @ApiResponse({ type: Link, status: 200})
   async update(@Param('id') id: string, @Body() link: Link ): Promise<LinkModel> {
     return this.appService.updateLink({
-      where: { customHashId: id },
+      where: {customHashId: id},
       data: { 
         userID: link.user || null,
         tags: link.tags || null,
@@ -162,3 +162,4 @@ export class AppController {
 // DONE 7. invalid CustomHashId creation 
 
 // Register : default 0 , 
+// 
