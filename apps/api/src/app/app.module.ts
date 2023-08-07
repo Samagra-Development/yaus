@@ -14,6 +14,7 @@ import { TerminusModule } from '@nestjs/terminus';
 import { PosthogModule } from 'nestjs-posthog';
 import { ScheduleModule } from '@nestjs/schedule';
 import { SchedulerService } from './scheduler/scheduler.service';
+import { RedisUtils } from './utils/redis.utils';
 
 @Module({
   imports: [
@@ -70,6 +71,6 @@ import { SchedulerService } from './scheduler/scheduler.service';
     ScheduleModule.forRoot()
   ],
   controllers: [AppController],
-  providers: [AppService, ConfigService, RouterService, PrismaService, TelemetryService, PrismaHealthIndicator, SchedulerService],
+  providers: [AppService, ConfigService, RouterService, PrismaService, TelemetryService, PrismaHealthIndicator, SchedulerService,RedisUtils],
 })
 export class AppModule {}

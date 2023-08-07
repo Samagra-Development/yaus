@@ -4,8 +4,7 @@ import { PrismaService } from './prisma.service';
 import { link, Prisma } from '@prisma/client';
 import { ConfigService } from '@nestjs/config'
 import { TelemetryService } from './telemetry/telemetry.service';
-import { Link } from './app.interface';
-import { randomUUID } from 'crypto';
+import { RedisUtils } from './utils/redis.utils';
 
 @Injectable()
 export class AppService {
@@ -14,65 +13,18 @@ export class AppService {
     private readonly redisService: RedisService,
     private prisma: PrismaService,
     private telemetryService: TelemetryService,
+    private redisUtils: RedisUtils,
     ) {}
 
+
     /**
-     * A generic function to set key value in redis
-     * @param key 
-     * @param value 
+     * Updates the click count in the postgres db based on hashId or customhashid
+     * @param hashID 
      */
-    async setKeyValueInRedis(key: string, value: string): Promise<void> {
-      const client = await this.redisService.getClient(this.configService.get<string>('REDIS_NAME'));
-      client.set(key, value);
-    }
-
-    /**
-   * A generic function to set expiry for a key
-   * @param key 
-   * @param ttl 
-   */
-    async setKeyWithExpiry(key:string,ttl:number): Promise<void> {
-    const client = await this.redisService.getClient(this.configService.get<string>('REDIS_NAME'));
-    client.expire(key, ttl);
-    }
-
-    /**
-   * set the link data in redis with expiry
-   * @param Data 
-   */
-    async setKey(Data:link): Promise<void> {
-    // expiration in seconds
-    let ttl = parseInt(Data?.params?.["expiry"]) ?? NaN;
-    this.setKeyValueInRedis(Data.hashid.toString(), JSON.stringify(Data));
-    !Number.isNaN(ttl) ? this.setKeyWithExpiry(Data.hashid.toString(), ttl) : 0;
-
-    if(!Number.isNaN(Data.customHashId)) {
-      this.setKeyValueInRedis(Data.customHashId, Data.hashid.toString());
-      !Number.isNaN(ttl) ? this.setKeyWithExpiry(Data.customHashId, ttl) : 0;
-    }
-    }
-
-    async clearKey(Data:link): Promise<void> {
-    const client = await this.redisService.getClient(this.configService.get<string>('REDIS_NAME'));
-    // Test this
-    client.del(Data.hashid.toString());
-    client.del(Data.customHashId);
-    }
-
-    async updateClicks(urlId: string): Promise<void> {
-    const client =  this.redisService.getClient(this.configService.get<string>('REDIS_NAME'));
-    // client.get(urlId).then(async (value: string) => {});
-    client.incr(urlId);
-    }
-
-    /**
- * Updates the click count in the postgres db based on hashId or customhashid
- * @param hashID 
- */
     async updateClicksInPostgresDB(hashID: string): Promise<void> {
    
     // Check if given id is customhashid  
-    Number.isNaN(parseInt(hashID)) ? hashID = await this.fetchKey(hashID):0;
+    Number.isNaN(parseInt(hashID)) ? hashID = await this.redisUtils.fetchKey(hashID):0;
 
     const link = await this.prisma.link.findFirst({
       where: { hashid: parseInt(hashID)},
@@ -84,21 +36,10 @@ export class AppService {
        });
     }
 
-    async fetchAllKeys(): Promise<string[]> {
-    const client = await this.redisService.getClient(this.configService.get<string>('REDIS_NAME'));
-    const keys: string[] = await client.keys('*');
-    return keys
-    }
-
-    async fetchKey(key: string): Promise<string> {
-    const client = await this.redisService.getClient(this.configService.get<string>('REDIS_NAME'));
-    const value: string = (await client.get(key))?.toString();
-    return value
-    }
-
+    // TO DO: shift to DB utils, required in scheduler !! so take care of that before shifting it to any other files
     async updateClicksInDb(): Promise<void> {
     const client = await this.redisService.getClient(this.configService.get<string>('REDIS_NAME'));
-    const keys: string[] = await this.fetchAllKeys()
+    const keys: string[] = await this.redisUtils.fetchAllKeys()
     for(const key of keys) {
       client.get(key).then(async (value: string) => {
         const updateClick = await this.prisma.link.updateMany({
@@ -120,6 +61,7 @@ export class AppService {
     }
     }
 
+    // TO DO: shift to db utils
     async link(linkWhereUniqueInput: Prisma.linkWhereUniqueInput,
     ): Promise<link | null> {
       return this.prisma.link.findUnique({
@@ -127,6 +69,7 @@ export class AppService {
       });
     }
 
+    // TO DO: shift to db utils
     async links(params: {
       skip?: number;
       take?: number;
@@ -143,22 +86,16 @@ export class AppService {
         orderBy,
       });
     }
-  
-    async createLinkInCache(data: link): Promise<link> {
-      this.setKey(data);
-      return data;
-    }
-/**
- * #### Persist the links in DB as well as cache to Redis after due validation.
- * 
- * A valid customHashId should not be a number and shouldn't have any special characters other than hyphen and underscore.
- * 
- * - Example of a valid customHashId: "my-custom-hash-id", "hasd1212"
- * - Example of an invalid customHashId: "123", "my-custom-hash-id!"
- * 
- * @param data - The link data to be persisted.
- * @returns The link object that has been persisted.
- */
+
+    /**
+     * #### Persist the links in DB as well as cache to Redis after due validation.
+     * A valid customHashId should not be a number and shouldn't have any special characters other than hyphen and underscore.
+     * - Example of a valid customHashId: "my-custom-hash-id", "hasd1212"
+     * - Example of an invalid customHashId: "123", "my-custom-hash-id!"
+     * 
+     * @param data - The link data to be persisted.
+     * @returns The link object that has been persisted.
+     */
     async createLinkInDB(data: Prisma.linkCreateInput): Promise<link> {
       const validCustomHashIdRegex = /^(?!^[0-9]+$)[a-zA-Z0-9_-]+$/;
       // validate the incoming request for custom hashId
@@ -167,19 +104,33 @@ export class AppService {
       }
     
       try {
+        const currentDate = new Date();
+        var ts = BigInt(currentDate.getTime());
+        console.log("Current time Stamp is: "+ts);
+
+        // store timeStamp in params
+        data.params["ts"] = ts.toString();
+        
         // create the link in DB
         const link = await this.prisma.link.create({
-          data,
+          data:{
+            ...data,
+          },
         });
         // set the link in redis
-        this.setKey(link);
+        this.redisUtils.setKey(link);
         return link;
 
       } catch (error) {
         throw new Error('Failed to create link in the database.');
       }
     }
-    
+
+    /**
+     * updates the link in DB as well as cache to Redis after due validation.
+     * @param params 
+     * @returns 
+     */
     async updateLink(params: {
       where: Prisma.linkWhereUniqueInput;
       data: Prisma.linkUpdateInput;
@@ -197,7 +148,7 @@ export class AppService {
         if(link == null){
           return Promise.reject(new Error('Link not found.'));
         }
-        this.clearKey(link); // to clear the old key from redis
+        this.redisUtils.clearKey(link); // to clear the old key from redis
 
         if(data.tags == null) data.tags = link.tags
         if(data.customHashId == null) data.customHashId = link.customHashId
@@ -212,22 +163,28 @@ export class AppService {
 
       })
       .then((link) => {
-        this.setKey(link); // to set the new key in redis
+        this.redisUtils.setKey(link); // to set the new key in redis
         return link;
       });
     }
-  
+
+    /**
+     * deletes the link in DB as well as cache to Redis after due validation.
+     * @param where 
+     * @returns 
+     */
     async deleteLink(where: Prisma.linkWhereUniqueInput): Promise<link> {
       return this.prisma.link.delete({
         where,
       });
     }
 
-/**
- * resolve the id for hashId or customhashid and fetch the url from redis
- * @param Id 
- * @returns 
- */
+    /**
+     * - Wrapper around redirect 
+     * - Resolve the hashId or customhashid 
+     * @param Id 
+     * @returns 
+     */
     async resolveRedirect(Id: string): Promise<string> {
       const validHashIdRegex = /^[0-9]*$/;
       if(validHashIdRegex.test(Id)){
@@ -235,7 +192,7 @@ export class AppService {
       }
       else
       { 
-        const hashId = await this.fetchKey(Id);
+        const hashId = await this.redisUtils.fetchKey(Id);
         if(hashId == undefined ){
           const linkData = await this.prisma.link.findFirst({
             where: { customHashId: Id},
@@ -251,19 +208,24 @@ export class AppService {
       }
     }
 
-/**
- * A generic function to fetch the url from redis based on hashId 
- * @param hashid 
- * @returns 
- */
+    /**
+     * A generic function to fetch the url from redis based on hashId 
+     * Fallback to DB if the hashId is not found in redis
+     * @param hashid 
+     * @returns 
+     */
     async redirect(hashid: string): Promise<string> {
 
-          return this.fetchKey(hashid).then((value: string) => {
+          return this.redisUtils.fetchKey(hashid).then((value: string) => {
           const link = JSON.parse(value);
 
           const url = link.url
           const params = link.params
           const ret = [];
+          
+          if(params?.["status"] == "expired"){
+            return "";
+          }
 
           if(params == null){
             return url;
@@ -281,6 +243,12 @@ export class AppService {
 
     }
 
+    /**
+     * resolves the url from DB based on hashId
+     * Fallback to DB if the hashId is not found in redis
+     * @param hashid 
+     * @returns 
+     */
     async redirectFromDB(hashid: string): Promise<string> {
         return this.prisma.link.findMany({
           where: {
@@ -298,7 +266,22 @@ export class AppService {
           const params = response[0].params
           const ret = [];
           
-          this.setKey(response[0]); 
+          const currentDate = new Date();
+          var ts = currentDate.getTime();
+
+          if(!Number.isNaN(parseInt(params["expiry"])) && (ts > (parseInt(params["ts"])+60*parseInt(params["expiry"])))){
+            console.log("expired link clearing from DB and redis");
+            // delete from DB and redis !!!
+            this.deleteLink({id: response[0].id});
+            this.redisUtils.clearKey(response[0]);
+            return "";
+          }
+
+          // Drawback: link won't get clear until it is clicked after expiry
+          // Sol: set a cron job to clear the expired links from DB and redis
+          // TO DO: DO deletion asynchronously
+
+          this.redisUtils.setKey(response[0]); 
 
           if(params == null){
             return url;
