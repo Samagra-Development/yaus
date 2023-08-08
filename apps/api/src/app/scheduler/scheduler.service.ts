@@ -18,7 +18,7 @@ export class SchedulerService {
         const cronId = uuidv4();
         try {
             this.telemetryService.sendEvent(this.configService.get<string>('POSTHOG_DISTINCT_KEY'), "updateClicksInDb cron started", {cronId: cronId, ts: Date.now()})
-            this.appService.updateClicksInDb();
+            // this.appService.updateClicksInDb();
         }
         catch (err) {
             this.telemetryService.sendEvent(this.configService.get<string>('POSTHOG_DISTINCT_KEY'), "Exception in updateClicksInDb cron", {error: err.message})
