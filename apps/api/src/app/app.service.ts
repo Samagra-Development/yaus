@@ -21,13 +21,13 @@ export class AppService {
      * Updates the click count in the postgres db based on hashId or customhashid
      * @param hashID 
      */
-    async updateClicksInPostgresDB(hashID: string): Promise<void> {
+    async updateClicksInPostgresDB(id: string|number): Promise<void> {
    
     // Check if given id is customhashid  
-    Number.isNaN(parseInt(hashID)) ? hashID = await this.redisUtils.fetchKey(hashID):0;
+    Number.isNaN(parseInt(id.toString())) ? id = await this.redisUtils.fetchKey(id.toString()):0;
 
     const link = await this.prisma.link.findFirst({
-      where: { hashid: parseInt(hashID)},
+      where: { hashid: parseInt(id.toString())},
     })
 
     let cnt = await this.prisma.link.update({
@@ -269,7 +269,7 @@ export class AppService {
           const currentDate = new Date();
           var ts = currentDate.getTime();
 
-          if(!Number.isNaN(parseInt(params["expiry"])) && (ts > (parseInt(params["ts"])+60*parseInt(params["expiry"])))){
+          if(!Number.isNaN(parseInt(params?.["expiry"])) && (ts > (parseInt(params["ts"])+60*parseInt(params?.["expiry"])))){
             console.log("expired link clearing from DB and redis");
             // delete from DB and redis !!!
             this.deleteLink({id: response[0].id});
