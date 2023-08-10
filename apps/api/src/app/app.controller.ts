@@ -122,19 +122,8 @@ export class AppController {
   @ApiOperation({ summary: 'Update Existing Links' })
   @ApiBody({ type: Link })
   @ApiResponse({ type: Link, status: 200})
-  async update(@Param('id') id: string, @Body() link: Link ): Promise<LinkModel> {
-    return this.appService.updateLink({
-      where: {customHashId: id},
-      data: { 
-        userID: link.user || null,
-        tags: link.tags || null,
-        clicks: link.clicks || null,
-        url: link.url || null,
-        hashid: link.hashid || null,
-        project: link.project || null,
-        customHashId: link.customHashId || null,
-       },
-    });
+  async update(@Param('id') id: string, @Body() link: link ): Promise<LinkModel> {
+    return this.appService.updateLink(id, link);
   }
 
   @MessagePattern('onClick')

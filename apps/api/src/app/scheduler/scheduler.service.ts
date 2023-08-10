@@ -10,24 +10,6 @@ export class SchedulerService {
     constructor(
         private configService: ConfigService,
         private readonly telemetryService: TelemetryService,
-        protected readonly appService: AppService){}
-
-// TODO: add dynamic configuration        
-    @Cron(process.env.CLICK_BACKUP_CRON)
-    async handleCron() {
-        const cronId = uuidv4();
-        try {
-            this.telemetryService.sendEvent(this.configService.get<string>('POSTHOG_DISTINCT_KEY'), "updateClicksInDb cron started", {cronId: cronId, ts: Date.now()})
-            // this.appService.updateClicksInDb();
-        }
-        catch (err) {
-            this.telemetryService.sendEvent(this.configService.get<string>('POSTHOG_DISTINCT_KEY'), "Exception in updateClicksInDb cron", {error: err.message})
-            return '';
-        }
-        finally {
-            this.telemetryService.sendEvent(this.configService.get<string>('POSTHOG_DISTINCT_KEY'), "updateClicksInDb cron completed", {cronId: cronId, ts: Date.now()})
-            return '';
-        }  
-    }    
+        protected readonly appService: AppService){}    
 }    
 

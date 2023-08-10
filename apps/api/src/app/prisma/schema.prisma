@@ -16,6 +16,7 @@ model link {
   hashid       Int      @default(autoincrement())
   project      String?  @db.Uuid
   customHashId String?  @unique
+  createdAt    DateTime? @default(now())
   params       Json?
 
   @@unique([userID, project, url, customHashId])

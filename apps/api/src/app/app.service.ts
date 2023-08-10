@@ -5,6 +5,7 @@ import { link, Prisma } from '@prisma/client';
 import { ConfigService } from '@nestjs/config'
 import { TelemetryService } from './telemetry/telemetry.service';
 import { RedisUtils } from './utils/redis.utils';
+import { Link } from './app.interface';
 
 @Injectable()
 export class AppService {
@@ -104,12 +105,6 @@ export class AppService {
       }
     
       try {
-        const currentDate = new Date();
-        var ts = BigInt(currentDate.getTime());
-        console.log("Current time Stamp is: "+ts);
-
-        // store timeStamp in params
-        data.params["ts"] = ts.toString();
         
         // create the link in DB
         const link = await this.prisma.link.create({
@@ -131,16 +126,13 @@ export class AppService {
      * @param params 
      * @returns 
      */
-    async updateLink(params: {
-      where: Prisma.linkWhereUniqueInput;
-      data: Prisma.linkUpdateInput;
-    }): Promise<link> {
-      const { where, data } = params;
+    async updateLink( id:string|number , data:link ): Promise<link> {
+
       return this.prisma.link.findFirst({
         where: {
         OR: [ 
-          { hashid: Number.isNaN(Number(where.customHashId)) ? -1 : parseInt(where.customHashId) }, 
-          { customHashId: where.customHashId } 
+          { hashid: Number.isNaN(Number(id)) ? -1 : parseInt(id.toString()) }, 
+          { customHashId: id.toString() } 
         ],
         },
       })
@@ -150,15 +142,26 @@ export class AppService {
         }
         this.redisUtils.clearKey(link); // to clear the old key from redis
 
-        if(data.tags == null) data.tags = link.tags
-        if(data.customHashId == null) data.customHashId = link.customHashId
-        if(data.hashid == null) data.hashid = link.hashid
+        if(!data.tags) data.tags = link.tags
+        if(!data.customHashId ) data.customHashId = link.customHashId
+        // if(!data.hashid) data.hashid = link.hashid   // cannot change hashid
+        if(data.params){
+          // update the params 
+          const values = Object.keys(data.params);
+          if(link.params == null) link.params = {};
+          values.forEach((value) => {
+            console.log(value,data.params[value]);
+            link.params[value] = data.params[value];
+          });
+
+          if(link.params)data.params = link.params;
+        }
         if(data.url != link.url) data.clicks = 0;
         else data.clicks = link.clicks;
 
         return this.prisma.link.update({
-          data,
           where : { id: link.id },
+          data:data
         });
 
       })
@@ -267,12 +270,14 @@ export class AppService {
           const ret = [];
           
           const currentDate = new Date();
-          var ts = currentDate.getTime();
+          var currentTime = currentDate.getTime();
+          var createdAt = response[0].createdAt.getTime();
+          console.log("currentTime",currentTime,"createdAt",createdAt,"expiry",params?.["expiry"]);
 
-          if(!Number.isNaN(parseInt(params?.["expiry"])) && (ts > (parseInt(params["ts"])+60*parseInt(params?.["expiry"])))){
+          if(!Number.isNaN(parseInt(params?.["expiry"])) && (currentTime > (createdAt+60*parseInt(params?.["expiry"])))){
             console.log("expired link clearing from DB and redis");
             // delete from DB and redis !!!
-            this.deleteLink({id: response[0].id});
+            // this.deleteLink({id: response[0].id}); // don't delete from DB keep it there
             this.redisUtils.clearKey(response[0]);
             return "";
           }
