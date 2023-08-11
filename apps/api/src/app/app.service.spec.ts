@@ -11,6 +11,7 @@ import { RedisService } from 'nestjs-redis';
 import { AppService } from './app.service';
 import { PrismaService } from './prisma.service';
 import { TelemetryService } from './telemetry/telemetry.service';
+import { RedisUtils } from './utils/redis.utils';
 
 describe('AppService', () => {
   let service: AppService;
@@ -83,6 +84,7 @@ describe('AppService', () => {
         AppService,
         PrismaService,
         TelemetryService,
+        RedisUtils
       ],
     })
     .overrideProvider(RedisService)

@@ -33,4 +33,8 @@ export class Link {
         description: 'Custom HashID of Link',
       })
     customHashId?: string | null
+    @ApiProperty({
+      description: 'Timestamp of Link creation',
+    })
+    createdAt?: string | null
 }

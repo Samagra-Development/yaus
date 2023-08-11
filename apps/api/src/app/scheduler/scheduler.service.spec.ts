@@ -11,6 +11,7 @@ import { HttpModule } from "@nestjs/axios";
 import { RedisHealthModule } from "@liaoliaots/nestjs-redis/health";
 import { ClientsModule, Transport } from "@nestjs/microservices";
 import { RedisModule } from "@liaoliaots/nestjs-redis";
+import { RedisUtils } from "../utils/redis.utils";
 
 describe("SchedulerService", () => {
   let service: SchedulerService;
@@ -78,7 +79,7 @@ describe("SchedulerService", () => {
         HttpModule,
         RedisHealthModule,
       ],
-      providers: [SchedulerService, AppService, PrismaService, TelemetryService, ],
+      providers: [SchedulerService, AppService, PrismaService, TelemetryService,RedisUtils ],
     })
     .overrideProvider(RedisService)
     .useValue(mockRedisService)

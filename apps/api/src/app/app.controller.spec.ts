@@ -15,6 +15,7 @@ import { RedisModule } from '@liaoliaots/nestjs-redis';
 import { HttpModule } from '@nestjs/axios';
 import { RedisHealthModule } from '@liaoliaots/nestjs-redis/health';
 import { PrismaHealthIndicator } from './prisma/prisma.health';
+import { RedisUtils } from './utils/redis.utils';
 
 describe('AppController', () => {
   let controller: AppController;
@@ -91,7 +92,8 @@ describe('AppController', () => {
         PrismaService,
         RouterService,
         TelemetryService,
-        PrismaHealthIndicator
+        PrismaHealthIndicator,
+        RedisUtils
     ],
     })
     .overrideProvider(RedisService)

@@ -37,7 +37,7 @@ import { URLSearchParams } from 'url';
           let name: string;
           console.log(`Execution Time: ${Date.now() - now}ms`)
 
-          const rawUrl = decodeURIComponent(req.raw.url);
+          const rawUrl = decodeURIComponent(req?.raw?.url);
           const url = rawUrl.split("?")?.[0];
           const urlSearchParams = new URLSearchParams(rawUrl.split("?")?.[1]);
 

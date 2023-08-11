@@ -22,17 +22,17 @@ async function bootstrap() {
   );
   app.enableCors()
 
-  // // MS for managing side-effects
-  // app.connectMicroservice<MicroserviceOptions>({
-  //   transport: Transport.RMQ,
-  //   options: {
-  //     urls: ['amqp://username:password@localhost:5672'],
-  //     queue: 'clicks',
-  //     queueOptions: {
-  //       durable: false,
-  //     },
-  //   },
-  // });
+  // MS for managing side-effects
+  app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.RMQ,
+    options: {
+      urls: ['amqp://username:password@localhost:5672'],
+      queue: 'clicks',
+      queueOptions: {
+        durable: true,
+      },
+    },
+  });
 
   const globalPrefix = process.env.APP_GLOBAL_PREFIX || '';
   app.setGlobalPrefix(globalPrefix);

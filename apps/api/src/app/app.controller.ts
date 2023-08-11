@@ -28,7 +28,7 @@ import { Link } from './app.interface';
 
 import { AppService } from './app.service';
 import { RouterService } from './router/router.service';
-import { link as LinkModel } from '@prisma/client';
+import { link as LinkModel, Prisma, link } from '@prisma/client';
 import { AddROToResponseInterceptor } from './interceptors/addROToResponseInterceptor';
 import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
@@ -76,7 +76,7 @@ export class AppController {
     const resp = await this.routerService.decodeAndRedirect(code)
     this.clickServiceClient
       .send('onClick', {
-        hashid: resp.hashid,
+        hashid: resp?.hashid,
       })
       .subscribe();
     if (resp.url !== '') {
@@ -91,14 +91,16 @@ export class AppController {
   @ApiOperation({ summary: 'Redirect Links' })
   @ApiResponse({ status: 301, description: 'will be redirected to the specified link'})
   async redirect(@Param('hashid') hashid: string, @Res() res) {
-    const reRouteURL: string = await this.appService.redirect(hashid);
-    this.clickServiceClient
+    
+    const reRouteURL: string = await this.appService.resolveRedirect(hashid);
+
+    if (reRouteURL !== '') {
+      console.log({reRouteURL});
+      this.clickServiceClient
       .send('onClick', {
         hashid: hashid,
       })
       .subscribe();
-    if (reRouteURL !== '') {
-      console.log({reRouteURL}); 
       return res.redirect(302, reRouteURL);
     } else {
       throw new NotFoundException();
@@ -110,28 +112,17 @@ export class AppController {
   @ApiOperation({ summary: 'Create New Links' })
   @ApiBody({ type: Link })
   @ApiResponse({ type: Link, status: 200})
-  async register(@Body() link: Link): Promise<LinkModel> {
-    return this.appService.createLink(link);
+  async register(@Body() link: Link): Promise<LinkModel> { 
+      const response:Promise<link> =  this.appService.createLinkInDB(link);
+      return response;
   }
 
-  
   @Patch('update/:id')
   @ApiOperation({ summary: 'Update Existing Links' })
   @ApiBody({ type: Link })
   @ApiResponse({ type: Link, status: 200})
-  async update(@Param('id') id: string, @Body() link: Link ): Promise<LinkModel> {
-    return this.appService.updateLink({
-      where: { customHashId: id },
-      data: { 
-        userID: link.user || null,
-        tags: link.tags || null,
-        clicks: link.clicks || null,
-        url: link.url || null,
-        hashid: link.hashid || null,
-        project: link.project || null,
-        customHashId: link.customHashId || null,
-       },
-    });
+  async update(@Param('id') id: string, @Body() link: link ): Promise<LinkModel> {
+    return this.appService.updateLink(id, link);
   }
 
   @MessagePattern('onClick')
@@ -143,7 +134,9 @@ export class AppController {
     const channel = context.getChannelRef();
     const originalMsg = context.getMessage().content.toString();
     console.log(`Message: ${originalMsg}`);
-    await this.appService.updateClicks(JSON.parse(originalMsg).data.hashid);
+    // await this.appService.updateClicks(JSON.parse(originalMsg).data.hashid);
+    let id = JSON.parse(originalMsg).data.hashid;
+    await this.appService.updateClicksInPostgresDB(id).then((res) => {console.log("UPDATED IN DB SUCCESS")}).catch((err) => {console.log(err)});
   }
-
+  
 }

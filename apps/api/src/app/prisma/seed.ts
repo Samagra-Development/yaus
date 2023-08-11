@@ -11,7 +11,8 @@ async function main() {
       clicks: 0,
       url: 'https://google.com',
       project: '1cd2bd98-7eba-4a4a-8cec-32eeb3648cf4',
-      customHashId: 'google'
+      customHashId: 'google',
+      createdAt: "2021-08-09T00:00:00.000Z",
     },
   })
 
@@ -24,7 +25,8 @@ async function main() {
       clicks: 0,
       url: 'https://facebook.com',
       project: '4b7c207c-3c6e-440f-9e6f-29736f23a3bb',
-      customHashId: 'fb'
+      customHashId: 'fb',
+      createdAt: "2021-08-09T00:00:00.000Z",
     },
   })
   console.log({ alice, bob })
