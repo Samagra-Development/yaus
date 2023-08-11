@@ -37,7 +37,6 @@ export class AppService {
        });
     }
 
-    // TO DO: shift to DB utils, required in scheduler !! so take care of that before shifting it to any other files
     async updateClicksInDb(): Promise<void> {
     const client = await this.redisService.getClient(this.configService.get<string>('REDIS_NAME'));
     const keys: string[] = await this.redisUtils.fetchAllKeys()
@@ -275,16 +274,12 @@ export class AppService {
           console.log("currentTime",currentTime,"createdAt",createdAt,"expiry",params?.["expiry"]);
 
           if(!Number.isNaN(parseInt(params?.["expiry"])) && (currentTime > (createdAt+60*parseInt(params?.["expiry"])))){
-            console.log("expired link clearing from DB and redis");
+            console.log("expired link clearing from redis");
             // delete from DB and redis !!!
             // this.deleteLink({id: response[0].id}); // don't delete from DB keep it there
             this.redisUtils.clearKey(response[0]);
             return "";
           }
-
-          // Drawback: link won't get clear until it is clicked after expiry
-          // Sol: set a cron job to clear the expired links from DB and redis
-          // TO DO: DO deletion asynchronously
 
           this.redisUtils.setKey(response[0]); 
 

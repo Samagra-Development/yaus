@@ -117,7 +117,6 @@ export class AppController {
       return response;
   }
 
-  // no way to change the params ??
   @Patch('update/:id')
   @ApiOperation({ summary: 'Update Existing Links' })
   @ApiBody({ type: Link })
@@ -141,14 +140,3 @@ export class AppController {
   }
   
 }
-// FIXME:
-// DONE 1. CustomHashId should also expire at the same time as the hashid
-// DONE 2. Click counts not updating in postgres  
-// RFC  3. How about making an index on hasId to optimize the click count query
-// RFC  4. Cleaning up the used HashId from postgres ??
-// DONE 5. Clicks should be updated even when customHashId is used
-// DONE 6. Not redirecting upon customHashId usage
-// DONE 7. invalid CustomHashId creation 
-
-// Register : default 0 , 
-// 
