@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Navigate, useNavigate, Link } from "react-router-dom";
+// import posthog from 'posthog-js';
 
 // prettier-ignore
 import { Layout, Menu, Button, Typography, Form, Input,Checkbox,Card } from "antd";
@@ -13,10 +14,14 @@ import routes from "app/constants/Routes";
 const { Title } = Typography;
 const { Content } = Layout;
 import Footer from "app/components/Footer";
+import { usePostHog } from "posthog-js/react";
 
 function SignUp() {
   const history = useNavigate();
+  const posthog = usePostHog(); // posthog instance
   useEffect(() => {
+    // console.log(posthog);
+    // posthog.capture('$pageview');  // sent the pageview to posthog
     if (localStorage.getItem("user-info")) {
       history.push("/dashboard");
     }
@@ -33,6 +38,12 @@ function SignUp() {
       email: email,
       password: password,
     });
+    
+    // sent the signup event to posthog
+    posthog.capture('User signed Up', {   
+         name:name,
+         email:email
+    }); 
 
     try {
       // Get Response
@@ -40,6 +51,9 @@ function SignUp() {
         routes.AUTH_BASE_URL + "/user/registration", // TO DO: shift to constants
         reqBody
       );
+
+      // posthog.capture('User signed Up', { userInfo: result }); // sent the signup event to posthog
+
       // Set Local Storage
       localStorage.setItem("user-info", JSON.stringify(result));
       // Navigate to Dashboard
