@@ -6,6 +6,7 @@ import "app/styles/header.css";
 import { Row, Col, Breadcrumb, Button } from "antd";
 
 import { NavLink, Link } from "react-router-dom";
+import { usePostHog } from "posthog-js/react";
 
 // TO DO: Shift these to constants file
 const profile = [
@@ -39,12 +40,14 @@ const toggler = [
 ];
 
 function Header({ name, subName, onPress }) {
+  const posthog = usePostHog();
   const local_info = JSON.parse(localStorage.getItem("user-info"));
   const navigate = useNavigate();
 
   useEffect(() => window.scrollTo(0, 0));
 
   function logout() {
+    posthog.capture("User Signed Out",{user:local_info});  // capture the signed out events
     localStorage.clear();
     navigate("/signup");
   }

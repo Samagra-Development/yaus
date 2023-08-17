@@ -18,6 +18,7 @@ import { InfoCircleOutlined } from "@ant-design/icons";
 import Interaction from "app/components/Interaction";
 import { LinkPreview } from "@dhaiwat10/react-link-preview";
 import { nanoid } from "nanoid";
+import { usePostHog } from "posthog-js/react";
 const { Meta } = Card;
 const { Footer } = Layout;
 const props = {
@@ -40,7 +41,7 @@ const props = {
 function FormTagsPage() {
   const [selectedMenuItem, setSelectedMenuItem] = useState("useUrl");
   const [isModalVisible, setIsModalVisible] = useState(false);
-
+  const posthog  = usePostHog();
   const [state, setState] = useState({
     userID: "0fe6ff38-fc46-11ec-b939-0242ac120001",
     url: "",

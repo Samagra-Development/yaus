@@ -6,11 +6,13 @@ import { Table } from "antd";
 import { nanoid } from "nanoid";
 import { Excel } from "antd-table-saveas-excel";
 import { Form, Button } from "antd";
+import { usePostHog } from "posthog-js/react";
 
 function Bulk() {
   const [form] = Form.useForm();
   const baseUrl = " https://yaus.xyz";
   const [data, setdata] = useState([]);
+  const posthog = usePostHog();
   const [excelData, setExcelData] = useState(null);
   const len = 0;
   const [state, setState] = useState({
@@ -21,6 +23,7 @@ function Bulk() {
   });
 
   const handleSubmit = (e) => {
+    let bulkLinkData = [];
     for (let i = 0; i < data.length; i++) {
       const customId = nanoid(6);
       const userData = {
@@ -35,6 +38,7 @@ function Bulk() {
         "Access-Control-Allow-Origin": "*",
       };
       console.log(userData);
+      bulkLinkData.push(userData);
       /*  console.log(baseUrl+{customHashId});   */
       axios
         .post(`${baseUrl}/register`, userData, { headers: headers })
@@ -46,6 +50,7 @@ function Bulk() {
           console.log(data);
         });
     }
+    posthog.capture("Bulk Links Created" , {LinksData:bulkLinkData});
   };
 
   const onDownload = () => {
