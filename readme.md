@@ -176,3 +176,9 @@ It is recommended to develop on Gitpod since everything is coupled with a bunch 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/Samagra-Development/yaus)
 
 The repo is structured as a monorepo using the [Nx](https://nx.dev/).
+
+# Contributors
+
+A big thanks to all the contributors who have helped make this project possible!
+
+[![Contributors](https://contributors-img.web.app/image?repo=Samagra-Development/yaus)](https://github.com/Samagra-Development/yaus/graphs/contributors)
