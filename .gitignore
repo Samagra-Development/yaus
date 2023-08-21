@@ -9,4 +9,3 @@ broker
 migrations/
 dist/
 .idea
-sample.env
