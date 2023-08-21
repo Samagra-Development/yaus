@@ -103,9 +103,9 @@ export class AppController {
         hashid: hashid,
       })
       .subscribe();
-      // if we shift this also in service layer then maybe we can capture better data but then it will be a bit slow
-      // as well a bit more complex
-      // tight coupling with the service layer
+
+      // id of link model
+      // params : query params
       this.telemetryService.sendEvent(
         this.configService.get<string>("POSTHOG_DISTINCT_KEY"),
         `Redirected Link`,
@@ -128,17 +128,18 @@ export class AppController {
   @ApiResponse({ type: Link, status: 200})
   async register(@Body() link: Link): Promise<LinkModel> { 
       const response:Promise<link> =  this.appService.createLinkInDB(link);
-      // discuss this stuff , shouuld we send the event here or in the service
-      // or we make this await and then send the event
-      this.telemetryService.sendEvent(
-        this.configService.get<string>("POSTHOG_DISTINCT_KEY"),
-        `Created Link`,
-        {
-          routeName: `/register`,
-          link: link,
-        }
-      );
-      return response;
+      return response
+      .then((createdLink) => {
+        this.telemetryService.sendEvent(
+          this.configService.get<string>("POSTHOG_DISTINCT_KEY"),
+          `Created Link`,
+          {
+            routeName: `/register`,
+            link: createdLink,
+          }
+        );
+        return createdLink;
+      });
   }
 
   @Patch('update/:id')
@@ -146,17 +147,21 @@ export class AppController {
   @ApiBody({ type: Link })
   @ApiResponse({ type: Link, status: 200})
   async update(@Param('id') id: string, @Body() link: link ): Promise<LinkModel> {
-    // make this a separate function in telemetry service
-    this.telemetryService.sendEvent(
-      this.configService.get<string>("POSTHOG_DISTINCT_KEY"),
-      `Updated Link`,
-      {
-        routeName: `update/:id`,
-        routeParam: id,
-        link: link,
-      }
-    );
-    return this.appService.updateLink(id, link);
+    
+    return this.appService.updateLink(id, link)
+    .then((updatedLink) => {
+      this.telemetryService.sendEvent(
+        this.configService.get<string>("POSTHOG_DISTINCT_KEY"),
+        `Updated Link`,
+        {
+          linkId:updatedLink.id,
+          routeName: `update/:id`,
+          link: updatedLink,
+          updatedFields: Object.keys(link),
+        }
+      );
+      return updatedLink;
+    })
   }
 
   @MessagePattern('onClick')
