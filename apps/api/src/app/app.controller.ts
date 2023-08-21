@@ -94,7 +94,9 @@ export class AppController {
   @ApiResponse({ status: 301, description: 'will be redirected to the specified link'})
   async redirect(@Param('hashid') hashid: string, @Res() res) {
     
-    const reRouteURL: string = await this.appService.resolveRedirect(hashid);
+    const response = await this.appService.resolveRedirect(hashid);
+    const reRouteURL: string = response?.reRouteurl;
+    const redirectedLink: LinkModel = response?.redirectedLink;
 
     if (reRouteURL !== '') {
       console.log({reRouteURL});
@@ -104,14 +106,13 @@ export class AppController {
       })
       .subscribe();
 
-      // id of link model
-      // params : query params
       this.telemetryService.sendEvent(
         this.configService.get<string>("POSTHOG_DISTINCT_KEY"),
         `Redirected Link`,
         {
+          linkId:redirectedLink.id,
           routeName: `/${hashid}}`,
-          routeParam: hashid,
+          routeParam: redirectedLink?.params,
           link: reRouteURL,
         }
       );

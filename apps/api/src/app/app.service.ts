@@ -187,7 +187,7 @@ export class AppService {
      * @param Id 
      * @returns 
      */
-    async resolveRedirect(Id: string): Promise<string> {
+    async resolveRedirect(Id: string): Promise<{reRouteurl:string,redirectedLink:link}> {
       const validHashIdRegex = /^[0-9]*$/;
       if(validHashIdRegex.test(Id)){
           return this.redirect(Id);
@@ -200,7 +200,7 @@ export class AppService {
             where: { customHashId: Id},
           });
           
-          let response = "";
+          let response = { reRouteurl : "" , redirectedLink:null };
           !(linkData == null) ? response = await this.redirect(linkData.hashid.toString()):0;
           return response;
         }
@@ -216,7 +216,7 @@ export class AppService {
      * @param hashid 
      * @returns 
      */
-    async redirect(hashid: string): Promise<string> {
+    async redirect(hashid: string): Promise<{reRouteurl:string,redirectedLink:link}> {
 
           return this.redisUtils.fetchKey(hashid).then((value: string) => {
           const link = JSON.parse(value);
@@ -226,16 +226,19 @@ export class AppService {
           const ret = [];
           
           if(params?.["status"] == "expired"){
-            return "";
+            return { reRouteurl : '' , redirectedLink:null };
+            // return "";
           }
 
           if(params == null){
-            return url;
+            return { reRouteurl : url , redirectedLink:link };
+            // return url;
           }else {
             Object.keys(params).forEach(function(d) {
               ret.push(encodeURIComponent(d) + '=' + encodeURIComponent(params[d]));
             })
-            return `${url}?${ret.join('&')}` || '';
+            return { reRouteurl : `${url}?${ret.join('&')}` || '' , redirectedLink:link };
+            // return `${url}?${ret.join('&')}` || '';
           }
         })
         .catch(err => {
@@ -251,7 +254,7 @@ export class AppService {
      * @param hashid 
      * @returns 
      */
-    async redirectFromDB(hashid: string): Promise<string> {
+    async redirectFromDB(hashid: string): Promise<{reRouteurl:string , redirectedLink:link}> {
         return this.prisma.link.findMany({
           where: {
             OR: [
@@ -278,23 +281,27 @@ export class AppService {
             // delete from DB and redis !!!
             // this.deleteLink({id: response[0].id}); // don't delete from DB keep it there
             this.redisUtils.clearKey(response[0]);
-            return "";
+            return { reRouteurl : "" , redirectedLink: null };
+            // return "";
           }
 
           this.redisUtils.setKey(response[0]); 
 
           if(params == null){
-            return url;
+            return { reRouteurl : url , redirectedLink: null };
+            // return url;
           }else {
             Object.keys(params).forEach(function(d) {
               ret.push(encodeURIComponent(d) + '=' + encodeURIComponent(params[d]));
             })
-            return `${url}?${ret.join('&')}` || '';
+            return { reRouteurl : `${url}?${ret.join('&')}` || '' , redirectedLink:response[0] };
+            // return `${url}?${ret.join('&')}` || '';
           }
         })
         .catch(err => {
           this.telemetryService.sendEvent(this.configService.get<string>('POSTHOG_DISTINCT_KEY'), "Exception in getLinkFromHashIdOrCustomHashId query", {error: err.message})
-          return '';
+          return { reRouteurl : "" , redirectedLink: null };
+          // return '';
         });
     }
 }
