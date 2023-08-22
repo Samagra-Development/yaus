@@ -112,7 +112,7 @@ export class AppController {
         {
           linkId:redirectedLink.id,
           routeName: `/${hashid}}`,
-          routeParam: redirectedLink?.params,
+          queryParams : redirectedLink?.params,
           link: reRouteURL,
         }
       );
