@@ -221,7 +221,7 @@ export class AppService {
           return this.redisUtils.fetchKey(hashid).then((value: string) => {
           const link = JSON.parse(value);
 
-          const url = link.url
+          let url = link.url
           const params = link.params
           const ret = [];
           
@@ -237,7 +237,11 @@ export class AppService {
             Object.keys(params).forEach(function(d) {
               ret.push(encodeURIComponent(d) + '=' + encodeURIComponent(params[d]));
             })
-            return { reRouteurl : `${url}?${ret.join('&')}` || '' , redirectedLink:link };
+            // check if url already has query params
+            const queryParams = new URL(url).searchParams;
+            url = ((queryParams.toString() === "") ? `${url}?${ret.join('&')}` || '' : `${url}&${ret.join('&')}` || '');
+
+            return { reRouteurl : url , redirectedLink:link };
             // return `${url}?${ret.join('&')}` || '';
           }
         })
@@ -267,7 +271,7 @@ export class AppService {
           take: 1
         })
         .then(response => {
-          const url = response[0].url
+          let url = response[0].url
           const params = response[0].params
           const ret = [];
           
@@ -294,7 +298,12 @@ export class AppService {
             Object.keys(params).forEach(function(d) {
               ret.push(encodeURIComponent(d) + '=' + encodeURIComponent(params[d]));
             })
-            return { reRouteurl : `${url}?${ret.join('&')}` || '' , redirectedLink:response[0] };
+
+            // check if url already has query params
+            const queryParams = new URL(url).searchParams;
+            url = ((queryParams.toString() === "") ? `${url}?${ret.join('&')}` || '' : `${url}&${ret.join('&')}` || '');
+
+            return { reRouteurl : url , redirectedLink:response[0] };
             // return `${url}?${ret.join('&')}` || '';
           }
         })
