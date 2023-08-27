@@ -18,7 +18,7 @@ model link {
   customHashId String?  @unique
   createdAt    DateTime? @default(now())
   params       Json?
-
+  intent       Boolean  @default(false)
   @@unique([userID, project, url, customHashId])
 }
 
