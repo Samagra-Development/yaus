@@ -43,7 +43,7 @@ import { URLSearchParams } from 'url';
 
           this.telemetryService.sendEvent(
             this.configService.get<string>("POSTHOG_DISTINCT_KEY"),
-            `${url} Execution Time`,
+            `Endpoint accessed`, 
             {
               routeName: name,
               executionTime: `${Date.now() - now}ms`,

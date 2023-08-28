@@ -32,6 +32,7 @@ import { link as LinkModel, Prisma, link } from '@prisma/client';
 import { AddROToResponseInterceptor } from './interceptors/addROToResponseInterceptor';
 import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
+import { TelemetryService } from './telemetry/telemetry.service';
 
 @Controller()
 @UseInterceptors(AddROToResponseInterceptor)
@@ -47,6 +48,7 @@ export class AppController {
     private prismaIndicator: PrismaHealthIndicator,
     private readonly configService: ConfigService,
     private readonly redisService: RedisService,
+    private readonly telemetryService: TelemetryService,
     @Inject('CLICK_SERVICE') private clickServiceClient: ClientProxy
   ) {
       this.redis = redisService.getClient(configService.get('REDIS_NAME'));
@@ -92,7 +94,9 @@ export class AppController {
   @ApiResponse({ status: 301, description: 'will be redirected to the specified link'})
   async redirect(@Param('hashid') hashid: string, @Res() res) {
     
-    const reRouteURL: string = await this.appService.resolveRedirect(hashid);
+    const response = await this.appService.resolveRedirect(hashid);
+    const reRouteURL: string = response?.reRouteurl;
+    const redirectedLink: LinkModel = response?.redirectedLink;
 
     if (reRouteURL !== '') {
       console.log({reRouteURL});
@@ -101,6 +105,18 @@ export class AppController {
         hashid: hashid,
       })
       .subscribe();
+
+      this.telemetryService.sendEvent(
+        this.configService.get<string>("POSTHOG_DISTINCT_KEY"),
+        `Redirected Link`,
+        {
+          linkId:redirectedLink.id,
+          routeName: `/${hashid}}`,
+          // queryParams : redirectedLink?.params,
+          originalUrl: redirectedLink?.url,
+          redirectUrl: reRouteURL,
+        }
+      );
       return res.redirect(302, reRouteURL);
     } else {
       throw new NotFoundException();
@@ -114,7 +130,18 @@ export class AppController {
   @ApiResponse({ type: Link, status: 200})
   async register(@Body() link: Link): Promise<LinkModel> { 
       const response:Promise<link> =  this.appService.createLinkInDB(link);
-      return response;
+      return response
+      .then((createdLink) => {
+        this.telemetryService.sendEvent(
+          this.configService.get<string>("POSTHOG_DISTINCT_KEY"),
+          `Created Link`,
+          {
+            routeName: `/register`,
+            link: createdLink,
+          }
+        );
+        return createdLink;
+      });
   }
 
   @Patch('update/:id')
@@ -122,7 +149,21 @@ export class AppController {
   @ApiBody({ type: Link })
   @ApiResponse({ type: Link, status: 200})
   async update(@Param('id') id: string, @Body() link: link ): Promise<LinkModel> {
-    return this.appService.updateLink(id, link);
+    
+    return this.appService.updateLink(id, link)
+    .then((updatedLink) => {
+      this.telemetryService.sendEvent(
+        this.configService.get<string>("POSTHOG_DISTINCT_KEY"),
+        `Updated Link`,
+        {
+          linkId:updatedLink.id,
+          routeName: `update/:id`,
+          link: updatedLink,
+          updatedFields: Object.keys(link),
+        }
+      );
+      return updatedLink;
+    })
   }
 
   @MessagePattern('onClick')
