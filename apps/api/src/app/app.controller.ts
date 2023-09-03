@@ -10,6 +10,7 @@ import {
   Put,
   Res,
   UseInterceptors,
+  Query
 } from '@nestjs/common';
 import {
   ClientProxy,
@@ -92,14 +93,34 @@ export class AppController {
   @Get('/:hashid')
   @ApiOperation({ summary: 'Redirect Links' })
   @ApiResponse({ status: 301, description: 'will be redirected to the specified link'})
-  async redirect(@Param('hashid') hashid: string, @Res() res) {
+  async redirect(@Param('hashid') hashid: string, @Query() queryParams: Record<string, string | string[]>, @Res() res) {
     
     const response = await this.appService.resolveRedirect(hashid);
-    const reRouteURL: string = response?.reRouteurl;
+    let reRouteURL: string = response?.reRouteurl;
     const redirectedLink: LinkModel = response?.redirectedLink;
-
+    // console.log(Object.keys(queryParams));
+    const params = redirectedLink?.params;
+    if (queryParams && Object.keys(queryParams).length) {
+      if (params == null) {
+        reRouteURL += "?";
+      } else {
+        reRouteURL += "&";
+      }
+      const qparams = [];
+      Object.keys(queryParams).forEach((d: string) => {
+        if (Array.isArray(queryParams[d])) {
+          (queryParams[d] as string[]).forEach(val => {
+            qparams.push(encodeURIComponent(d) + "=" + encodeURIComponent(val));
+          });
+        } else {
+          qparams.push(encodeURIComponent(d) + "=" + encodeURIComponent(queryParams[d] as string));
+        }
+      });
+      reRouteURL += qparams.join("&") || "";
+    }
+    // console.log("ReRouted URL is:",{reRouteURL});
     if (reRouteURL !== '') {
-      console.log({reRouteURL});
+      console.log("Redirected URL is ",{reRouteURL});
       this.clickServiceClient
       .send('onClick', {
         hashid: hashid,
