@@ -4,7 +4,7 @@ import { Space } from "antd";
 import { useNavigate } from "react-router-dom";
 import "app/styles/header.css";
 import { Row, Col, Breadcrumb, Button } from "antd";
-
+import Event from "app/constants/PosthogEvent";
 import { NavLink, Link } from "react-router-dom";
 import { usePostHog } from "posthog-js/react";
 
@@ -47,7 +47,7 @@ function Header({ name, subName, onPress }) {
   useEffect(() => window.scrollTo(0, 0));
 
   function logout() {
-    posthog.capture("User Signed Out",{user:local_info});  // capture the signed out events
+    posthog.capture(Event.SIGNED_OUT,{user:local_info});  // capture the signed out events
     localStorage.clear();
     navigate("/signup");
   }

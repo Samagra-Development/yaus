@@ -9,6 +9,7 @@ import Navbar from "app/components/Navbar";
 import Footer from "app/components/Footer";
 import { mockUser } from "app/constants/mockData"; // TODO: Remove this line
 import { usePostHog } from "posthog-js/react";
+import Event from "app/constants/PosthogEvent";
 function onChange(checked) {
   console.log(`switch to ${checked}`);
 }
@@ -44,7 +45,7 @@ function SignIn() {
         localStorage.setItem("user-info", JSON.stringify(result));
       */
       // add telemetry for Sign In
-      posthog.capture("User Signed In", {
+      posthog.capture(Event.SIGNED_IN, {
         // To DO: Add user info here after completing the api integration
         email: email,
       });

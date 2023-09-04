@@ -7,7 +7,7 @@ import { nanoid } from "nanoid";
 import { Excel } from "antd-table-saveas-excel";
 import { Form, Button } from "antd";
 import { usePostHog } from "posthog-js/react";
-
+import Event from "app/constants/PosthogEvent";
 function Bulk() {
   const [form] = Form.useForm();
   const baseUrl = " https://yaus.xyz";
@@ -50,7 +50,7 @@ function Bulk() {
           console.log(data);
         });
     }
-    posthog.capture("Bulk Links Created" , {LinksData:bulkLinkData});
+    posthog.capture(Event.BULK_LINK_CREATION , {LinksData:bulkLinkData});
   };
 
   const onDownload = () => {

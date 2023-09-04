@@ -13,6 +13,7 @@ import FormRedirectPage from "app/pages/Form/LinkRedirectsForm";
 import FormLinkDataPage from "app/pages/Form/LinkDataForm";
 import FormTagsPage from "app/pages/Form/LinkTagsForm";
 import { usePostHog } from "posthog-js/react";
+import Event from "app/constants/PosthogEvent";
 const { Footer } = Layout;
 const { Step } = Steps;
 const { Meta } = Card;
@@ -43,7 +44,7 @@ const FormDemo = () => {
       Authorization: "JWT fefege...",
       "Access-Control-Allow-Origin": "*",
     };
-    posthog.capture("Link created",{userData:userData}); // capture the link creation events
+    posthog.capture(Event.LINK_CREATION,{userData:userData}); // capture the link creation events
     console.log(userData);
     axios
       .post(`${baseUrl}/register`, userData, { headers: headers })

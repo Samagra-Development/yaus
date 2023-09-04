@@ -15,7 +15,7 @@ const { Title } = Typography;
 const { Content } = Layout;
 import Footer from "app/components/Footer";
 import { usePostHog } from "posthog-js/react";
-
+import Event from "app/constants/PosthogEvent";
 function SignUp() {
   const history = useNavigate();
   const posthog = usePostHog(); // posthog instance
@@ -40,7 +40,7 @@ function SignUp() {
     });
     
     // sent the signup event to posthog
-    posthog.capture('User signed Up', {   
+    posthog.capture(Event.SIGNED_UP, {   
          name:name,
          email:email
     }); 
