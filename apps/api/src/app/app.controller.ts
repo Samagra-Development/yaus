@@ -99,9 +99,10 @@ export class AppController {
     let reRouteURL: string = response?.reRouteurl;
     const redirectedLink: LinkModel = response?.redirectedLink;
     // console.log(Object.keys(queryParams));
-    const params = redirectedLink?.params;
+    // const params = redirectedLink?.params;
+    const isParams = new URL(reRouteURL).searchParams.toString() !== "";
     if (queryParams && Object.keys(queryParams).length) {
-      if (params == null) {
+      if (!isParams) {
         reRouteURL += "?";
       } else {
         reRouteURL += "&";
@@ -118,7 +119,7 @@ export class AppController {
       });
       reRouteURL += qparams.join("&") || "";
     }
-    // console.log("ReRouted URL is:",{reRouteURL});
+    console.log("ReRouted URL is:",{reRouteURL});
     if (reRouteURL !== '') {
       console.log("Redirected URL is ",{reRouteURL});
       this.clickServiceClient

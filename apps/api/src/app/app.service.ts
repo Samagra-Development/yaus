@@ -229,17 +229,18 @@ export class AppService {
             return { reRouteurl : '' , redirectedLink:null };
             // return "";
           }
+          return { reRouteurl : url , redirectedLink:link };
 
-          if(params == null){
-            return { reRouteurl : url , redirectedLink:link };
-            // return url;
-          }else {
-            Object.keys(params).forEach(function(d) {
-              ret.push(encodeURIComponent(d) + '=' + encodeURIComponent(params[d]));
-            })
-            return { reRouteurl : `${url}?${ret.join('&')}` || '' , redirectedLink:link };
-            // return `${url}?${ret.join('&')}` || '';
-          }
+          // if(params == null){
+          //   return { reRouteurl : url , redirectedLink:link };
+          //   // return url;
+          // }else {
+          //   Object.keys(params).forEach(function(d) {
+          //     ret.push(encodeURIComponent(d) + '=' + encodeURIComponent(params[d]));
+          //   })
+          //   return { reRouteurl : `${url}?${ret.join('&')}` || '' , redirectedLink:link };
+          //   // return `${url}?${ret.join('&')}` || '';
+          // }
         })
         .catch(err => {
             this.telemetryService.sendEvent(this.configService.get<string>('POSTHOG_DISTINCT_KEY'), "Exception in fetching data from redis falling back to DB", {error: err.message})
@@ -286,17 +287,20 @@ export class AppService {
           }
 
           this.redisUtils.setKey(response[0]); 
-
-          if(params == null){
-            return { reRouteurl : url , redirectedLink: null };
-            // return url;
-          }else {
-            Object.keys(params).forEach(function(d) {
-              ret.push(encodeURIComponent(d) + '=' + encodeURIComponent(params[d]));
-            })
-            return { reRouteurl : `${url}?${ret.join('&')}` || '' , redirectedLink:response[0] };
-            // return `${url}?${ret.join('&')}` || '';
-          }
+          
+          return { reRouteurl : url , redirectedLink: response[0] };
+          
+          // if(params == null){
+          //   return { reRouteurl : url , redirectedLink: null };
+          //   // return url;
+          // }
+          // else {
+          //   Object.keys(params).forEach(function(d) {
+          //     ret.push(encodeURIComponent(d) + '=' + encodeURIComponent(params[d]));
+          //   })
+          //   return { reRouteurl : `${url}?${ret.join('&')}` || '' , redirectedLink:response[0] };
+          //   // return `${url}?${ret.join('&')}` || '';
+          // }
         })
         .catch(err => {
           this.telemetryService.sendEvent(this.configService.get<string>('POSTHOG_DISTINCT_KEY'), "Exception in getLinkFromHashIdOrCustomHashId query", {error: err.message})
