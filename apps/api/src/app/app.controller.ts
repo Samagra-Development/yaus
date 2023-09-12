@@ -98,30 +98,31 @@ export class AppController {
     const response = await this.appService.resolveRedirect(hashid);
     let reRouteURL: string = response?.reRouteurl;
     const redirectedLink: LinkModel = response?.redirectedLink;
-    // console.log(Object.keys(queryParams));
-    // const params = redirectedLink?.params;
-    const isParams = new URL(reRouteURL).searchParams.toString() !== "";
+    const urlContainParams = new URL(reRouteURL).searchParams.toString() !== "";
+    
     if (queryParams && Object.keys(queryParams).length) {
-      if (!isParams) {
+      if (!urlContainParams) {
         reRouteURL += "?";
       } else {
         reRouteURL += "&";
       }
-      const qparams = [];
+
+      const qParamList = [];
       Object.keys(queryParams).forEach((d: string) => {
         if (Array.isArray(queryParams[d])) {
           (queryParams[d] as string[]).forEach(val => {
-            qparams.push(encodeURIComponent(d) + "=" + encodeURIComponent(val));
+            qParamList.push(encodeURIComponent(d) + "=" + encodeURIComponent(val));
           });
         } else {
-          qparams.push(encodeURIComponent(d) + "=" + encodeURIComponent(queryParams[d] as string));
+          qParamList.push(encodeURIComponent(d) + "=" + encodeURIComponent(queryParams[d] as string));
         }
       });
-      reRouteURL += qparams.join("&") || "";
+      reRouteURL += qParamList.join("&") || "";
     }
-    console.log("ReRouted URL is:",{reRouteURL});
+    
+    console.log("ReRouted URL is: ",{reRouteURL});
+    
     if (reRouteURL !== '') {
-      console.log("Redirected URL is ",{reRouteURL});
       this.clickServiceClient
       .send('onClick', {
         hashid: hashid,
