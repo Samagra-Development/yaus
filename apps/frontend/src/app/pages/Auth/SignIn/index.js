@@ -1,6 +1,5 @@
 // prettier-ignore
 import { Layout, Menu, Button, Row, Col, Typography, Form, Input, Switch } from "antd";
-
 import signinbg from "app/assets/images/img-signin.jpg";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -9,6 +8,8 @@ import { onFinish, onFinishFailed } from "app/utils/outputResponse.js";
 import Navbar from "app/components/Navbar";
 import Footer from "app/components/Footer";
 import { mockUser } from "app/constants/mockData"; // TODO: Remove this line
+import { usePostHog } from "posthog-js/react";
+import Event from "app/constants/PosthogEvent";
 function onChange(checked) {
   console.log(`switch to ${checked}`);
 }
@@ -18,7 +19,7 @@ const { Content } = Layout;
 function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const posthog = usePostHog();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -43,7 +44,13 @@ function SignIn() {
         // Set Local Storage
         localStorage.setItem("user-info", JSON.stringify(result));
       */
-      navigate("/dashboard");
+      // add telemetry for Sign In
+      posthog.capture(Event.SIGNED_IN, {
+        // To DO: Add user info here after completing the api integration
+        email: email,
+      });
+      console.log("User Signed In");
+      navigate("/dashboard"); 
     } catch (e) {
       console.log(e);
     }

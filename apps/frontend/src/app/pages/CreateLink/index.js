@@ -12,6 +12,8 @@ import FormAnalyticsPage from "app/pages/Form/LinkAnalyticsForm";
 import FormRedirectPage from "app/pages/Form/LinkRedirectsForm";
 import FormLinkDataPage from "app/pages/Form/LinkDataForm";
 import FormTagsPage from "app/pages/Form/LinkTagsForm";
+import { usePostHog } from "posthog-js/react";
+import Event from "app/constants/PosthogEvent";
 const { Footer } = Layout;
 const { Step } = Steps;
 const { Meta } = Card;
@@ -20,7 +22,7 @@ const FormDemo = () => {
   const baseUrl = " https://yaus.xyz";
   const [formLayout, setFormLayout] = useState("vertical");
   const [modal1Visible, setModal1Visible] = useState(false);
-
+  const posthog = usePostHog();
   const [state, setState] = useState({
     userID: "0fe6ff38-fc46-11ec-b939-0242ac120001",
     url: "",
@@ -42,11 +44,12 @@ const FormDemo = () => {
       Authorization: "JWT fefege...",
       "Access-Control-Allow-Origin": "*",
     };
+    posthog.capture(Event.LINK_CREATION,{userData:userData}); // capture the link creation events
     console.log(userData);
     axios
       .post(`${baseUrl}/register`, userData, { headers: headers })
       .then((response) => {
-        console.log(response.status);
+        console.log("response"+response.status);
         console.log(response.data.token);
         console.log(`${baseUrl}/${state.customHashId}`);
       });
