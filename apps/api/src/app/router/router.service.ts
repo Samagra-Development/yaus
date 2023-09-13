@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Injectable } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 const Hashids = require("hashids");
 
 import {
@@ -9,10 +9,10 @@ import {
   QueryOptions,
   gql,
   ApolloQueryResult,
-} from '@apollo/client';
-import { getLink, getLinkFromHashIdOrCustomHashId } from './queries';
-import { fetch } from 'isomorphic-fetch';
-import { TelemetryService } from '../telemetry/telemetry.service';
+} from "@apollo/client";
+import { getLink, getLinkFromHashIdOrCustomHashId } from "./queries";
+import { fetch } from "isomorphic-fetch";
+import { TelemetryService } from "../telemetry/telemetry.service";
 
 @Injectable()
 export class RouterService {
@@ -21,15 +21,15 @@ export class RouterService {
 
   constructor(
     private readonly configService: ConfigService,
-    private readonly telemetryService: TelemetryService,
-    ) {
+    private readonly telemetryService: TelemetryService
+  ) {
     this.dbClient = this.getClient(
-      this.configService.get<string>('GRAPHQL_URI'),
+      this.configService.get<string>("GRAPHQL_URI"),
       {
-        'x-hasura-admin-secret': this.configService.get<string>(
-          'HASURA_ADMIN_SECRET'
+        "x-hasura-admin-secret": this.configService.get<string>(
+          "HASURA_ADMIN_SECRET"
         ),
-        'content-type': 'application/json',
+        "content-type": "application/json",
       }
     );
 
@@ -56,15 +56,20 @@ export class RouterService {
         hashid: parseInt(hashid),
         customHashId: hashid,
       });
-      return response.link[0].url || '';
-    }
-    catch (err) {
-      this.telemetryService.sendEvent(this.configService.get<string>('POSTHOG_DISTINCT_KEY'), "Exception in getLinkFromHashIdOrCustomHashId query", {error: err.message})
-      return '';
+      return response.link[0].url || "";
+    } catch (err) {
+      this.telemetryService.sendEvent(
+        this.configService.get<string>("POSTHOG_DISTINCT_KEY"),
+        "Exception in getLinkFromHashIdOrCustomHashId query",
+        { error: err.message }
+      );
+      return "";
     }
   }
 
-  async decodeAndRedirect(code: string): Promise<{url: string, hashid: number}> {
+  async decodeAndRedirect(
+    code: string
+  ): Promise<{ url: string; hashid: number }> {
     let hashid = -1;
     try {
       hashid = this.hashids.decode(code)[0];
@@ -77,12 +82,14 @@ export class RouterService {
         hashid,
         customHashId: code,
       });
-      return {url:redirectURL.link[0].url || '', hashid: hashid};
+      return { url: redirectURL.link[0].url || "", hashid: hashid };
+    } catch (err) {
+      this.telemetryService.sendEvent(
+        this.configService.get<string>("POSTHOG_DISTINCT_KEY"),
+        "Exception in getLink query",
+        { error: err.message }
+      );
+      return { url: "", hashid: hashid };
     }
-    catch (err) {
-      this.telemetryService.sendEvent(this.configService.get<string>('POSTHOG_DISTINCT_KEY'), "Exception in getLink query", {error: err.message})
-      return {url: '', hashid: hashid};
-    }
-    
   }
 }

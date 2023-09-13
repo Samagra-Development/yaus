@@ -47,7 +47,7 @@ function Header({ name, subName, onPress }) {
   useEffect(() => window.scrollTo(0, 0));
 
   function logout() {
-    posthog.capture(Event.SIGNED_OUT,{user:local_info});  // capture the signed out events
+    posthog.capture(Event.SIGNED_OUT, { user: local_info }); // capture the signed out events
     localStorage.clear();
     navigate("/signup");
   }

@@ -38,12 +38,12 @@ function SignUp() {
       email: email,
       password: password,
     });
-    
+
     // sent the signup event to posthog
-    posthog.capture(Event.SIGNED_UP, {   
-         name:name,
-         email:email
-    }); 
+    posthog.capture(Event.SIGNED_UP, {
+      name: name,
+      email: email,
+    });
 
     try {
       // Get Response

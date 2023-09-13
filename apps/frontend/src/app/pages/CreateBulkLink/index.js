@@ -50,7 +50,7 @@ function Bulk() {
           console.log(data);
         });
     }
-    posthog.capture(Event.BULK_LINK_CREATION , {LinksData:bulkLinkData});
+    posthog.capture(Event.BULK_LINK_CREATION, { LinksData: bulkLinkData });
   };
 
   const onDownload = () => {

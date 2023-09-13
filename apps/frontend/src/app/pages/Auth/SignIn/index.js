@@ -50,7 +50,7 @@ function SignIn() {
         email: email,
       });
       console.log("User Signed In");
-      navigate("/dashboard"); 
+      navigate("/dashboard");
     } catch (e) {
       console.log(e);
     }

@@ -41,7 +41,7 @@ const props = {
 function FormTagsPage() {
   const [selectedMenuItem, setSelectedMenuItem] = useState("useUrl");
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const posthog  = usePostHog();
+  const posthog = usePostHog();
   const [state, setState] = useState({
     userID: "0fe6ff38-fc46-11ec-b939-0242ac120001",
     url: "",
