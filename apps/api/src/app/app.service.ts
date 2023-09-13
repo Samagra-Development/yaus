@@ -227,19 +227,8 @@ export class AppService {
           
           if(params?.["status"] == "expired"){
             return { reRouteurl : '' , redirectedLink:null };
-            // return "";
           }
-
-          if(params == null){
-            return { reRouteurl : url , redirectedLink:link };
-            // return url;
-          }else {
-            Object.keys(params).forEach(function(d) {
-              ret.push(encodeURIComponent(d) + '=' + encodeURIComponent(params[d]));
-            })
-            return { reRouteurl : `${url}?${ret.join('&')}` || '' , redirectedLink:link };
-            // return `${url}?${ret.join('&')}` || '';
-          }
+          return { reRouteurl : url , redirectedLink:link };
         })
         .catch(err => {
             this.telemetryService.sendEvent(this.configService.get<string>('POSTHOG_DISTINCT_KEY'), "Exception in fetching data from redis falling back to DB", {error: err.message})
@@ -282,26 +271,15 @@ export class AppService {
             // this.deleteLink({id: response[0].id}); // don't delete from DB keep it there
             this.redisUtils.clearKey(response[0]);
             return { reRouteurl : "" , redirectedLink: null };
-            // return "";
           }
 
           this.redisUtils.setKey(response[0]); 
-
-          if(params == null){
-            return { reRouteurl : url , redirectedLink: null };
-            // return url;
-          }else {
-            Object.keys(params).forEach(function(d) {
-              ret.push(encodeURIComponent(d) + '=' + encodeURIComponent(params[d]));
-            })
-            return { reRouteurl : `${url}?${ret.join('&')}` || '' , redirectedLink:response[0] };
-            // return `${url}?${ret.join('&')}` || '';
-          }
+          
+          return { reRouteurl : url , redirectedLink: response[0] };
         })
         .catch(err => {
           this.telemetryService.sendEvent(this.configService.get<string>('POSTHOG_DISTINCT_KEY'), "Exception in getLinkFromHashIdOrCustomHashId query", {error: err.message})
           return { reRouteurl : "" , redirectedLink: null };
-          // return '';
         });
     }
 }
