@@ -134,8 +134,8 @@ export class AppController {
         `Redirected Link`,
         {
           linkId:redirectedLink.id,
-          routeName: `/${hashid}}`,
-          // queryParams : redirectedLink?.params,
+          routeName: `/${hashid}`,
+          queryParams : queryParams,
           originalUrl: redirectedLink?.url,
           redirectUrl: reRouteURL,
         }
