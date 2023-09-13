@@ -1,6 +1,6 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { SchedulerService } from "./scheduler.service";
-import { RedisService } from 'nestjs-redis';
+import { RedisService } from "nestjs-redis";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { AppService } from "../app.service";
 import { PrismaService } from "../prisma.service";
@@ -30,33 +30,33 @@ describe("SchedulerService", () => {
       imports: [
         ConfigModule.forRoot({
           isGlobal: true,
-          envFilePath: ['.env.local', '.env'],
+          envFilePath: [".env.local", ".env"],
         }),
         RedisModule.forRootAsync({
           useFactory: (config: ConfigService) => {
             return {
               readyLog: true,
               config: {
-                name: 'db',
-                url: config.get('REDIS_URI'),
-              }
+                name: "db",
+                url: config.get("REDIS_URI"),
+              },
             };
           },
           inject: [ConfigService],
         }),
         ClientsModule.registerAsync([
           {
-            name: 'CLICK_SERVICE',
+            name: "CLICK_SERVICE",
             imports: [ConfigModule],
             useFactory: async (config: ConfigService) => ({
-                transport: Transport.RMQ,
-                options: {
-                  urls: [config.get<string>('RMQ_URL')],
-                  queue: config.get<string>('RMQ_QUEUE'),
-                  queueOptions: {
-                    durable: config.get<boolean>('RMQ_QUEUE_DURABLE'),
-                  },
+              transport: Transport.RMQ,
+              options: {
+                urls: [config.get<string>("RMQ_URL")],
+                queue: config.get<string>("RMQ_QUEUE"),
+                queueOptions: {
+                  durable: config.get<boolean>("RMQ_QUEUE_DURABLE"),
                 },
+              },
             }),
             inject: [ConfigService],
           },
@@ -64,11 +64,11 @@ describe("SchedulerService", () => {
         PosthogModule.forRootAsync({
           useFactory: (config: ConfigService) => {
             return {
-              apiKey: config.get<string>('POSTHOG_API_KEY'),
+              apiKey: config.get<string>("POSTHOG_API_KEY"),
               options: {
-                host: config.get<string>('POSTHOG_API_HOST'),
-                flushAt: config.get<number>('POSTHOG_BATCH_SIZE'),
-                flushInterval: config.get<number>('POSTHOG_FLUSH_INTERVAL'),
+                host: config.get<string>("POSTHOG_API_HOST"),
+                flushAt: config.get<number>("POSTHOG_BATCH_SIZE"),
+                flushInterval: config.get<number>("POSTHOG_FLUSH_INTERVAL"),
               },
               mock: false,
             };
@@ -79,11 +79,17 @@ describe("SchedulerService", () => {
         HttpModule,
         RedisHealthModule,
       ],
-      providers: [SchedulerService, AppService, PrismaService, TelemetryService,RedisUtils ],
+      providers: [
+        SchedulerService,
+        AppService,
+        PrismaService,
+        TelemetryService,
+        RedisUtils,
+      ],
     })
-    .overrideProvider(RedisService)
-    .useValue(mockRedisService)
-    .compile();
+      .overrideProvider(RedisService)
+      .useValue(mockRedisService)
+      .compile();
 
     service = module.get<SchedulerService>(SchedulerService);
   });

@@ -1,23 +1,23 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { createMock } from '@golevelup/ts-jest';
+import { Test, TestingModule } from "@nestjs/testing";
+import { createMock } from "@golevelup/ts-jest";
 
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { RedisService } from 'nestjs-redis';
-import { PrismaService } from './prisma.service';
-import { RouterService } from './router/router.service';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TerminusModule } from '@nestjs/terminus';
-import { ClientsModule, Transport } from '@nestjs/microservices';
-import { TelemetryService } from './telemetry/telemetry.service';
-import { PosthogModule } from 'nestjs-posthog';
-import { RedisModule } from '@liaoliaots/nestjs-redis';
-import { HttpModule } from '@nestjs/axios';
-import { RedisHealthModule } from '@liaoliaots/nestjs-redis/health';
-import { PrismaHealthIndicator } from './prisma/prisma.health';
-import { RedisUtils } from './utils/redis.utils';
+import { AppController } from "./app.controller";
+import { AppService } from "./app.service";
+import { RedisService } from "nestjs-redis";
+import { PrismaService } from "./prisma.service";
+import { RouterService } from "./router/router.service";
+import { ConfigModule, ConfigService } from "@nestjs/config";
+import { TerminusModule } from "@nestjs/terminus";
+import { ClientsModule, Transport } from "@nestjs/microservices";
+import { TelemetryService } from "./telemetry/telemetry.service";
+import { PosthogModule } from "nestjs-posthog";
+import { RedisModule } from "@liaoliaots/nestjs-redis";
+import { HttpModule } from "@nestjs/axios";
+import { RedisHealthModule } from "@liaoliaots/nestjs-redis/health";
+import { PrismaHealthIndicator } from "./prisma/prisma.health";
+import { RedisUtils } from "./utils/redis.utils";
 
-describe('AppController', () => {
+describe("AppController", () => {
   let controller: AppController;
   let service: AppService;
   let mockRedisSet;
@@ -36,33 +36,33 @@ describe('AppController', () => {
         TerminusModule,
         ConfigModule.forRoot({
           isGlobal: true,
-          envFilePath: ['.env.local', '.env'],
+          envFilePath: [".env.local", ".env"],
         }),
         RedisModule.forRootAsync({
           useFactory: (config: ConfigService) => {
             return {
               readyLog: true,
               config: {
-                namespace: config.get('REDIS_NAME'),
-                url: config.get('REDIS_URI'),
-              }
+                namespace: config.get("REDIS_NAME"),
+                url: config.get("REDIS_URI"),
+              },
             };
           },
           inject: [ConfigService],
         }),
         ClientsModule.registerAsync([
           {
-            name: 'CLICK_SERVICE',
+            name: "CLICK_SERVICE",
             imports: [ConfigModule],
             useFactory: async (config: ConfigService) => ({
-                transport: Transport.RMQ,
-                options: {
-                  urls: [config.get<string>('RMQ_URL')],
-                  queue: config.get<string>('RMQ_QUEUE'),
-                  queueOptions: {
-                    durable: config.get<boolean>('RMQ_QUEUE_DURABLE'),
-                  },
+              transport: Transport.RMQ,
+              options: {
+                urls: [config.get<string>("RMQ_URL")],
+                queue: config.get<string>("RMQ_QUEUE"),
+                queueOptions: {
+                  durable: config.get<boolean>("RMQ_QUEUE_DURABLE"),
                 },
+              },
             }),
             inject: [ConfigService],
           },
@@ -70,11 +70,11 @@ describe('AppController', () => {
         PosthogModule.forRootAsync({
           useFactory: (config: ConfigService) => {
             return {
-              apiKey: config.get<string>('POSTHOG_API_KEY'),
+              apiKey: config.get<string>("POSTHOG_API_KEY"),
               options: {
-                host: config.get<string>('POSTHOG_API_HOST'),
-                flushAt: config.get<number>('POSTHOG_BATCH_SIZE'),
-                flushInterval: config.get<number>('POSTHOG_FLUSH_INTERVAL'),
+                host: config.get<string>("POSTHOG_API_HOST"),
+                flushAt: config.get<number>("POSTHOG_BATCH_SIZE"),
+                flushInterval: config.get<number>("POSTHOG_FLUSH_INTERVAL"),
               },
               mock: false,
             };
@@ -88,25 +88,24 @@ describe('AppController', () => {
       providers: [
         AppService,
         ConfigService,
-        { provide: RedisService, useValue: mockRedisService }, 
+        { provide: RedisService, useValue: mockRedisService },
         PrismaService,
         RouterService,
         TelemetryService,
         PrismaHealthIndicator,
-        RedisUtils
-    ],
+        RedisUtils,
+      ],
     })
-    .overrideProvider(RedisService)
-    .useValue(mockRedisService)
-    .compile();
+      .overrideProvider(RedisService)
+      .useValue(mockRedisService)
+      .compile();
 
     controller = module.get<AppController>(AppController);
     service = module.get<AppService>(AppService);
   });
 
-  it('should be defined', () => {
+  it("should be defined", () => {
     expect(controller).toBeDefined();
     expect(service).toBeDefined();
   });
-
 });

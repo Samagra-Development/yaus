@@ -44,12 +44,12 @@ const FormDemo = () => {
       Authorization: "JWT fefege...",
       "Access-Control-Allow-Origin": "*",
     };
-    posthog.capture(Event.LINK_CREATION,{userData:userData}); // capture the link creation events
+    posthog.capture(Event.LINK_CREATION, { userData: userData }); // capture the link creation events
     console.log(userData);
     axios
       .post(`${baseUrl}/register`, userData, { headers: headers })
       .then((response) => {
-        console.log("response"+response.status);
+        console.log("response" + response.status);
         console.log(response.data.token);
         console.log(`${baseUrl}/${state.customHashId}`);
       });
